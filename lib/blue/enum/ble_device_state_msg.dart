@@ -1,0 +1,31 @@
+enum BleDeviceStateMsg {
+  ///设备蓝牙检查通讯正常后反馈
+  deviceCheckSuccess,
+  ///设备蓝牙检查通讯异常后反馈
+  deviceCheckError,
+  ///设备蓝牙后开始检查通讯是否正常
+  deviceChecking,
+  ///打开通道
+  deviceOpenCharacter,
+  ///打开通道失败
+  deviceOpenCharacterError,
+  ///设备蓝牙开始连接
+  bleStartConnect,
+  ///设备蓝牙连接成功
+  bleConnect,
+  ///设备蓝牙连接失败
+  bleConnectError,
+  ///设备蓝牙连接断开
+  bleDisconnect,
+  ///设备蓝牙开关断开
+  bleDisconnectBySwitch,
+  ///设备下发信息失败
+  bleCharacteristicError,
+  ///设备断电
+  bleDisconnectByPowerOff,
+  ///蓝牙断开后重新连接
+  bleBleReConnect,
+  ///蓝牙列表数据
+  deviceScanResult
+}
+
