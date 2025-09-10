@@ -249,7 +249,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                           child: Slider(
                               value: backDegree,
                               min: 3,
-                              max: 75,
+                              max: 100,
                               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                               onChanged: (value) {
                                 controller.backDegree.value = double.parse(value.toStringAsFixed(1));
@@ -274,12 +274,60 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                           child: Slider(
                               value: seatDegree,
                               min: 3,
-                              max: 75,
+                              max: 90,
                               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                               onChanged: (value) {
                                 controller.seatDegree.value = double.parse(value.toStringAsFixed(1));
                               }),
-                        )
+                        ),
+                        Row(
+                          children: [
+                            RHText(
+                              text: "Left Side Slider: ",
+                              fontSize: 20,
+                              fontColor: RHColor.black,
+                            ),RHText(
+                              text: "20cm",
+                              fontWeight: 7,
+                              fontSize: 18,
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width - 120,
+                          child: Slider(
+                              value: 40,
+                              min: 3,
+                              max: 100,
+                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                              onChanged: (value) {
+                                // controller.backDegree.value = double.parse(value.toStringAsFixed(1));
+                              }),
+                        ),
+                        Row(
+                          children: [
+                            RHText(
+                              text: "Right Side Slider: ",
+                              fontSize: 20,
+                              fontColor: RHColor.black,
+                            ),RHText(
+                              text: "40cm",
+                              fontWeight: 7,
+                              fontSize: 18,
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width - 120,
+                          child: Slider(
+                              value: 30,
+                              min: 3,
+                              max: 100,
+                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                              onChanged: (value) {
+                                // controller.backDegree.value = double.parse(value.toStringAsFixed(1));
+                              }),
+                        ),
                       ],
                     );
                   }),
@@ -376,7 +424,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
               }),
               const Gap(10),
               RHText(
-                text: 'Weight settings',
+                text: 'Weight Settings',
                 fontSize: 20,
                 fontWeight: 7,
               ),
@@ -403,11 +451,14 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                                 ),
                               ),
                               const Gap(15),
-                              RHText(
-                                text: "20kg",
-                                fontColor: RHColor.black,
-                                fontSize: 22,
-                              ),
+                              Obx(() {
+                                int update = controller.listUpdate.value;
+                                return RHText(
+                                  text: "${(controller.powerModel.mPowerData.leftWeightOriginal / 10).toStringAsFixed(1)}kg",
+                                  fontColor: RHColor.black,
+                                  fontSize: 22,
+                                );
+                              }),
                               const Gap(15),
                               GestureDetector(
                                 child: Icon(
@@ -465,7 +516,9 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                           text: "Counts:",
                           fontColor: RHColor.black,
                           fontSize: 18,
+                          fontWeight: 6,
                         ),
+                        const Gap(6),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -491,7 +544,9 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                           text: "Linear Velocity:",
                           fontColor: RHColor.black,
                           fontSize: 18,
+                          fontWeight: 6,
                         ),
+                        const Gap(6),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -517,7 +572,9 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                           text: "RPM:",
                           fontColor: RHColor.black,
                           fontSize: 18,
+                          fontWeight: 6,
                         ),
+                        const Gap(6),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -539,17 +596,17 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                 );
               }),
               const Gap(10),
-              Row(
-                children: [
-                  RHText(
-                    text: 'Motor Status',
-                    fontSize: 20,
-                    fontWeight: 7,
-                  ),
-                  const Gap(10),
-                  Obx(() {
-                      int status = controller.statusType.value;
-                      return GestureDetector(
+              Obx(() {
+                  int status = controller.statusType.value;
+                  return Row(
+                    children: [
+                      RHText(
+                        text: 'Motor Status',
+                        fontSize: 20,
+                        fontWeight: 7,
+                      ),
+                      const Gap(10),
+                      GestureDetector(
                         onTap: () {
                           controller.statusType.value = status == 1 ? 2 : 1;
                         },
@@ -572,10 +629,12 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                               ],
                             )
                         ),
-                      );
-                    }
-                  ),
-                ],
+                      ),
+                      if (status == 2)
+                        const Gap(10),
+                    ],
+                  );
+                }
               ),
               Container(
                 height: 1,

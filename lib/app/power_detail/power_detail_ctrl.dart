@@ -9,8 +9,6 @@ import '../../blue/factory/ble_factory.dart';
 
 class PowerDetailCtrl extends GetxController {
 
-  List<double> list = [10, 30, 100, 20, 30, 110, 30];
-  List<double> list1 = [50, 80, 100, 30, 40, 150, 110];
   late PowerModel powerModel;
 
   RxDouble backDegree = 20.0.obs;
@@ -22,10 +20,10 @@ class PowerDetailCtrl extends GetxController {
   RxInt statusType = 1.obs;
 
   RxInt listUpdate = 0.obs;
-  List<double> leftWeight = [];
-  List<double> rightWeight = [];
-  List<double> leftRope = [];
-  List<double> rightRope = [];
+  List<double> leftWeight = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  List<double> rightWeight = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  List<double> leftRope = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  List<double> rightRope = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   @override
   void onInit() {
     super.onInit();
@@ -56,7 +54,7 @@ class PowerDetailCtrl extends GetxController {
     }
     leftWeight.add(data.realTimeLeft.toDouble());
     rightWeight.add(data.realTimeRight.toDouble());
-    if (leftWeight.length > 50) {
+    if (leftWeight.length > 80) {
       leftWeight.removeAt(0);
       rightWeight.removeAt(0);
     }
@@ -67,7 +65,7 @@ class PowerDetailCtrl extends GetxController {
   @override
   void onClose() {
     super.onClose();
-    // powerModel.stopConnect();
+    powerModel.stopConnect();
 
   }
 }
