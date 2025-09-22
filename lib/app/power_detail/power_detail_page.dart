@@ -1,12 +1,15 @@
 import 'package:cabina_ble/app/power_detail/power_detail_ctrl.dart';
+import 'package:cabina_ble/app/power_detail/view/message_dialog.dart';
 import 'package:cabina_ble/app/power_detail/view/power_line_chart.dart';
 import 'package:cabina_ble/app/power_detail/view/power_weight_chart.dart';
 import 'package:cabina_ble/base_views/rh_text.dart';
+import 'package:cabina_ble/base_views/rh_text_input.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 import '../../base_views/rh_colors.dart';
+import '../../blue/entity/power_advanced_data.dart';
 
 class PowerDetailPage extends GetView<PowerDetailCtrl> {
   @override
@@ -38,14 +41,14 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     RHText(
-                      text: "L ${controller.powerModel.mPowerData.leftLength}cm",
+                      text: "L ${controller.powerModel.mPowerData.curLeftCableLength}cm",
                       fontSize: 18,
                       fontColor: RHColor.line_1,
                       fontWeight: 7,
                     ),
                     const Gap(10),
                     RHText(
-                      text: "R ${controller.powerModel.mPowerData.rightLength}cm",
+                      text: "R ${controller.powerModel.mPowerData.curRightCableLength}cm",
                       fontSize: 18,
                       fontColor: RHColor.line_2,
                       fontWeight: 7,
@@ -76,14 +79,16 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     RHText(
-                      text: "L ${(controller.powerModel.mPowerData.realTimeLeft / 10).toStringAsFixed(1)}kg",
+                      // text: "L ${(controller.powerModel.mPowerData.realTimeLeft / 10).toStringAsFixed(1)}kg",
+                      text: "L 0kg",
                       fontSize: 18,
                       fontColor: RHColor.line_1,
                       fontWeight: 7,
                     ),
                     const Gap(10),
                     RHText(
-                      text: "R ${(controller.powerModel.mPowerData.realTimeRight / 10).toStringAsFixed(1)}kg",
+                      // text: "R ${(controller.powerModel.mPowerData.realTimeRight / 10).toStringAsFixed(1)}kg",
+                      text: "R 0kg",
                       fontSize: 18,
                       fontColor: RHColor.line_2,
                       fontWeight: 7,
@@ -93,7 +98,6 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
               ],
             );
           }),
-
         ],
       );
     }
@@ -140,12 +144,19 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
       );
     }
 
-
+    final PowerAdvancedData powerAdvancedData = PowerAdvancedData();
     return Scaffold(
       appBar: AppBar(
         title: Text('BLE Name'),
         backgroundColor: RHColor.primary,
         foregroundColor: Colors.white,
+        actions: [
+          Center(
+            child: IconButton(onPressed: () {
+              MessageDialog.showMessageDialog(context, powerAdvancedData);
+            }, icon: Icon(Icons.message_outlined)),
+          ),
+        ],
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -224,132 +235,242 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                 margin: EdgeInsets.only(top: 10, bottom: 10),
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Obx(() {
-                    double backDegree = controller.backDegree.value;
-                    double seatDegree = controller.seatDegree.value;
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                  Row(
+                    children: [
+                      RHText(
+                        text: "Back: ",
+                        fontSize: 16,
+                        fontColor: RHColor.black,
+                      ),
+                      RHText(
+                        text: "30 Degree",
+                        fontWeight: 7,
+                        fontSize: 18,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      RHText(
+                        text: "Seat: ",
+                        fontSize: 16,
+                        fontColor: RHColor.black,
+                      ),
+                      RHText(
+                        text: "30 Degree",
+                        fontWeight: 7,
+                        fontSize: 18,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const Gap(15),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Row(
+                    children: [
+                      RHText(
+                        text: "Left Slider: ",
+                        fontSize: 16,
+                        fontColor: RHColor.black,
+                        textAlign: TextAlign.center,
+                      ),
+                      RHText(
+                        text: "30 CM",
+                        fontWeight: 7,
+                        fontSize: 18,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      RHText(
+                        text: "Right Slider: ",
+                        fontSize: 16,
+                        fontColor: RHColor.black,
+                        textAlign: TextAlign.center,
+                      ),
+                      RHText(
+                        text: "30 CM",
+                        fontWeight: 7,
+                        fontSize: 18,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const Gap(15),
+              Row(
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * .7,
+                    child: Column(
                       children: [
                         Row(
                           children: [
                             RHText(
                               text: "Back: ",
-                              fontSize: 20,
+                              fontSize: 16,
                               fontColor: RHColor.black,
-                            ),RHText(
-                              text: "$backDegree Degree",
+                            ),
+                            const Spacer(),
+                            RHTextInput(
+                              text: controller.backCtrl.text,
+                              textCtrl: controller.backCtrl,
+                              width: 80,
+                              height: 40,
+                              isPassword: false,
+                              isPhone: true,
+                              radius: 10,
+                              backColor: RHColor.greyF0,
+                              onChange: (ctrl, value) {
+                                return null;
+                              },
+                            ),
+                            RHText(
+                              text: " Degree",
                               fontWeight: 7,
                               fontSize: 18,
                             ),
                           ],
                         ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width - 120,
-                          child: Slider(
-                              value: backDegree,
-                              min: 3,
-                              max: 100,
-                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                              onChanged: (value) {
-                                controller.backDegree.value = double.parse(value.toStringAsFixed(1));
-                              }),
-                        ),
+                        const Gap(10),
                         Row(
                           children: [
                             RHText(
                               text: "Seat: ",
-                              fontSize: 20,
+                              fontSize: 16,
                               fontColor: RHColor.black,
                             ),
+                            const Spacer(),
+                            RHTextInput(
+                              text: controller.seatCtrl.text,
+                              textCtrl: controller.seatCtrl,
+                              width: 80,
+                              height: 40,
+                              isPassword: false,
+                              isPhone: true,
+                              radius: 10,
+                              backColor: RHColor.greyF0,
+                              onChange: (ctrl, value) {
+                                return null;
+                              },
+                            ),
                             RHText(
-                              text: "$seatDegree Degree",
+                              text: " Degree",
                               fontWeight: 7,
                               fontSize: 18,
                             ),
                           ],
                         ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width - 120,
-                          child: Slider(
-                              value: seatDegree,
-                              min: 3,
-                              max: 90,
-                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                              onChanged: (value) {
-                                controller.seatDegree.value = double.parse(value.toStringAsFixed(1));
-                              }),
-                        ),
+                        const Gap(10),
                         Row(
                           children: [
                             RHText(
-                              text: "Left Side Slider: ",
-                              fontSize: 20,
+                              text: "Left Slider: ",
+                              fontSize: 16,
                               fontColor: RHColor.black,
-                            ),RHText(
-                              text: "20cm",
+                            ),
+                            const Spacer(),
+                            RHTextInput(
+                              text: controller.leftSideCtrl.text,
+                              textCtrl: controller.leftSideCtrl,
+                              width: 80,
+                              height: 40,
+                              isPassword: false,
+                              isPhone: true,
+                              radius: 10,
+                              backColor: RHColor.greyF0,
+                              onChange: (ctrl, value) {
+                                return null;
+                              },
+                            ),
+                            RHText(
+                              text: "cm",
                               fontWeight: 7,
                               fontSize: 18,
                             ),
                           ],
                         ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width - 120,
-                          child: Slider(
-                              value: 40,
-                              min: 3,
-                              max: 100,
-                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                              onChanged: (value) {
-                                // controller.backDegree.value = double.parse(value.toStringAsFixed(1));
-                              }),
-                        ),
+                        const Gap(10),
                         Row(
                           children: [
                             RHText(
-                              text: "Right Side Slider: ",
-                              fontSize: 20,
+                              text: "Right Slider: ",
+                              fontSize: 16,
                               fontColor: RHColor.black,
-                            ),RHText(
-                              text: "40cm",
+                            ),
+                            const Spacer(),
+                            RHTextInput(
+                              text: controller.rightSideCtrl.text,
+                              textCtrl: controller.rightSideCtrl,
+                              width: 80,
+                              height: 40,
+                              isPassword: false,
+                              isPhone: true,
+                              radius: 10,
+                              backColor: RHColor.greyF0,
+                              onChange: (ctrl, value) {
+                                return null;
+                              },
+                            ),
+                            RHText(
+                              text: "cm",
                               fontWeight: 7,
                               fontSize: 18,
                             ),
                           ],
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width - 120,
-                          child: Slider(
-                              value: 30,
-                              min: 3,
-                              max: 100,
-                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                              onChanged: (value) {
-                                // controller.backDegree.value = double.parse(value.toStringAsFixed(1));
-                              }),
                         ),
                       ],
-                    );
-                  }),
+                    ),
+                  ),
                   const Spacer(),
-                  Container(
-                    width: 80,
-                    height: 50,
-                    decoration: BoxDecoration(
-                        color: RHColor.primary,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: GestureDetector(
-                      onTap: () {
+                  Column(
+                    children: [
+                      Container(
+                        width: 70,
+                        height: 40,
+                        decoration: BoxDecoration(
+                            color: RHColor.primary,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: GestureDetector(
+                          onTap: () {
 
-                      },
-                      child: Center(
-                        child: RHText(
-                          text: "Setup",
-                          fontColor: RHColor.white,
-                          fontSize: 18,
-                        ),
+                          },
+                          child: Center(
+                            child: RHText(
+                              text: "Setup",
+                              fontColor: RHColor.white,
+                              fontSize: 16,
+                            ),
+                          ),
+                        )
                       ),
-                    )
+                      const Gap(60),
+                      Container(
+                          width: 70,
+                          height: 40,
+                          decoration: BoxDecoration(
+                              color: RHColor.primary,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: GestureDetector(
+                            onTap: () {
+
+                            },
+                            child: Center(
+                              child: RHText(
+                                text: "Setup",
+                                fontColor: RHColor.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                          )
+                      ),
+                    ],
                   )
                 ],
               ),
@@ -370,139 +491,296 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                 int percent = controller.eccentricPer.value;
                 return Column(
                   children: [
+                    RHText(
+                      text: 'Current Mode: Standard Mode',
+                      fontSize: 18,
+                      fontWeight: 6,
+                    ),
+                    RHText(
+                      text: 'Eccentric Percent: $percent%Eccentric Percent: $percent%Eccentric Percent: $percent%Eccentric Percent: $percent%',
+                      fontSize: 16,
+                      fontWeight: 6,
+                      textAlign: TextAlign.center,
+                    ),
+                    CheckboxMenuButton(value: mode == 0, onChanged: (value) {
+                      bool check = value ?? false;
+                      if (check) {
+                        controller.trainingMode.value = 0;
+                      }
+                    }, child: RHText(text: 'Standard Mode', fontSize: 18, fontColor: RHColor.black,)),
+                    if (mode == 0)
                     Row(
                       children: [
-                        CheckboxMenuButton(value: mode == 1, onChanged: (value) {
-                          bool check = value ?? false;
-                          if (check) {
-                            controller.trainingMode.value = 1;
-                          }
-                        }, child: RHText(text: 'Standard', fontSize: 18, fontColor: RHColor.black,)),
-                        CheckboxMenuButton(value: mode == 2, onChanged: (value) {
-                          bool check = value ?? false;
-                          if (check) {
-                            controller.trainingMode.value = 2;
-                          }
-                        }, child: RHText(text: 'Chain', fontSize: 18, fontColor: RHColor.black,)),
-                        CheckboxMenuButton(value: mode == 3, onChanged: (value) {
-                          bool check = value ?? false;
-                          if (check) {
-                            controller.trainingMode.value = 3;
-                          }
-                        }, child: RHText(text: 'Speed', fontSize: 18, fontColor: RHColor.black,))
+                        const Gap(40),
+                        RHText(text: 'Weight：', fontSize: 18, fontColor: RHColor.black,),
+                        const Spacer(),
+                        RHTextInput(
+                          text: controller.standardCtrl.text,
+                          textCtrl: controller.standardCtrl,
+                          width: 80,
+                          height: 40,
+                          isPassword: false,
+                          isPhone: true,
+                          radius: 10,
+                          backColor: RHColor.greyF0,
+                          onChange: (ctrl, value) {
+                            return null;
+                          },
+                        ),
+                        RHText(
+                          text: "KG",
+                          fontWeight: 7,
+                          fontSize: 18,
+                        ),
+                        const Gap(20),
                       ],
                     ),
+                    CheckboxMenuButton(value: mode == 1, onChanged: (value) {
+                      bool check = value ?? false;
+                      if (check) {
+                        controller.trainingMode.value = 1;
+                      }
+                    }, child: RHText(text: 'Eccentric Mode', fontSize: 18, fontColor: RHColor.black,)),
+                    if (mode == 1)
+                    Column(
+                      children: [
+                        Row(
+                          children: [
+                            const Gap(40),
+                            RHText(text: 'Eccentric Force：', fontSize: 18, fontColor: RHColor.black,),
+                            const Spacer(),
+                            RHTextInput(
+                              text: controller.eccentricCtrl.text,
+                              textCtrl: controller.eccentricCtrl,
+                              width: 80,
+                              height: 40,
+                              isPassword: false,
+                              isPhone: true,
+                              radius: 10,
+                              backColor: RHColor.greyF0,
+                              onChange: (ctrl, value) {
+                                return null;
+                              },
+                            ),
+                            RHText(
+                              text: "KG",
+                              fontWeight: 7,
+                              fontSize: 18,
+                            ),
+                            const Gap(20),
+                          ],
+                        ),
+                        const Gap(10),
+                        Row(
+                          children: [
+                            const Gap(40),
+                            RHText(text: 'Concentric Force：', fontSize: 18, fontColor: RHColor.black,),
+                            const Spacer(),
+                            RHTextInput(
+                              text: controller.concernCtrl.text,
+                              textCtrl: controller.concernCtrl,
+                              width: 80,
+                              height: 40,
+                              isPassword: false,
+                              isPhone: true,
+                              radius: 10,
+                              backColor: RHColor.greyF0,
+                              onChange: (ctrl, value) {
+                                return null;
+                              },
+                            ),
+                            RHText(
+                              text: "KG",
+                              fontWeight: 7,
+                              fontSize: 18,
+                            ),
+                            const Gap(20),
+                          ],
+                        ),
+                      ],
+                    ),
+
+                    CheckboxMenuButton(value: mode == 2, onChanged: (value) {
+                      bool check = value ?? false;
+                      if (check) {
+                        controller.trainingMode.value = 2;
+                      }
+                    }, child: RHText(text: 'Elastic Mode', fontSize: 18, fontColor: RHColor.black,)),
+                    if (mode == 2)
+                    Column(
+                      children: [
+                        Row(
+                          children: [
+                            const Gap(40),
+                            RHText(text: 'Initial Force：', fontSize: 18, fontColor: RHColor.black,),
+                            const Spacer(),
+                            RHTextInput(
+                              text: controller.initialCtrl.text,
+                              textCtrl: controller.initialCtrl,
+                              width: 80,
+                              height: 40,
+                              isPassword: false,
+                              isPhone: true,
+                              radius: 10,
+                              backColor: RHColor.greyF0,
+                              onChange: (ctrl, value) {
+                                return null;
+                              },
+                            ),
+                            RHText(
+                              text: "KG",
+                              fontWeight: 7,
+                              fontSize: 18,
+                            ),
+                            const Gap(20),
+                          ],
+                        ),
+                        const Gap(10),
+                        Row(
+                          children: [
+                            const Gap(40),
+                            RHText(text: 'Maximum Force：', fontSize: 18, fontColor: RHColor.black,),
+                            const Spacer(),
+                            RHTextInput(
+                              text: controller.maxCtrl.text,
+                              textCtrl: controller.maxCtrl,
+                              width: 80,
+                              height: 40,
+                              isPassword: false,
+                              isPhone: true,
+                              radius: 10,
+                              backColor: RHColor.greyF0,
+                              onChange: (ctrl, value) {
+                                return null;
+                              },
+                            ),
+                            RHText(
+                              text: "KG",
+                              fontWeight: 7,
+                              fontSize: 18,
+                            ),
+                            const Gap(20),
+                          ],
+                        ),
+                        const Gap(10),
+                        Row(
+                          children: [
+                            const Gap(40),
+                            RHText(text: 'Spring Length：', fontSize: 18, fontColor: RHColor.black,),
+                            const Spacer(),
+                            RHTextInput(
+                              text: controller.springCtrl.text,
+                              textCtrl: controller.springCtrl,
+                              width: 80,
+                              height: 40,
+                              isPassword: false,
+                              isPhone: true,
+                              radius: 10,
+                              backColor: RHColor.greyF0,
+                              onChange: (ctrl, value) {
+                                return null;
+                              },
+                            ),
+                            RHText(
+                              text: "mm",
+                              fontWeight: 7,
+                              fontSize: 18,
+                            ),
+                            const Gap(20),
+                          ],
+                        ),
+                      ],
+                    ),
+                    CheckboxMenuButton(value: mode == 3, onChanged: (value) {
+                      bool check = value ?? false;
+                      if (check) {
+                        controller.trainingMode.value = 3;
+                      }
+                    }, child: RHText(text: 'Isokinetic Mode(Force Measurement)', fontSize: 18, fontColor: RHColor.black,)),
+                    if (mode == 3)
                     Row(
                       children: [
-                        CheckboxMenuButton(value: mode == 4, onChanged: (value) {
-                          bool check = value ?? false;
-                          if (check) {
-                            controller.trainingMode.value = 4;
-                          }
-                        }, child: RHText(text: 'Eccentric', fontSize: 18, fontColor: RHColor.black,)),
-                        Flexible(
-                          child: Column(
-                            children: [
-                              RHText(text: "Eccentric Percent: $percent%", fontSize: 18, fontColor: RHColor.black,),
-                              Slider(
-                                  value: controller.eccentricPer.value.toDouble(),
-                                  min: 3,
-                                  max: 75,
-                                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                                  onChanged: (value) {
-                                    controller.eccentricPer.value = value.toInt();
-                                  }),
-                              RHText(text: "Only applicable to eccentric mode",fontWeight: 6,)
-                            ],
-                          ),
+                        const Gap(40),
+                        RHText(text: 'Linear Velocity：', fontSize: 18, fontColor: RHColor.black,),
+                        const Spacer(),
+                        RHTextInput(
+                          text: controller.velocityCtrl.text,
+                          textCtrl: controller.velocityCtrl,
+                          width: 80,
+                          height: 40,
+                          isPassword: false,
+                          isPhone: true,
+                          radius: 10,
+                          backColor: RHColor.greyF0,
+                          onChange: (ctrl, value) {
+                            return null;
+                          },
                         ),
-
+                        RHText(
+                          text: "mm/s",
+                          fontWeight: 7,
+                          fontSize: 18,
+                        ),
+                        const Gap(20),
+                      ],
+                    ),
+                    CheckboxMenuButton(value: mode == 4, onChanged: (value) {
+                      bool check = value ?? false;
+                      if (check) {
+                        controller.trainingMode.value = 4;
+                      }
+                    }, child: RHText(text: 'Isometric Mode', fontSize: 18, fontColor: RHColor.black,)),
+                    if (mode == 4)
+                    Row(
+                      children: [
+                        const Gap(40),
+                        RHText(text: 'Cable Length：', fontSize: 18, fontColor: RHColor.black,),
+                        const Spacer(),
+                        RHTextInput(
+                          text: controller.cableCtrl.text,
+                          textCtrl: controller.cableCtrl,
+                          width: 80,
+                          height: 40,
+                          isPassword: false,
+                          isPhone: true,
+                          radius: 10,
+                          backColor: RHColor.greyF0,
+                          onChange: (ctrl, value) {
+                            return null;
+                          },
+                        ),
+                        RHText(
+                          text: "mm",
+                          fontWeight: 7,
+                          fontSize: 18,
+                        ),
+                        const Gap(20),
                       ],
                     ),
                   ],
                 );
               }),
-              const Gap(10),
-              RHText(
-                text: 'Weight Settings',
-                fontSize: 20,
-                fontWeight: 7,
-              ),
-              Container(
-                height: 1,
-                width: MediaQuery.of(context).size.width,
-                color: RHColor.black,
-                margin: EdgeInsets.only(top: 10, bottom: 15),
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              GestureDetector(
-                                child: Icon(
-                                  size: 45,
-                                  Icons.add_circle_outline_rounded,
-                                  color: Colors.deepPurple
-                                ),
-                              ),
-                              const Gap(15),
-                              Obx(() {
-                                int update = controller.listUpdate.value;
-                                return RHText(
-                                  text: "${(controller.powerModel.mPowerData.leftWeightOriginal / 10).toStringAsFixed(1)}kg",
-                                  fontColor: RHColor.black,
-                                  fontSize: 22,
-                                );
-                              }),
-                              const Gap(15),
-                              GestureDetector(
-                                child: Icon(
-                                    size: 45,
-                                    Icons.remove_circle_outline_rounded,
-                                    color: Colors.deepPurple
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Gap(15),
-                        Slider(
-                            value: 20,
-                            min: 3,
-                            max: 75,
-                            padding: EdgeInsets.only(left: 0, right: 0),
-                            onChanged: (value) {
+              const Gap(20),
+              Center(
+                child: Container(
+                    width: 120,
+                    height: 50,
+                    decoration: BoxDecoration(
+                        color: RHColor.primary,
+                        borderRadius: BorderRadius.circular(10)),
+                    child: GestureDetector(
+                      onTap: () {
 
-                            })
-                      ],
-                    ),
-                  ),
-                  const Gap(10),
-                  Container(
-                      width: 80,
-                      height: 50,
-                      decoration: BoxDecoration(
-                          color: RHColor.primary,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: GestureDetector(
-                        onTap: () {
-
-                        },
-                        child: Center(
-                          child: RHText(
-                            text: "Start",
-                            fontColor: RHColor.white,
-                            fontSize: 18,
-                          ),
+                      },
+                      child: Center(
+                        child: RHText(
+                          text: "Start",
+                          fontColor: RHColor.white,
+                          fontSize: 18,
                         ),
-                      )
-                  )
-                ],
+                      ),
+                    )
+                ),
               ),
               const Gap(20),
               Obx(() {
@@ -523,12 +801,12 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             RHText(
-                              text: "Left: ${controller.powerModel.mPowerData.leftCount}",
+                              text: "Left: ${controller.powerModel.mPowerData.curLeftCount}",
                               fontColor: RHColor.black,
                               fontSize: 18,
                             ),
                             RHText(
-                              text: "Right: ${controller.powerModel.mPowerData.rightCount}",
+                              text: "Right: ${controller.powerModel.mPowerData.curRightCount}",
                               fontColor: RHColor.black,
                               fontSize: 18,
                             ),
@@ -551,12 +829,12 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             RHText(
-                              text: "Left: ${controller.powerModel.mPowerData.leftPower}",
+                              text: "Left: ${controller.powerModel.mPowerData.curLeftLinearVelocity}",
                               fontColor: RHColor.black,
                               fontSize: 18,
                             ),
                             RHText(
-                              text: "Right: ${controller.powerModel.mPowerData.rightPower}",
+                              text: "Right: ${controller.powerModel.mPowerData.curRightLinearVelocity}",
                               fontColor: RHColor.black,
                               fontSize: 18,
                             ),
@@ -579,12 +857,12 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             RHText(
-                              text: "Left: ${controller.powerModel.mPowerData.leftRPM}",
+                              text: "Left: ${controller.powerModel.mPowerData.curLeftRPM}",
                               fontColor: RHColor.black,
                               fontSize: 18,
                             ),
                             RHText(
-                              text: "Right: ${controller.powerModel.mPowerData.rightRPM}",
+                              text: "Right: ${controller.powerModel.mPowerData.curRightRPM}",
                               fontColor: RHColor.black,
                               fontSize: 18,
                             ),

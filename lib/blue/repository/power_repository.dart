@@ -76,11 +76,11 @@ class PowerRepository {
                   break;
               }
             }
-          case PowerCommands.queryDataSport_0x06:
-            {
-              _handleHCJData(value, deviceData);
-              break;
-            }
+          // case PowerCommands.queryDataSport_0x06:
+          //   {
+          //     _handleHCJData(value, deviceData);
+          //     break;
+          //   }
         }
         break;
       case PowerCommands.cmdDeviceConf_0x0C:

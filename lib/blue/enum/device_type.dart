@@ -5,21 +5,6 @@ import '../../base_tool/rh_null.dart';
 enum RHDeviceType {
   none(-1),// 无
 
-  // ///跑步机
-  // treadmill(0),
-  //
-  // ///椭圆机
-  // elliptical(1),
-  //
-  // ///健身车
-  // exercise(2),
-  //
-  // ///划船机
-  // rowing(3),
-  //
-  // ///动感单车
-  // bicycle(4),
-
   /// 律动机
   vibration(5),
 
@@ -35,6 +20,8 @@ enum RHDeviceType {
   trainBench(32),
   ///柔力机
   softPower(33),
+  ///新版力量训练器
+  powerAdvanced(34),
 
   /// 心率手表
   bracelet(99);
@@ -90,6 +77,7 @@ enum RHDeviceType {
       //   return 'rowing_machine';
       // case RHDeviceType.bicycle:
       //   return 'indoor_bike';
+      case RHDeviceType.powerAdvanced:
       case RHDeviceType.powerBoard:
         return 'power_device';
       case RHDeviceType.bracelet:
@@ -122,6 +110,7 @@ enum RHDeviceType {
       //   return 'rowing_machine';
       // case RHDeviceType.bicycle:
       //   return 'indoor_bike';
+      case RHDeviceType.powerAdvanced:
       case RHDeviceType.powerBoard:
         return 'power_device';
       case RHDeviceType.softPower:
@@ -155,6 +144,7 @@ enum RHDeviceType {
       //   return 'home_top_hcj';
       // case RHDeviceType.bicycle:
       //   return 'indoor_bike';
+      case RHDeviceType.powerAdvanced:
       case RHDeviceType.powerBoard:
         return 'device_power';
       case RHDeviceType.none:

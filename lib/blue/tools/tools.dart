@@ -148,4 +148,12 @@ class Tools {
   static int swappingData(int lowByte, int highByte) {
     return ((highByte << 8) | lowByte);
   }
+
+  static bool updateIfChanged<T>(T oldValue, T newValue, Function(T) updater) {
+    if (oldValue != newValue) {
+      updater(newValue);
+      return true;
+    }
+    return false;
+  }
 }

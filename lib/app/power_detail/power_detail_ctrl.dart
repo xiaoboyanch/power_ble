@@ -1,5 +1,7 @@
 import 'package:cabina_ble/base_tool/log_utils.dart';
+import 'package:cabina_ble/blue/model/power_adv_model.dart';
 import 'package:cabina_ble/blue/model/power_model.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../blue/entity/power_device_data.dart';
@@ -9,7 +11,7 @@ import '../../blue/factory/ble_factory.dart';
 
 class PowerDetailCtrl extends GetxController {
 
-  late PowerModel powerModel;
+  late PowerAdvancedModel powerModel;
 
   RxDouble backDegree = 20.0.obs;
   RxDouble seatDegree = 20.0.obs;
@@ -24,18 +26,31 @@ class PowerDetailCtrl extends GetxController {
   List<double> rightWeight = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   List<double> leftRope = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   List<double> rightRope = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+  TextEditingController backCtrl = TextEditingController();
+  TextEditingController seatCtrl = TextEditingController();
+  TextEditingController leftSideCtrl = TextEditingController();
+  TextEditingController rightSideCtrl = TextEditingController();
+  TextEditingController standardCtrl = TextEditingController();
+  TextEditingController eccentricCtrl = TextEditingController();
+  TextEditingController concernCtrl = TextEditingController();
+  TextEditingController initialCtrl = TextEditingController();
+  TextEditingController maxCtrl = TextEditingController();
+  TextEditingController springCtrl = TextEditingController();
+  TextEditingController velocityCtrl = TextEditingController();
+  TextEditingController cableCtrl = TextEditingController();
+
   @override
   void onInit() {
     super.onInit();
-    powerModel = BleFactory.createModel(RHDeviceType.powerBoard) as PowerModel;
-    powerModel.onLLZSetup();
+    powerModel = BleFactory.createModel(RHDeviceType.powerAdvanced) as PowerAdvancedModel;
     powerModel.bleDeviceStateController.stream.listen((msg) {
 
     });
     powerModel.bleDeviceDataController.stream.listen((msg) {
       switch (msg) {
         case BleDeviceDataMsg.dataQueryUpdate_0x04: {
-          onDataCallBack(powerModel.mPowerData);
+          // onDataCallBack(powerModel.mPowerData);
         }
         case BleDeviceDataMsg.statusUpdate_0x02: {
 

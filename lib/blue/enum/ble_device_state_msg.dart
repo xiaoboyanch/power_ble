@@ -26,6 +26,8 @@ enum BleDeviceStateMsg {
   ///蓝牙断开后重新连接
   bleBleReConnect,
   ///蓝牙列表数据
-  deviceScanResult
+  deviceScanResult,
+  ///公英制状态
+  deviceUnitState,
 }
 

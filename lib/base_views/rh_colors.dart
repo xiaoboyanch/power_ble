@@ -17,6 +17,8 @@ class RHColor {
   static const Color unSelect = Color(0xFFAAAFBC);
   static const Color grey_EB = Color(0xFFEBEBEB);
   static const Color defaultRed = Color(0xFFFF4444);
+  static const Color font999 = Color(0xFF999999);
+  static const Color greyF0 = Color(0xFFF0F0F0);
 
   static const Color line_1 = Color(0xFF157F05);
   static const Color line_2 = Color(0xFF00C0FC);

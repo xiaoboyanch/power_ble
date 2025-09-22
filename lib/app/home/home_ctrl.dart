@@ -1,4 +1,5 @@
 import 'package:cabina_ble/base_views/rh_toast.dart';
+import 'package:cabina_ble/blue/model/power_adv_model.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -14,12 +15,12 @@ import '../../route/rh_route.dart';
 class HomeCtrl extends GetxController {
   RxInt flag = 0.obs;
   RxBool scanningFlag = false.obs;
-  late PowerModel powerModel;
+  late PowerAdvancedModel powerModel;
   List<RHBlueScanResult> bleResultList = [];
   @override
   void onInit() {
     super.onInit();
-    powerModel = BleFactory.createModel(RHDeviceType.powerBoard) as PowerModel;
+    powerModel = BleFactory.createModel(RHDeviceType.powerAdvanced) as PowerAdvancedModel;
     BleManager.instance.scanningStreamController.stream.listen((isScanning) {
       if (isScanning) {
         scanningFlag.value = true;

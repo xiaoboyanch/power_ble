@@ -1,4 +1,6 @@
 
+import 'package:cabina_ble/blue/model/power_adv_model.dart';
+
 import '../../base_tool/log_utils.dart';
 import '../enum/device_type.dart';
 
@@ -54,11 +56,14 @@ class BleFactory {
     }
     BleModel model;
     switch (type) {
-      case RHDeviceType.powerBoard:
-        model = PowerModel();
+      // case RHDeviceType.powerBoard:
+      //   model = PowerModel();
+      //   break;
+      case RHDeviceType.powerAdvanced:
+        model = PowerAdvancedModel();
         break;
       default:
-        model = PowerModel();
+        model = PowerAdvancedModel();
         break;
     }
     _modelMap[type] = model;
