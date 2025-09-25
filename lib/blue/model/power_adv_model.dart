@@ -23,7 +23,7 @@ class PowerAdvancedModel extends BleModel {
   late PowerAdvancedRepository _repository;
   List<RHBlueScanResult> bleResultList = [];
   StreamController<BleDeviceDataMsg> get bleDeviceDataController => _repository.bleDeviceDataController;
-  List<RHDeviceType> typeList = [RHDeviceType.powerAdvanced];
+  List<RHDeviceType> typeList = [RHDeviceType.powerAdvanced, RHDeviceType.powerBoard, RHDeviceType.running, RHDeviceType.walking];
 
   PowerAdvancedModel() {
     setDeviceType(RHDeviceType.powerAdvanced);
@@ -127,10 +127,10 @@ class PowerAdvancedModel extends BleModel {
   void sendMessage(BleDeviceStateMsg msg) {
     bleDeviceStateController.add(msg);
     switch (msg) {
-    ///通知设备通道打开后开始初始化
+    ///The initialization begins after the notification device channel is opened
       case BleDeviceStateMsg.deviceOpenCharacter:
         {
-          ///打开通道后发送0x01指令
+          ///After opening the Characteristic, send the 0x01 instruction
           bleDeviceStateController.add(BleDeviceStateMsg.deviceChecking);
           startCheckDeviceInfo();
         }
@@ -142,10 +142,10 @@ class PowerAdvancedModel extends BleModel {
     bleDeviceStateController.add(msg);
   }
 
-  ///设置参数
+  ///Set parameters
   ///
 
-  setBacSeatDegree(int backDegree, int seatDegree) {
+  setBackSeatDegree(int backDegree, int seatDegree) {
     mCmdData.add(PowerCommands.setBackSeat(backDegree, seatDegree));
   }
 

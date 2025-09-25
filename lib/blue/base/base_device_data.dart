@@ -21,8 +21,6 @@ class BaseDeviceData {
 
   int get controlResistance => sendResistance;
 
-  DeviceState state = DeviceState.none;
-  DeviceState prevState = DeviceState.none;
   int prevStateCode = 0;
   int heartRare = 0;
 
@@ -50,13 +48,3 @@ class BaseDeviceData {
   bool get canControlResistance => maxResistance > 0;
 }
 
-enum DeviceState {
-  none, // 无连接
-  stop, // 停止
-  stopping, // 停止中
-  connecting, // 连接中
-  connected, // 已连接
-  beforeRunning, // 设备运行前-倒计时
-  running, // 设备运行中
-  paused, // 暂停
-}

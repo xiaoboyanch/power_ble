@@ -87,7 +87,7 @@ class i18n {
         return newMap;
       }
     } catch (e) {
-      print('加载多语言配置报错:${e.toString()}');
+      print('error multilingual configuration:${e.toString()}');
     }
     return oriMap;
   }

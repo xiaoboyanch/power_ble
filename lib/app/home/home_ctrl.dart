@@ -45,6 +45,9 @@ class HomeCtrl extends GetxController {
           break;
       }
     });
+    // Future.delayed(Duration(milliseconds: 500), () {
+    //   powerModel.startScan();
+    // });
   }
 
   btnStartScan() {

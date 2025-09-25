@@ -20,7 +20,7 @@ enum RHDeviceType {
   trainBench(32),
   ///柔力机
   softPower(33),
-  ///新版力量训练器
+  ///Cabina
   powerAdvanced(34),
 
   /// 心率手表
@@ -64,7 +64,6 @@ enum RHDeviceType {
     return RHDeviceType.none;
   }
 
-  /// 这个方法主要是给首页用的
   String get name {
     switch (this) {
       // case RHDeviceType.treadmill:
@@ -97,7 +96,6 @@ enum RHDeviceType {
     }
     return 'Test';
   }
-  /// 这个方法主要是给首页用的
   String get tagName{
     switch (this) {
       // case RHDeviceType.treadmill:
@@ -131,7 +129,6 @@ enum RHDeviceType {
     return 'unknow (${this.value})';
   }
 
-  //  真实设备照片
   String get deviceIcon{
     switch (this) {
       // case RHDeviceType.treadmill:
@@ -165,7 +162,6 @@ enum RHDeviceType {
     return 'img-power';
   }
 
-  //  训练模版的拟物图
   String get tempIcon{
     switch (this) {
       case RHDeviceType.running:

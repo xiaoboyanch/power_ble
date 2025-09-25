@@ -75,7 +75,7 @@ class HomePage extends GetView<HomeCtrl> {
                       var adv = scanResult.advertisementData;
                       return GestureDetector(
                         onTap: () {
-                          controller.connectDevice(rhBlueScanResult);
+                          // controller.connectDevice(rhBlueScanResult);
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),

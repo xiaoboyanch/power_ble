@@ -5,8 +5,8 @@ import '../tools/crc_tools.dart';
 
 class PowerCommands {
 
-  static const int cmdStart = 0xF5; //开始
-  static const int cmdEnd = 0xFA; //结束
+  static const int cmdStart = 0xF5; //START
+  static const int cmdEnd = 0xFA; //END
 
   static const int cmdIndex = 3;
   static const int cmdDataIndex = 4;
@@ -17,7 +17,7 @@ class PowerCommands {
 
   static const int sportLevelIndex = 20;
 
-  static const int cmdQueryParam_0x01 = 0x01;  //  设备参数信息查询（指令：0x01）
+  static const int cmdQueryParam_0x01 = 0x01;
   static const int cmdQueryExtParam_0x02 = 0x02;
   static const int cmdControl_0x03 = 0x03;
   static const int cmdControl_0x05 = 0x05;
@@ -27,49 +27,43 @@ class PowerCommands {
   static const int cmdError = 0x0E;
   static const int cmdResponse_0xD0 = 0xD0;
 
-  /*app在即将开始运行设备时，最先发送此指令给设备，通知设备即将开始，设备接收到此指令后，进行运动数据重置，同时恢复相关设置值   备注：倒计值 若设备需要倒计时提示用户，返回数据为倒计秒值，若不需要返回0*/
 
-  static const int controlReset = 0x01; //复位
-  static const int controlStop = 0x02; //停止
+  static const int controlReset = 0x01; //
+  static const int controlStop = 0x02; //
   static const int controlReBLE = 0x03;
-  static const int controlStart = 0x04; //启动
+  static const int controlStart = 0x04; //
   static const int controlReMusic = 0x06;
 
-  static const int statusNormal = 0x00; //待机
-  static const int statusStarting = 0x04; //启动中
-  static const int statusStop = 0x02; //停止
+  static const int statusNormal = 0x00; //
+  static const int statusStarting = 0x04; //
+  static const int statusStop = 0x02; //
 
-  ///模式：设置恒力
   static const int hengLiMode = 0x06;
 
-  ///模式：设置离心/向心模式
   static const int liXinLiMode = 0x08;
 
-  ///模式：设置弹力模式
   static const int tanLiMode = 0x0A;
 
-  ///模式：设置流体力模式
   static const int gearMode = 0x0C;
 
-  ///模式：设置速度模式
   static const int speedMode = 0x0D;
 
-  static const int queryDeviceCtrl_0x01 = 0x01; //设置设备配置
-  static const int queryDataState_0x02 = 0x02; //获取设备状态
-  // static const int queryBobaoOpen_0x03 = 0x03; //获取播报开关
-  static const int queryDataSport_0x04 = 0x04; //获取运动数据
-  static const int queryDataSport_0x10 = 0x10; //获取运动数据
-  static const int queryDataSport_0x12 = 0x12; //获取运动数据
-  static const int queryDataSport_0x14 = 0x14; //获取运动数据
-  static const int getVolume_0x0B = 0x0B; //获取设备播报音量
-  static const int setVolume_0x0D = 0x0D; //设置设备播报音量
-  static const int queryMode = 0x06; //获取运动数据
+  static const int queryDeviceCtrl_0x01 = 0x01; //
+  static const int queryDataState_0x02 = 0x02; //
+  // static const int queryBobaoOpen_0x03 = 0x03; //
+  static const int queryDataSport_0x04 = 0x04; //
+  static const int queryDataSport_0x10 = 0x10; //
+  static const int queryDataSport_0x12 = 0x12; //
+  static const int queryDataSport_0x14 = 0x14; //
+  static const int getVolume_0x0B = 0x0B;
+  static const int setVolume_0x0D = 0x0D; //
+  static const int queryMode = 0x06;
 
-  static const int errorUnkowCmd = 0x00; //指令不支持
-  static const int errorFormat = 0x02; //格式不正确
-  static const int errorCrc = 0x04; //格式不正确
-  static const int errorSystemBusy = 0x06; //系统忙
-  static const int errorValue = 0x08; //数值不在范围内
+  static const int errorUnkowCmd = 0x00; //The instruction is not supported
+  static const int errorFormat = 0x02; //Incorrect format
+  static const int errorCrc = 0x04; //Incorrect format
+  static const int errorSystemBusy = 0x06; //The system is busy.
+  static const int errorValue = 0x08; //The value is not within the range
 
   static List<int> getSportData() {
     return CrcTools.encryptCmd([cmdQueryData_0x09, queryDataSport_0x04]);

@@ -41,14 +41,14 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     RHText(
-                      text: "L ${controller.powerModel.mPowerData.curLeftCableLength}cm",
+                      text: "L ${controller.powerModel.mPowerData.curLeftCableLength}mm",
                       fontSize: 18,
                       fontColor: RHColor.line_1,
                       fontWeight: 7,
                     ),
                     const Gap(10),
                     RHText(
-                      text: "R ${controller.powerModel.mPowerData.curRightCableLength}cm",
+                      text: "R ${controller.powerModel.mPowerData.curRightCableLength}mm",
                       fontSize: 18,
                       fontColor: RHColor.line_2,
                       fontWeight: 7,
@@ -80,7 +80,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                   children: [
                     RHText(
                       // text: "L ${(controller.powerModel.mPowerData.realTimeLeft / 10).toStringAsFixed(1)}kg",
-                      text: "L 0kg",
+                      text: "L 0${controller.getUnitStr()}",
                       fontSize: 18,
                       fontColor: RHColor.line_1,
                       fontWeight: 7,
@@ -88,7 +88,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                     const Gap(10),
                     RHText(
                       // text: "R ${(controller.powerModel.mPowerData.realTimeRight / 10).toStringAsFixed(1)}kg",
-                      text: "R 0kg",
+                      text: "R 0${controller.getUnitStr()}",
                       fontSize: 18,
                       fontColor: RHColor.line_2,
                       fontWeight: 7,
@@ -234,75 +234,82 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                 color: RHColor.black,
                 margin: EdgeInsets.only(top: 10, bottom: 10),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Row(
-                    children: [
-                      RHText(
-                        text: "Back: ",
-                        fontSize: 16,
-                        fontColor: RHColor.black,
-                      ),
-                      RHText(
-                        text: "30 Degree",
-                        fontWeight: 7,
-                        fontSize: 18,
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      RHText(
-                        text: "Seat: ",
-                        fontSize: 16,
-                        fontColor: RHColor.black,
-                      ),
-                      RHText(
-                        text: "30 Degree",
-                        fontWeight: 7,
-                        fontSize: 18,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const Gap(15),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Row(
-                    children: [
-                      RHText(
-                        text: "Left Slider: ",
-                        fontSize: 16,
-                        fontColor: RHColor.black,
-                        textAlign: TextAlign.center,
-                      ),
-                      RHText(
-                        text: "30 CM",
-                        fontWeight: 7,
-                        fontSize: 18,
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      RHText(
-                        text: "Right Slider: ",
-                        fontSize: 16,
-                        fontColor: RHColor.black,
-                        textAlign: TextAlign.center,
-                      ),
-                      RHText(
-                        text: "30 CM",
-                        fontWeight: 7,
-                        fontSize: 18,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+              Obx(() {
+                int type = controller.backSeatStatus.value;
+                return Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Row(
+                          children: [
+                            RHText(
+                              text: "Back: ",
+                              fontSize: 16,
+                              fontColor: RHColor.black,
+                            ),
+                            RHText(
+                              text: "${controller.powerData.curBackDegree} Degree",
+                              fontWeight: 7,
+                              fontSize: 18,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            RHText(
+                              text: "Seat: ",
+                              fontSize: 16,
+                              fontColor: RHColor.black,
+                            ),
+                            RHText(
+                              text: "${controller.powerData.curSeakDegree} Degree",
+                              fontWeight: 7,
+                              fontSize: 18,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const Gap(15),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Row(
+                          children: [
+                            RHText(
+                              text: "Left Slider: ",
+                              fontSize: 16,
+                              fontColor: RHColor.black,
+                              textAlign: TextAlign.center,
+                            ),
+                            RHText(
+                              text: "${controller.powerData.curLeftSlider} mm",
+                              fontWeight: 7,
+                              fontSize: 18,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            RHText(
+                              text: "Right Slider: ",
+                              fontSize: 16,
+                              fontColor: RHColor.black,
+                              textAlign: TextAlign.center,
+                            ),
+                            RHText(
+                              text: "${controller.powerData.curRightSlider} mm",
+                              fontWeight: 7,
+                              fontSize: 18,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              }),
               const Gap(15),
               Row(
                 children: [
@@ -394,6 +401,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                               fontWeight: 7,
                               fontSize: 18,
                             ),
+                            const  Gap(35),
                           ],
                         ),
                         const Gap(10),
@@ -423,6 +431,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                               fontWeight: 7,
                               fontSize: 18,
                             ),
+                            const  Gap(35),
                           ],
                         ),
                       ],
@@ -439,7 +448,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                             borderRadius: BorderRadius.circular(10)),
                         child: GestureDetector(
                           onTap: () {
-
+                            controller.setBackSeatDegree();
                           },
                           child: Center(
                             child: RHText(
@@ -459,7 +468,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                               borderRadius: BorderRadius.circular(10)),
                           child: GestureDetector(
                             onTap: () {
-
+                              controller.setSideSlider();
                             },
                             child: Center(
                               child: RHText(
@@ -496,8 +505,9 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                       fontSize: 18,
                       fontWeight: 6,
                     ),
+                    const Gap(5),
                     RHText(
-                      text: 'Eccentric Percent: $percent%Eccentric Percent: $percent%Eccentric Percent: $percent%Eccentric Percent: $percent%',
+                      text: 'Weight: 20kg',
                       fontSize: 16,
                       fontWeight: 6,
                       textAlign: TextAlign.center,
@@ -528,7 +538,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                           },
                         ),
                         RHText(
-                          text: "KG",
+                          text: controller.getUnitStr(),
                           fontWeight: 7,
                           fontSize: 18,
                         ),
@@ -563,7 +573,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                               },
                             ),
                             RHText(
-                              text: "KG",
+                              text: controller.getUnitStr(),
                               fontWeight: 7,
                               fontSize: 18,
                             ),
@@ -590,7 +600,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                               },
                             ),
                             RHText(
-                              text: "KG",
+                              text: controller.getUnitStr(),
                               fontWeight: 7,
                               fontSize: 18,
                             ),
@@ -628,7 +638,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                               },
                             ),
                             RHText(
-                              text: "KG",
+                              text: controller.getUnitStr(),
                               fontWeight: 7,
                               fontSize: 18,
                             ),
@@ -655,7 +665,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                               },
                             ),
                             RHText(
-                              text: "KG",
+                              text: controller.getUnitStr(),
                               fontWeight: 7,
                               fontSize: 18,
                             ),

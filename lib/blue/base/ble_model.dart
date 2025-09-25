@@ -111,7 +111,7 @@ abstract class BleModel {
         }
         case BleDeviceStateMsg.bleConnectError: {
           // RHToast.showToast(msg: "连接失败");
-          LogUtils.d("连接失败");
+          LogUtils.d("Connection failed");
           RHToast.dismiss();
           if (isReConnect) {
             showDisconnectDialog();
@@ -131,10 +131,9 @@ abstract class BleModel {
       }
     });
     _connectStateStream = BleManager.instance.connectionStateStreamController.stream.listen((state) {
-      LogUtils.d("蓝牙连接状态 :$state");
       switch (state) {
         case BluetoothConnectionState.connected:
-          LogUtils.d("AAAAAAa蓝牙通知-连接成功 : $isDeviceConnect");
+          LogUtils.d("BLE Connection successful : $isDeviceConnect");
           if (isReConnect) {
             bleDeviceStateController.add(BleDeviceStateMsg.bleBleReConnect);
             isReConnect = false;
@@ -144,11 +143,11 @@ abstract class BleModel {
             isDeviceConnect = true;
             deviceConnected();
             BleManager.instance.stopScan();
-            LogUtils.d("蓝牙通知-连接成功 : $isDeviceConnect");
+            LogUtils.d("BLE Connection successful : $isDeviceConnect");
           }
           break;
         case BluetoothConnectionState.disconnected:
-          LogUtils.d("是不是来这里了？ 蓝牙断开");
+          // LogUtils.d("是不是来这里了？ 蓝牙断开");
           if (deviceType == RHDeviceType.walking) {
             if (mDevice != null) {
               if (mDevice!.isConnected) {
@@ -162,7 +161,7 @@ abstract class BleModel {
             deviceDisconnected();
             bleDeviceStateController.add(BleDeviceStateMsg.bleDisconnect);
             showDisconnectDialog();
-            LogUtils.d("蓝牙通知-连接断开 : $isDeviceConnect");
+            LogUtils.d("BLE Connection disconnected : $isDeviceConnect");
           }
           break;
         default:
@@ -188,7 +187,7 @@ abstract class BleModel {
   }
 
   showDisconnectDialog() {
-    LogUtils.d("AAAAAAAAAAAAAAa 弹出扫不到框22222222: $deviceType  ${mDevice == null}");
+    // LogUtils.d("AAAAAAAAAAAAAAa 弹出扫不到框22222222: $deviceType  ${mDevice == null}");
     if(deviceType != RHDeviceType.bracelet) {
       if (!isDispose && mDevice != null) {
         if (!disconnectDialog.isShow) {
@@ -265,7 +264,7 @@ abstract class BleModel {
     } catch (e) {
       if (_connectCount > 3) {
         bleDeviceStateController.add(BleDeviceStateMsg.bleConnectError);
-        LogUtils.d("蓝牙连接失败 ${e.toString()}");
+        LogUtils.d("Failed Bluetooth connection ${e.toString()}");
         if (!isReConnect) {
           RHToast.dismiss();
           RHToast.showToast(msg: "bleConnectionError");
@@ -346,7 +345,7 @@ abstract class BleModel {
         // LogUtils.d("发送指令: ${Tools.getNiceHexArray(value)}");
         await _writeCharacteristic?.write(value, withoutResponse: true);
       } catch (e) {
-        LogUtils.d("下发指令出错： ${e.toString()}");
+        LogUtils.d("Error issue： ${e.toString()}");
         bleDeviceStateController.add(BleDeviceStateMsg.bleCharacteristicError);
         // RHLog.i("蓝牙通知-22写入指令出错 $e");
       }
@@ -361,7 +360,7 @@ abstract class BleModel {
     });
     _notifyCharacteristic = null;
     if (service != null) {
-      LogUtils.d("蓝牙通知-发现服务");
+      LogUtils.d("BLE Discovery Service");
       _notifyCharacteristic = service.characteristics.firstWhereOrNull(
           (item) => item.uuid.str.toString().toUpperCase() == notify);
       if (write != null) {
@@ -370,7 +369,7 @@ abstract class BleModel {
       }
     }
     if (_notifyCharacteristic != null) {
-      LogUtils.d("蓝牙通知-找到通知通道");
+      LogUtils.d("BLE Find the notification Character");
       _setSubNotifyCharacteristic();
       if (write == null) {
         sendMessage(BleDeviceStateMsg.deviceOpenCharacter);
@@ -379,15 +378,15 @@ abstract class BleModel {
       if (write == null) {
         sendMessage(BleDeviceStateMsg.deviceOpenCharacterError);
       }
-      LogUtils.d("蓝牙通知-未找到通知通道");
+      LogUtils.d("Notification Character not found");
     }
     if (_writeCharacteristic != null) {
-      LogUtils.d("蓝牙通知-找到写通道");
+      LogUtils.d("Find the write Character");
       if (_notifyCharacteristic != null) {
         sendMessage(BleDeviceStateMsg.deviceOpenCharacter);
       }
     } else {
-      LogUtils.d("蓝牙通知-未找到写通道");
+      LogUtils.d("rite Character not found");
       if (write != null) {
         sendMessage(BleDeviceStateMsg.deviceOpenCharacterError);
       }

@@ -14,9 +14,6 @@ class BleFactory {
 
   BleFactory._internal();
 
-  /**
-   * 所有已创建的蓝牙model
-   */
   static final Map<RHDeviceType, BleModel> _modelMap = {};
 
   static BleModel getModel(RHDeviceType type) {
@@ -31,7 +28,6 @@ class BleFactory {
     // _modelMap.clear();
     final keys = _modelMap.keys.toList(); // 复制键列表
     for (var key in keys) {
-      LogUtils.d("有没有清除： $key");
       _modelMap[key]?.disconnectDevice();
       _modelMap[key]?.dispose();
       _modelMap.remove(key); // 安全地移除元素

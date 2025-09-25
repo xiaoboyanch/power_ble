@@ -1,33 +1,33 @@
 enum BleDeviceStateMsg {
-  ///设备蓝牙检查通讯正常后反馈
+  ///Feedback after checking that the Bluetooth communication of the device is normal
   deviceCheckSuccess,
-  ///设备蓝牙检查通讯异常后反馈
+  ///Feedback after the device's Bluetooth checks for abnormal communication
   deviceCheckError,
-  ///设备蓝牙后开始检查通讯是否正常
+  ///After the device's Bluetooth is connected, start checking whether the communication is normal
   deviceChecking,
-  ///打开通道
+  ///Open the Character
   deviceOpenCharacter,
-  ///打开通道失败
+  ///Failed to open the channel
   deviceOpenCharacterError,
-  ///设备蓝牙开始连接
+  ///The device's Bluetooth starts to connect
   bleStartConnect,
-  ///设备蓝牙连接成功
+  ///The device's Bluetooth connection was successful
   bleConnect,
-  ///设备蓝牙连接失败
+  ///The Bluetooth connection of the device failed
   bleConnectError,
-  ///设备蓝牙连接断开
+  ///The Bluetooth connection of the device is disconnected
   bleDisconnect,
-  ///设备蓝牙开关断开
+  ///The Bluetooth switch of the device is turned off
   bleDisconnectBySwitch,
-  ///设备下发信息失败
+  ///The device failed to send the message
   bleCharacteristicError,
-  ///设备断电
+  ///The equipment is powered off.
   bleDisconnectByPowerOff,
-  ///蓝牙断开后重新连接
+  ///Reconnect after the Bluetooth is disconnected
   bleBleReConnect,
-  ///蓝牙列表数据
+  ///Bluetooth list data
   deviceScanResult,
-  ///公英制状态
+  ///Metric and imperial system status
   deviceUnitState,
 }
 

@@ -175,8 +175,8 @@ class PowerAdvancedRepository {
       ) {
     bool hasChanged = false;
 
-    hasChanged |= data.errorCode.updateIfChanged(
-      value[subCmdDataIndex_5], (val) => data.errorCode = val);
+    // hasChanged |= data.errorCode.updateIfChanged(
+    //   value[subCmdDataIndex_5], (val) => data.errorCode = val);
 
     hasChanged |= data.mainStatus.updateIfChanged(
       value[subCmdDataIndex_5 + 1], (val) => data.mainStatus = val);
@@ -198,7 +198,8 @@ class PowerAdvancedRepository {
 
     if (hasChanged) {
       // 可以添加相应的通知
-      // bleDeviceDataController.add(BleDeviceDataMsg.statusUpdate_0x10);
+      data.updateMotorStatus();
+      bleDeviceDataController.add(BleDeviceDataMsg.dataQueryUpdate_0x10);
     }
   }
 
@@ -236,7 +237,7 @@ class PowerAdvancedRepository {
     );
 
     if (hasChanged) {
-      // bleDeviceStateController.add(BleDeviceStateMsg.deviceDataState);
+      bleDeviceDataController.add(BleDeviceDataMsg.dateQueryUpdate_0x12);
     }
   }
 
@@ -280,7 +281,7 @@ class PowerAdvancedRepository {
           value[subCmdDataIndex_5 + 1],
         );
     }
-    if (data.curMotorGroup == 3) {
+    if (data.curMotorGroup == 1) {
       data.legWeight = Tools.getTwoByteByBigEndian(
         value[subCmdDataIndex_5 + 7],
         value[subCmdDataIndex_5 + 8],
@@ -371,6 +372,7 @@ class PowerAdvancedRepository {
         data.curLeftRPM = rpm1;
       }
     }
+    bleDeviceDataController.add(BleDeviceDataMsg.dataQueryUpdate_0x14);
   }
 
   void dispose() {

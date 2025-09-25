@@ -21,8 +21,8 @@ class PowerAdvancedData extends BaseDeviceData {
   int mainMaxWeightIm = 300;
   int mainMinWeightIm = 30;
   int mainStepSizeIm = 1;
-  int mainStatus = 0;
-  int mainMode = 0;
+
+
 
   int armMotorCount = 2;
   int armMaxWeightMe = 300;
@@ -31,8 +31,7 @@ class PowerAdvancedData extends BaseDeviceData {
   int armMaxWeightIm = 300;
   int armMinWeightIm = 30;
   int armStepSizeIm = 1;
-  int armStatus = 0;
-  int armMode = 0;
+
 
   int legMotorCount = 1;
   int legMaxWeightMe = 300;
@@ -41,8 +40,6 @@ class PowerAdvancedData extends BaseDeviceData {
   int legMaxWeightIm = 300;
   int legMinWeightIm = 30;
   int legStepSizeIm = 1;
-  int legStatus = 0;
-  int legMode = 0;
 
   int backMinDegree = 0;
   int backMaxDegree = 180;
@@ -56,10 +53,19 @@ class PowerAdvancedData extends BaseDeviceData {
   int curBackDegree = 0;
   int curSeakDegree = 0;
 
-  ///模式参数
-  ///当前启动的电机组数 current number of active motor groups
+  ///Mode parameters
+  ///
+  ///
+  ///The current status and mode of the three motor sets
+  int mainStatus = 0;
+  int mainMode = 0;
+  int armStatus = 0;
+  int armMode = 0;
+  int legStatus = 0;
+  int legMode = 0;
+  /// current number of active motor groups
   int curMotorGroup = 1;
-  ///当前模式
+  ///Current mode
   PowerMode curMode = PowerMode.standard;
   int modeStandardWeight = 0;
   int modeEccentricForce = 0;
@@ -70,9 +76,9 @@ class PowerAdvancedData extends BaseDeviceData {
   int modeLinearVelocity = 0;
   int modeCableLength = 0;
 
-  ///左边实时重量
+  ///Real-time weight on the left
   int curLeftWeight = 0;
-  ///右边实时重量
+  ///Real-time weight on the right
   int curRightWeight = 0;
   int curLeftCount = 0;
   int curRightCount = 0;
@@ -88,5 +94,9 @@ class PowerAdvancedData extends BaseDeviceData {
   int legCableLength = 0;
   int legLinearVelocity = 0;
   int legRPM = 0;
+
+  updateMotorStatus() {
+
+  }
 
 }

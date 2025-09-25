@@ -66,10 +66,8 @@ class RHBluetoothDeviceInfo {
 
   int maxLevel = 30;
   int minLevel = 1;
-  ///自发电
   bool isZiFaDian = false;
-  bool supportKGTransform = false; //  是千克还是磅
+  bool supportKGTransform = false;
 
-  /// 走步机是野小兽还是任和版本
   bool isRHWalking = false;
 }
