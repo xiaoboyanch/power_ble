@@ -37,7 +37,7 @@ class PowerAdvancedModel extends BleModel {
           sendCmd(PowerCommands.getDeviceState0902CMD());
         }
         case BleDeviceStateMsg.deviceUnitState: {
-          sendCmd(PowerCommands.getMainInfo_02Data());
+          sendCmd(PowerCommands.getMainInfo_03Data());
         }
         case BleDeviceStateMsg.bleBleReConnect: {
 

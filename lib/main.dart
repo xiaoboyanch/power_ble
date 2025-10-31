@@ -40,6 +40,7 @@ class MyApp extends StatelessWidget {
       supportedLocales: const [
         Locale('en', 'US'),
         Locale('zh', 'CN'),
+        Locale('ja', 'JP'),
         //其它Locales
       ],
       locale: i18Util.currentLocal,

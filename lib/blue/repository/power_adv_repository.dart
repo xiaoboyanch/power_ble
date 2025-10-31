@@ -36,7 +36,7 @@ class PowerAdvancedRepository {
       case PowerCommands.cmdQueryParam_0x01:
         _handleDeviceInfo(value, data, deviceInfo);
         break;
-      case PowerCommands.cmdQueryExtParam_0x02:
+      case PowerCommands.cmdQueryExtParam_0x03:
         _handleExtendedParams(value, data, deviceInfo);
       case PowerCommands.cmdQueryData_0x09:
         switch (value[subCmdIndex]) {
@@ -57,6 +57,8 @@ class PowerAdvancedRepository {
             break;
         }
         break;
+      case PowerCommands.cmdQueryData_0x0A:
+
       default:
         break;
     }
@@ -165,7 +167,7 @@ class PowerAdvancedRepository {
       value[cmdDataIndex + 6],
       value[cmdDataIndex + 7],
     );
-    bleDeviceDataController.add(BleDeviceDataMsg.statusUpdate_0x02);
+    bleDeviceDataController.add(BleDeviceDataMsg.dataQueryUpdate_0x03);
   }
 
   _handleDataSport0x10(
@@ -175,8 +177,8 @@ class PowerAdvancedRepository {
       ) {
     bool hasChanged = false;
 
-    // hasChanged |= data.errorCode.updateIfChanged(
-    //   value[subCmdDataIndex_5], (val) => data.errorCode = val);
+    data.errorCode.updateIfChanged(
+      value[subCmdDataIndex_5], (val) => data.errorCode = val);
 
     hasChanged |= data.mainStatus.updateIfChanged(
       value[subCmdDataIndex_5 + 1], (val) => data.mainStatus = val);
@@ -197,7 +199,7 @@ class PowerAdvancedRepository {
       value[subCmdDataIndex_5 + 6], (val) => data.legMode = val);
 
     if (hasChanged) {
-      // 可以添加相应的通知
+      // Corresponding notifications can be added
       data.updateMotorStatus();
       bleDeviceDataController.add(BleDeviceDataMsg.dataQueryUpdate_0x10);
     }
@@ -281,7 +283,10 @@ class PowerAdvancedRepository {
           value[subCmdDataIndex_5 + 1],
         );
     }
-    if (data.curMotorGroup == 1) {
+
+    if (data.curMotorGroup == 0) return;
+
+    if (data.curMotorGroup == 3) {
       data.legWeight = Tools.getTwoByteByBigEndian(
         value[subCmdDataIndex_5 + 7],
         value[subCmdDataIndex_5 + 8],

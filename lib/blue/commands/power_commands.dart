@@ -18,11 +18,13 @@ class PowerCommands {
   static const int sportLevelIndex = 20;
 
   static const int cmdQueryParam_0x01 = 0x01;
-  static const int cmdQueryExtParam_0x02 = 0x02;
-  static const int cmdControl_0x03 = 0x03;
+  static const int cmdControl_0x02 = 0x02;
+  static const int cmdQueryExtParam_0x03 = 0x03;
+  static const int cmdControl_0x04 = 0x04;
   static const int cmdControl_0x05 = 0x05;
   static const int cmdControl_0x06 = 0x06;
   static const int cmdQueryData_0x09 = 0x09;
+  static const int cmdQueryData_0x0A = 0x0A;
   static const int cmdDeviceConf_0x0C = 0x0C;
   static const int cmdError = 0x0E;
   static const int cmdResponse_0xD0 = 0xD0;
@@ -76,8 +78,8 @@ class PowerCommands {
     return CrcTools.encryptCmd([cmdQueryParam_0x01]);
   }
 
-  static List<int> getMainInfo_02Data() {
-    return CrcTools.encryptCmd([cmdQueryExtParam_0x02]);
+  static List<int> getMainInfo_03Data() {
+    return CrcTools.encryptCmd([cmdControl_0x02]);
   }
 
   static List<int> getDeviceState0902CMD() {
@@ -111,7 +113,7 @@ class PowerCommands {
 
   static List<int> getDeviceConfig(bool isKG) {
     return CrcTools.encryptCmd([
-      cmdControl_0x03,
+      cmdControl_0x04,
       queryDeviceCtrl_0x01,
       isKG ? 0 : 1
     ]);

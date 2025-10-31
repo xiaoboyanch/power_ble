@@ -15,11 +15,15 @@ class PowerDetailCtrl extends GetxController {
   late PowerAdvancedModel powerModel;
   late PowerAdvancedData powerData;
 
+  ///Motor type
   RxInt motorType = 1.obs;
+  ///Training mode status
   RxInt trainingMode = 0.obs;
-  RxInt eccentricPer = 20.obs;
-  RxDouble powerWeight = 20.0.obs;
+  ///Device is Start or Stop
+  RxBool isStart = false.obs;
+  ///Motor status
   RxInt statusType = 1.obs;
+  ///Backrest and seat, including slide rail status
   RxInt backSeatStatus = 0.obs;
 
   RxInt listUpdate = 0.obs;
@@ -63,14 +67,16 @@ class PowerDetailCtrl extends GetxController {
     });
     powerModel.bleDeviceDataController.stream.listen((msg) {
       switch (msg) {
-        case BleDeviceDataMsg.statusUpdate_0x02: {
-
+        case BleDeviceDataMsg.dataQueryUpdate_0x02: {
         }
         case BleDeviceDataMsg.dataQueryUpdate_0x10: {
-          //status mode
+          //device status include training mode, motor status,
+          if (isStart.value != powerData.isStart) {
+            isStart.value = powerData.isStart;
+          }
         }
         case BleDeviceDataMsg.dateQueryUpdate_0x12: {
-          //update backrest  seat
+          //update backrest  seat  slider
           backSeatStatus.value++;
         }
         case BleDeviceDataMsg.dataQueryUpdate_0x14: {
@@ -121,5 +127,14 @@ class PowerDetailCtrl extends GetxController {
     int left = int.parse(leftSideCtrl.text);
     int right = int.parse(rightSideCtrl.text);
     powerModel.setSideSlider(left * 10, right * 10);
+  }
+
+  /// Start applying force or releasing force
+  startOrStopForce() {
+    // if (powerData.isStart) {
+    //   powerModel.stopForce();
+    // }else {
+    //   powerModel.startForce();
+    // }
   }
 }

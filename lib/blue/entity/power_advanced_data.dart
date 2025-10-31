@@ -11,9 +11,10 @@ class PowerAdvancedData extends BaseDeviceData {
   /// 0:KG 1:LB
   int unit = 0;
   int errorCode = 0;
-
+  /// Number of motor groups
   int motorGroupNumber = 3;
 
+  /// Basic maximum and minimum weight parameters for Motor Group 1
   int mainMotorCount = 2;
   int mainMaxWeightMe = 300;
   int mainMinWeightMe = 30;
@@ -23,7 +24,7 @@ class PowerAdvancedData extends BaseDeviceData {
   int mainStepSizeIm = 1;
 
 
-
+  /// Basic maximum and minimum weight parameters for Motor Group 2
   int armMotorCount = 2;
   int armMaxWeightMe = 300;
   int armMinWeightMe = 30;
@@ -32,7 +33,7 @@ class PowerAdvancedData extends BaseDeviceData {
   int armMinWeightIm = 30;
   int armStepSizeIm = 1;
 
-
+  /// Basic maximum and minimum weight parameters for Motor Group 3
   int legMotorCount = 1;
   int legMaxWeightMe = 300;
   int legMinWeightMe = 30;
@@ -41,6 +42,7 @@ class PowerAdvancedData extends BaseDeviceData {
   int legMinWeightIm = 30;
   int legStepSizeIm = 1;
 
+  ///Seat, Back, Slider parameters
   int backMinDegree = 0;
   int backMaxDegree = 180;
   int seakMinDegree = 0;
@@ -48,6 +50,7 @@ class PowerAdvancedData extends BaseDeviceData {
   int minSlider = 0;
   int maxSlider = 100;
 
+  /// Current backrest, seat, and left/right slider data
   int curLeftSlider = 0;
   int curRightSlider = 0;
   int curBackDegree = 0;
@@ -64,7 +67,8 @@ class PowerAdvancedData extends BaseDeviceData {
   int legStatus = 0;
   int legMode = 0;
   /// current number of active motor groups
-  int curMotorGroup = 1;
+  bool isStart = false;
+  int curMotorGroup = 3;
   ///Current mode
   PowerMode curMode = PowerMode.standard;
   int modeStandardWeight = 0;
@@ -96,7 +100,20 @@ class PowerAdvancedData extends BaseDeviceData {
   int legRPM = 0;
 
   updateMotorStatus() {
-
+    if (mainStatus == 4) {
+      isStart = true;
+      curMotorGroup = 1;
+    } else if (armStatus == 4) {
+      isStart = true;
+      curMotorGroup = 2;
+    } else if (legStatus == 4) {
+      isStart = true;
+      curMotorGroup = 3;
+    } else {
+      isStart = false;
+      // If no motor is in the start state, the default value is 0
+      curMotorGroup = 0;
+    }
   }
 
 }

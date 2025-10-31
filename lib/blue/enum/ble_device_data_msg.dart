@@ -1,7 +1,8 @@
 enum BleDeviceDataMsg {
   ///Equipment information query 0x01
   deviceInfoUpdate_0x01(1),
-  statusUpdate_0x02(2),
+  dataQueryUpdate_0x02(2),
+  dataQueryUpdate_0x03(3),
   dataQueryUpdate_0x04(4),
   dataQueryUpdate_0x10(10),
   dateQueryUpdate_0x12(12),

@@ -2,8 +2,10 @@ import 'package:cabina_ble/app/power_detail/power_detail_ctrl.dart';
 import 'package:cabina_ble/app/power_detail/view/message_dialog.dart';
 import 'package:cabina_ble/app/power_detail/view/power_line_chart.dart';
 import 'package:cabina_ble/app/power_detail/view/power_weight_chart.dart';
+import 'package:cabina_ble/base_tool/log_utils.dart';
 import 'package:cabina_ble/base_views/rh_text.dart';
 import 'package:cabina_ble/base_views/rh_text_input.dart';
+import 'package:cabina_ble/base_views/rh_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -147,7 +149,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
     final PowerAdvancedData powerAdvancedData = PowerAdvancedData();
     return Scaffold(
       appBar: AppBar(
-        title: Text('BLE Name'),
+        title: Text(controller.powerModel.mDevice == null? 'ble_name'.tr : controller.powerModel.mDevice!.platformName),
         backgroundColor: RHColor.primary,
         foregroundColor: Colors.white,
         actions: [
@@ -176,8 +178,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                       fontWeight: 5,
                     ),
                     RHText(
-                      // text: controller.powerModel.mDevice!.platformName.isNotEmpty ? controller.powerModel.mDevice!.platformName : controller.powerModel.mDevice!.remoteId.str,
-                      text: '',
+                      text: controller.powerModel.mDevice == null? 'ble_name'.tr : controller.powerModel.mDevice!.remoteId.str,
                       fontSize: 18,
                       fontColor: RHColor.black,
                     )
@@ -186,7 +187,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
               ),
               const Gap(10),
               RHText(
-                text: 'Used Motors',
+                textKey: 'used_motors',
                 fontSize: 20,
                 fontWeight: 7,
               ),
@@ -201,30 +202,42 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                 return Row(
                   children: [
                     CheckboxMenuButton(value: type == 1, onChanged: (value) {
+                      if (controller.powerData.isStart) {
+                        RHToast.showToast(msg: "setting_before_tips");
+                        return;
+                      }
                       bool check = value ?? false;
                       if (check) {
                         controller.motorType.value = 1;
                       }
-                    }, child: RHText(text: 'Main', fontSize: 18, fontColor: RHColor.black,)),
+                    }, child: RHText(textKey: 'main', fontSize: 18, fontColor: RHColor.black,)),
                     CheckboxMenuButton(value: type == 2, onChanged: (value) {
+                      if (controller.powerData.isStart) {
+                        RHToast.showToast(msg: "setting_before_tips");
+                        return;
+                      }
                       bool check = value ?? false;
                       if (check) {
                         controller.motorType.value = 2;
                       }
-                    }, child: RHText(text: 'Arm', fontSize: 18, fontColor: RHColor.black,)),
+                    }, child: RHText(textKey: 'arm', fontSize: 18, fontColor: RHColor.black,)),
                     CheckboxMenuButton(value: type == 3, onChanged: (value) {
+                      if (controller.powerData.isStart) {
+                        RHToast.showToast(msg: "setting_before_tips");
+                        return;
+                      }
                       bool check = value ?? false;
                       if (check) {
                         controller.motorType.value = 3;
                       }
-                    }, child: RHText(text: 'Leg', fontSize: 18, fontColor: RHColor.black,))
+                    }, child: RHText(textKey: 'leg', fontSize: 18, fontColor: RHColor.black,))
                   ],
                 );
               }),
 
               const Gap(10),
               RHText(
-                text: 'Machine Adjustment',
+                textKey: 'machine_adjustment',
                 fontSize: 20,
                 fontWeight: 7,
               ),
@@ -244,7 +257,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                         Row(
                           children: [
                             RHText(
-                              text: "Back: ",
+                              textKey: "back",
                               fontSize: 16,
                               fontColor: RHColor.black,
                             ),
@@ -258,7 +271,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                         Row(
                           children: [
                             RHText(
-                              text: "Seat: ",
+                              textKey: "seat",
                               fontSize: 16,
                               fontColor: RHColor.black,
                             ),
@@ -278,7 +291,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                         Row(
                           children: [
                             RHText(
-                              text: "Left Slider: ",
+                              textKey: "left_slider",
                               fontSize: 16,
                               fontColor: RHColor.black,
                               textAlign: TextAlign.center,
@@ -293,7 +306,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                         Row(
                           children: [
                             RHText(
-                              text: "Right Slider: ",
+                              textKey: "right_slider",
                               fontSize: 16,
                               fontColor: RHColor.black,
                               textAlign: TextAlign.center,
@@ -320,7 +333,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                         Row(
                           children: [
                             RHText(
-                              text: "Back: ",
+                              textKey: "back",
                               fontSize: 16,
                               fontColor: RHColor.black,
                             ),
@@ -349,7 +362,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                         Row(
                           children: [
                             RHText(
-                              text: "Seat: ",
+                              textKey: "seat",
                               fontSize: 16,
                               fontColor: RHColor.black,
                             ),
@@ -378,7 +391,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                         Row(
                           children: [
                             RHText(
-                              text: "Left Slider: ",
+                              textKey: "left_slider",
                               fontSize: 16,
                               fontColor: RHColor.black,
                             ),
@@ -408,7 +421,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                         Row(
                           children: [
                             RHText(
-                              text: "Right Slider: ",
+                              textKey: "right_slider",
                               fontSize: 16,
                               fontColor: RHColor.black,
                             ),
@@ -452,7 +465,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                           },
                           child: Center(
                             child: RHText(
-                              text: "Setup",
+                              textKey: "setup",
                               fontColor: RHColor.white,
                               fontSize: 16,
                             ),
@@ -472,7 +485,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                             },
                             child: Center(
                               child: RHText(
-                                text: "Setup",
+                                textKey: "setup",
                                 fontColor: RHColor.white,
                                 fontSize: 16,
                               ),
@@ -485,7 +498,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
               ),
               const Gap(10),
               RHText(
-                text: 'Training Mode',
+                textKey: 'training_mode',
                 fontSize: 20,
                 fontWeight: 7,
               ),
@@ -497,17 +510,16 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
               ),
               Obx(() {
                 int mode = controller.trainingMode.value;
-                int percent = controller.eccentricPer.value;
                 return Column(
                   children: [
                     RHText(
-                      text: 'Current Mode: Standard Mode',
+                      text: '${"current_mode".tr} ${"standard_mode".tr}',
                       fontSize: 18,
                       fontWeight: 6,
                     ),
                     const Gap(5),
                     RHText(
-                      text: 'Weight: 20kg',
+                      text: '${"Weight".tr}: 20kg',
                       fontSize: 16,
                       fontWeight: 6,
                       textAlign: TextAlign.center,
@@ -517,12 +529,12 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                       if (check) {
                         controller.trainingMode.value = 0;
                       }
-                    }, child: RHText(text: 'Standard Mode', fontSize: 18, fontColor: RHColor.black,)),
+                    }, child: RHText(textKey: 'standard_mode', fontSize: 18, fontColor: RHColor.black,)),
                     if (mode == 0)
                     Row(
                       children: [
                         const Gap(40),
-                        RHText(text: 'Weight：', fontSize: 18, fontColor: RHColor.black,),
+                        RHText(text: '${"Weight".tr}：', fontSize: 18, fontColor: RHColor.black,),
                         const Spacer(),
                         RHTextInput(
                           text: controller.standardCtrl.text,
@@ -550,14 +562,14 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                       if (check) {
                         controller.trainingMode.value = 1;
                       }
-                    }, child: RHText(text: 'Eccentric Mode', fontSize: 18, fontColor: RHColor.black,)),
+                    }, child: RHText(textKey: 'eccentric_mode', fontSize: 18, fontColor: RHColor.black,)),
                     if (mode == 1)
                     Column(
                       children: [
                         Row(
                           children: [
                             const Gap(40),
-                            RHText(text: 'Eccentric Force：', fontSize: 18, fontColor: RHColor.black,),
+                            RHText(textKey: 'eccentric_force', fontSize: 18, fontColor: RHColor.black,),
                             const Spacer(),
                             RHTextInput(
                               text: controller.eccentricCtrl.text,
@@ -584,7 +596,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                         Row(
                           children: [
                             const Gap(40),
-                            RHText(text: 'Concentric Force：', fontSize: 18, fontColor: RHColor.black,),
+                            RHText(textKey: 'concentric_force', fontSize: 18, fontColor: RHColor.black,),
                             const Spacer(),
                             RHTextInput(
                               text: controller.concernCtrl.text,
@@ -615,14 +627,14 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                       if (check) {
                         controller.trainingMode.value = 2;
                       }
-                    }, child: RHText(text: 'Elastic Mode', fontSize: 18, fontColor: RHColor.black,)),
+                    }, child: RHText(textKey: 'elastic_mode', fontSize: 18, fontColor: RHColor.black,)),
                     if (mode == 2)
                     Column(
                       children: [
                         Row(
                           children: [
                             const Gap(40),
-                            RHText(text: 'Initial Force：', fontSize: 18, fontColor: RHColor.black,),
+                            RHText(textKey: 'initial_force', fontSize: 18, fontColor: RHColor.black,),
                             const Spacer(),
                             RHTextInput(
                               text: controller.initialCtrl.text,
@@ -649,7 +661,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                         Row(
                           children: [
                             const Gap(40),
-                            RHText(text: 'Maximum Force：', fontSize: 18, fontColor: RHColor.black,),
+                            RHText(textKey: 'maximum_force', fontSize: 18, fontColor: RHColor.black,),
                             const Spacer(),
                             RHTextInput(
                               text: controller.maxCtrl.text,
@@ -676,7 +688,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                         Row(
                           children: [
                             const Gap(40),
-                            RHText(text: 'Spring Length：', fontSize: 18, fontColor: RHColor.black,),
+                            RHText(textKey: 'spring_length', fontSize: 18, fontColor: RHColor.black,),
                             const Spacer(),
                             RHTextInput(
                               text: controller.springCtrl.text,
@@ -706,12 +718,12 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                       if (check) {
                         controller.trainingMode.value = 3;
                       }
-                    }, child: RHText(text: 'Isokinetic Mode(Force Measurement)', fontSize: 18, fontColor: RHColor.black,)),
+                    }, child: RHText(textKey: 'strength_measurement', fontSize: 18, fontColor: RHColor.black,)),
                     if (mode == 3)
                     Row(
                       children: [
                         const Gap(40),
-                        RHText(text: 'Linear Velocity：', fontSize: 18, fontColor: RHColor.black,),
+                        RHText(textKey: 'linear_velocity', fontSize: 18, fontColor: RHColor.black,),
                         const Spacer(),
                         RHTextInput(
                           text: controller.velocityCtrl.text,
@@ -739,12 +751,12 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                       if (check) {
                         controller.trainingMode.value = 4;
                       }
-                    }, child: RHText(text: 'Isometric Mode', fontSize: 18, fontColor: RHColor.black,)),
+                    }, child: RHText(textKey: 'isometric_mode', fontSize: 18, fontColor: RHColor.black,)),
                     if (mode == 4)
                     Row(
                       children: [
                         const Gap(40),
-                        RHText(text: 'Cable Length：', fontSize: 18, fontColor: RHColor.black,),
+                        RHText(textKey: 'cable_length', fontSize: 18, fontColor: RHColor.black,),
                         const Spacer(),
                         RHTextInput(
                           text: controller.cableCtrl.text,
@@ -771,27 +783,30 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                 );
               }),
               const Gap(20),
-              Center(
-                child: Container(
-                    width: 120,
-                    height: 50,
-                    decoration: BoxDecoration(
-                        color: RHColor.primary,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: GestureDetector(
-                      onTap: () {
-
-                      },
-                      child: Center(
-                        child: RHText(
-                          text: "Start",
-                          fontColor: RHColor.white,
-                          fontSize: 18,
+              Obx(() {
+                bool isStart = controller.isStart.value;
+                return Center(
+                  child: Container(
+                      width: 120,
+                      height: 50,
+                      decoration: BoxDecoration(
+                          color: RHColor.primary,
+                          borderRadius: BorderRadius.circular(10)),
+                      child: GestureDetector(
+                        onTap: () {
+                          controller.startOrStopForce();
+                        },
+                        child: Center(
+                          child: RHText(
+                            textKey: isStart? "stop" : "start",
+                            fontColor: RHColor.white,
+                            fontSize: 18,
+                          ),
                         ),
-                      ),
-                    )
-                ),
-              ),
+                      )
+                  ),
+                );
+              }),
               const Gap(20),
               Obx(() {
                 int update = controller.listUpdate.value;
@@ -801,7 +816,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         RHText(
-                          text: "Counts:",
+                          textKey: "counts",
                           fontColor: RHColor.black,
                           fontSize: 18,
                           fontWeight: 6,
@@ -811,12 +826,12 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             RHText(
-                              text: "Left: ${controller.powerModel.mPowerData.curLeftCount}",
+                              text: "${"left".tr}: ${controller.powerModel.mPowerData.curLeftCount}",
                               fontColor: RHColor.black,
                               fontSize: 18,
                             ),
                             RHText(
-                              text: "Right: ${controller.powerModel.mPowerData.curRightCount}",
+                              text: "${"right".tr}: ${controller.powerModel.mPowerData.curRightCount}",
                               fontColor: RHColor.black,
                               fontSize: 18,
                             ),
@@ -829,7 +844,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         RHText(
-                          text: "Linear Velocity:",
+                          textKey: "linear_velocity",
                           fontColor: RHColor.black,
                           fontSize: 18,
                           fontWeight: 6,
@@ -839,12 +854,12 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             RHText(
-                              text: "Left: ${controller.powerModel.mPowerData.curLeftLinearVelocity}",
+                              text: "${"left".tr}: ${controller.powerModel.mPowerData.curLeftLinearVelocity}",
                               fontColor: RHColor.black,
                               fontSize: 18,
                             ),
                             RHText(
-                              text: "Right: ${controller.powerModel.mPowerData.curRightLinearVelocity}",
+                              text: "${"right".tr}: ${controller.powerModel.mPowerData.curRightLinearVelocity}",
                               fontColor: RHColor.black,
                               fontSize: 18,
                             ),
@@ -857,7 +872,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         RHText(
-                          text: "RPM:",
+                          textKey: "rpm",
                           fontColor: RHColor.black,
                           fontSize: 18,
                           fontWeight: 6,
@@ -867,12 +882,12 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             RHText(
-                              text: "Left: ${controller.powerModel.mPowerData.curLeftRPM}",
+                              text: "${"left".tr}: ${controller.powerModel.mPowerData.curLeftRPM}",
                               fontColor: RHColor.black,
                               fontSize: 18,
                             ),
                             RHText(
-                              text: "Right: ${controller.powerModel.mPowerData.curRightRPM}",
+                              text: "${"right".tr}:  ${controller.powerModel.mPowerData.curRightRPM}",
                               fontColor: RHColor.black,
                               fontSize: 18,
                             ),
@@ -889,7 +904,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                   return Row(
                     children: [
                       RHText(
-                        text: 'Motor Status',
+                        textKey: 'motor_status',
                         fontSize: 20,
                         fontWeight: 7,
                       ),
@@ -906,7 +921,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                             child: Row(
                               children: [
                                 RHText(
-                                  text: status == 1 ? 'Cmd log' : 'Waveform',
+                                  textKey: status == 1 ? 'cmd_log' : 'waveform',
                                   fontSize: 18,
                                   fontColor: RHColor.black,
                                 ),
