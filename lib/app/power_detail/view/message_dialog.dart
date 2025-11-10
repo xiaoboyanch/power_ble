@@ -54,8 +54,6 @@ class MessageDialog {
                       contentStr("${"back_rest_max_angle".tr}${data.backMaxDegree}"),
                       contentStr("${"seat_min_angle".tr}${data.seakMinDegree}"),
                       contentStr("${"seat_max_angle".tr}${data.seakMaxDegree}"),
-                      contentStr("${"slider_min_distance".tr}${data.minSlider}"),
-                      contentStr("${"slider_max_distance".tr}${data.maxSlider}"),
                       line(),
                       contentStr("${"motor_group_count".tr}${data.motorGroupNumber}"),
                       line(),

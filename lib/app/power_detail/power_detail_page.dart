@@ -6,6 +6,7 @@ import 'package:cabina_ble/base_tool/log_utils.dart';
 import 'package:cabina_ble/base_views/rh_text.dart';
 import 'package:cabina_ble/base_views/rh_text_input.dart';
 import 'package:cabina_ble/base_views/rh_toast.dart';
+import 'package:cabina_ble/blue/enum/power_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -178,7 +179,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                       fontWeight: 5,
                     ),
                     RHText(
-                      text: controller.powerModel.mDevice == null? 'ble_name'.tr : controller.powerModel.mDevice!.remoteId.str,
+                      text: controller.powerModel.mDevice == null? '' : controller.powerModel.mDevice!.remoteId.str,
                       fontSize: 18,
                       fontColor: RHColor.black,
                     )
@@ -291,13 +292,13 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                         Row(
                           children: [
                             RHText(
-                              textKey: "left_slider",
+                              textKey: "left_arm_swing",
                               fontSize: 16,
                               fontColor: RHColor.black,
                               textAlign: TextAlign.center,
                             ),
                             RHText(
-                              text: "${controller.powerData.curLeftSlider} mm",
+                              text: ": ${controller.powerData.curLeftArmSwing} ${("gear".tr)}",
                               fontWeight: 7,
                               fontSize: 18,
                             ),
@@ -306,13 +307,13 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                         Row(
                           children: [
                             RHText(
-                              textKey: "right_slider",
+                              textKey: "right_arm_swing",
                               fontSize: 16,
                               fontColor: RHColor.black,
                               textAlign: TextAlign.center,
                             ),
                             RHText(
-                              text: "${controller.powerData.curRightSlider} mm",
+                              text: ": ${controller.powerData.curRightArmSwing} ${("gear".tr)}",
                               fontWeight: 7,
                               fontSize: 18,
                             ),
@@ -388,65 +389,6 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                           ],
                         ),
                         const Gap(10),
-                        Row(
-                          children: [
-                            RHText(
-                              textKey: "left_slider",
-                              fontSize: 16,
-                              fontColor: RHColor.black,
-                            ),
-                            const Spacer(),
-                            RHTextInput(
-                              text: controller.leftSideCtrl.text,
-                              textCtrl: controller.leftSideCtrl,
-                              width: 80,
-                              height: 40,
-                              isPassword: false,
-                              isPhone: true,
-                              radius: 10,
-                              backColor: RHColor.greyF0,
-                              onChange: (ctrl, value) {
-                                return null;
-                              },
-                            ),
-                            RHText(
-                              text: "cm",
-                              fontWeight: 7,
-                              fontSize: 18,
-                            ),
-                            const  Gap(35),
-                          ],
-                        ),
-                        const Gap(10),
-                        Row(
-                          children: [
-                            RHText(
-                              textKey: "right_slider",
-                              fontSize: 16,
-                              fontColor: RHColor.black,
-                            ),
-                            const Spacer(),
-                            RHTextInput(
-                              text: controller.rightSideCtrl.text,
-                              textCtrl: controller.rightSideCtrl,
-                              width: 80,
-                              height: 40,
-                              isPassword: false,
-                              isPhone: true,
-                              radius: 10,
-                              backColor: RHColor.greyF0,
-                              onChange: (ctrl, value) {
-                                return null;
-                              },
-                            ),
-                            RHText(
-                              text: "cm",
-                              fontWeight: 7,
-                              fontSize: 18,
-                            ),
-                            const  Gap(35),
-                          ],
-                        ),
                       ],
                     ),
                   ),
@@ -472,26 +414,6 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                           ),
                         )
                       ),
-                      const Gap(60),
-                      Container(
-                          width: 70,
-                          height: 40,
-                          decoration: BoxDecoration(
-                              color: RHColor.primary,
-                              borderRadius: BorderRadius.circular(10)),
-                          child: GestureDetector(
-                            onTap: () {
-                              controller.setSideSlider();
-                            },
-                            child: Center(
-                              child: RHText(
-                                textKey: "setup",
-                                fontColor: RHColor.white,
-                                fontSize: 16,
-                              ),
-                            ),
-                          )
-                      ),
                     ],
                   )
                 ],
@@ -513,13 +435,14 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                 return Column(
                   children: [
                     RHText(
-                      text: '${"current_mode".tr} ${"standard_mode".tr}',
+                      text: '${"current_mode".tr} ${controller.powerData.curMode.name.tr}',
                       fontSize: 18,
                       fontWeight: 6,
+                      textAlign: TextAlign.center,
                     ),
                     const Gap(5),
                     RHText(
-                      text: '${"Weight".tr}: 20kg',
+                      text: controller.getModeParameter(),
                       fontSize: 16,
                       fontWeight: 6,
                       textAlign: TextAlign.center,
@@ -534,7 +457,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                     Row(
                       children: [
                         const Gap(40),
-                        RHText(text: '${"Weight".tr}：', fontSize: 18, fontColor: RHColor.black,),
+                        RHText(text: '${"weight".tr}：', fontSize: 18, fontColor: RHColor.black,),
                         const Spacer(),
                         RHTextInput(
                           text: controller.standardCtrl.text,
@@ -794,7 +717,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                           borderRadius: BorderRadius.circular(10)),
                       child: GestureDetector(
                         onTap: () {
-                          controller.startOrStopForce();
+                          controller.startOrStopPower();
                         },
                         child: Center(
                           child: RHText(

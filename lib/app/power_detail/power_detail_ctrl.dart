@@ -1,5 +1,6 @@
 import 'package:cabina_ble/base_tool/log_utils.dart';
 import 'package:cabina_ble/blue/entity/power_advanced_data.dart';
+import 'package:cabina_ble/blue/enum/power_mode.dart';
 import 'package:cabina_ble/blue/model/power_adv_model.dart';
 import 'package:cabina_ble/blue/model/power_model.dart';
 import 'package:flutter/material.dart';
@@ -74,6 +75,11 @@ class PowerDetailCtrl extends GetxController {
           if (isStart.value != powerData.isStart) {
             isStart.value = powerData.isStart;
           }
+          if (isStart.value) {
+            if (powerData.curMotorGroup != 0 && motorType.value != powerData.curMotorGroup) {
+              motorType.value = powerData.curMotorGroup;
+            }
+          }
         }
         case BleDeviceDataMsg.dateQueryUpdate_0x12: {
           //update backrest  seat  slider
@@ -129,12 +135,85 @@ class PowerDetailCtrl extends GetxController {
     powerModel.setSideSlider(left * 10, right * 10);
   }
 
-  /// Start applying force or releasing force
-  startOrStopForce() {
-    // if (powerData.isStart) {
-    //   powerModel.stopForce();
-    // }else {
-    //   powerModel.startForce();
-    // }
+  /// Start applying Power or releasing force
+  startOrStopPower() {
+    if (powerData.isStart) {
+      //stop Power
+      List<int> modeData = [00, 00, 00, 00, 00, 00];
+      powerModel.setPowerMode(motorType.value, 2, powerData.curMode.value, modeData);
+    }else {
+      //start Power
+      List<int> modeData = [];
+      switch (PowerMode.fromInt(trainingMode.value)) {
+        case PowerMode.standard: {
+          //standard mode
+          int power = int.parse(standardCtrl.text);
+          modeData.add((power * 10)~/256);
+          modeData.add((power * 10)%256);
+          modeData.addAll([00,00,00,00]);
+        }
+        case PowerMode.eccentric: {
+          //eccentric mode
+          int eccentric = int.parse(eccentricCtrl.text);
+          int concern = int.parse(concernCtrl.text);
+          modeData.add((eccentric * 10)~/256);
+          modeData.add((eccentric * 10)%256);
+          modeData.add((concern * 10)~/256);
+          modeData.add((concern * 10)%256);
+          modeData.addAll([00,00]);
+        }
+        case PowerMode.elastic: {
+          //elastic mode
+          int initial = int.parse(initialCtrl.text);
+          int max = int.parse(maxCtrl.text);
+          int spring = int.parse(springCtrl.text);
+          modeData.add((initial * 10)~/256);
+          modeData.add((initial * 10)%256);
+          modeData.add((max * 10)~/256);
+          modeData.add((max * 10)%256);
+          modeData.add((spring * 10)~/256);
+          modeData.add((spring * 10)%256);
+        }
+        case PowerMode.isokinetic: {
+          //isokinetic mode
+          int velocity = int.parse(velocityCtrl.text);
+          modeData.add((velocity * 10)~/256);
+          modeData.add((velocity * 10)%256);
+          modeData.addAll([00,00,00,00]);
+        }
+        case PowerMode.isometric: {
+          //isometric mode
+          int cable = int.parse(cableCtrl.text);
+          modeData.add((cable * 10)~/256);
+          modeData.add((cable * 10)%256);
+          modeData.addAll([00,00,00,00]);
+        }
+      }
+      powerModel.setPowerMode(motorType.value, 4, powerData.curMode.value, modeData);
+    }
+  }
+
+  getModeParameter() {
+    switch (PowerMode.fromInt(powerData.curMode.value)) {
+      case PowerMode.standard: {
+        //standard mode
+        return "${"weight".tr}: ${powerData.modeStandardWeight} ${powerData.unitStr()}";
+      }
+      case PowerMode.eccentric: {
+        //eccentric mode
+        return "${"eccentric_force".tr}: ${powerData.modeEccentricForce} ${powerData.unitStr()} \n ${"concentric_force".tr}: ${powerData.modeConcentricForce} ${powerData.unitStr()}";
+      }
+      case PowerMode.elastic: {
+        //elastic mode
+        return "${"initial_force".tr}: ${powerData.modeInitialForce} ${powerData.unitStr()} \n ${"maximum_force".tr}: ${powerData.modeMaximumForce} ${powerData.unitStr()} \n ${"spring_length".tr}: ${powerData.modeSpringLength} mm";
+      }
+      case PowerMode.isokinetic: {
+        //isokinetic mode
+        return "${"linear_velocity".tr}: ${powerData.modeLinearVelocity} mm/s";
+      }
+      case PowerMode.isometric: {
+        return "${"cable_length".tr}: ${powerData.modeCableLength} mm";
+      }
+    }
   }
 }

@@ -47,15 +47,12 @@ class PowerAdvancedData extends BaseDeviceData {
   int backMaxDegree = 180;
   int seakMinDegree = 0;
   int seakMaxDegree = 180;
-  int minSlider = 0;
-  int maxSlider = 100;
 
   /// Current backrest, seat, and left/right slider data
-  int curLeftSlider = 0;
-  int curRightSlider = 0;
   int curBackDegree = 0;
   int curSeakDegree = 0;
-
+  int curLeftArmSwing = 0;
+  int curRightArmSwing = 0;
   ///Mode parameters
   ///
   ///
@@ -69,15 +66,23 @@ class PowerAdvancedData extends BaseDeviceData {
   /// current number of active motor groups
   bool isStart = false;
   int curMotorGroup = 3;
+
   ///Current mode
   PowerMode curMode = PowerMode.standard;
+
+  ///Mode parameters
+  /// standard parameters
   int modeStandardWeight = 0;
+  /// eccentric parameters
   int modeEccentricForce = 0;
   int modeConcentricForce = 0;
+  /// elastic parameters
   int modeInitialForce = 0;
   int modeMaximumForce = 0;
   int modeSpringLength = 0;
+  /// strength measurement  parameters
   int modeLinearVelocity = 0;
+  /// isometric parameters
   int modeCableLength = 0;
 
   ///Real-time weight on the left
@@ -114,6 +119,10 @@ class PowerAdvancedData extends BaseDeviceData {
       // If no motor is in the start state, the default value is 0
       curMotorGroup = 0;
     }
+  }
+
+  unitStr() {
+    return unit == 0 ? "kg" : "lb";
   }
 
 }

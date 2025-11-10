@@ -28,4 +28,19 @@ enum PowerMode {
         return standard;
     }
   }
+
+  String get name {
+    switch (this) {
+      case standard:
+        return "standard_mode";
+      case eccentric:
+        return "eccentric_mode";
+      case elastic:
+        return "elastic_mode";
+      case isokinetic:
+        return "strength_measurement";
+      case isometric:
+        return "isometric_mode";
+    }
+  }
 }

@@ -159,14 +159,6 @@ class PowerAdvancedRepository {
     data.backMaxDegree = value[cmdDataIndex + 1];
     data.seakMinDegree = value[cmdDataIndex + 2];
     data.seakMaxDegree = value[cmdDataIndex + 3];
-    data.minSlider = Tools.getTwoByteByBigEndian(
-      value[cmdDataIndex + 4],
-      value[cmdDataIndex + 5],
-    );
-    data.maxSlider = Tools.getTwoByteByBigEndian(
-      value[cmdDataIndex + 6],
-      value[cmdDataIndex + 7],
-    );
     bleDeviceDataController.add(BleDeviceDataMsg.dataQueryUpdate_0x03);
   }
 
@@ -181,22 +173,22 @@ class PowerAdvancedRepository {
       value[subCmdDataIndex_5], (val) => data.errorCode = val);
 
     hasChanged |= data.mainStatus.updateIfChanged(
-      value[subCmdDataIndex_5 + 1], (val) => data.mainStatus = val);
+      value[subCmdDataIndex_5 + 8], (val) => data.mainStatus = val);
 
     hasChanged |= data.mainMode.updateIfChanged(
-      value[subCmdDataIndex_5 + 2], (val) => data.mainMode = val);
+      value[subCmdDataIndex_5 + 9], (val) => data.mainMode = val);
 
     hasChanged |= data.armStatus.updateIfChanged(
-      value[subCmdDataIndex_5 + 3], (val) => data.armStatus = val);
+      value[subCmdDataIndex_5 + 10], (val) => data.armStatus = val);
 
     hasChanged |= data.armMode.updateIfChanged(
-      value[subCmdDataIndex_5 + 4], (val) => data.armMode = val);
+      value[subCmdDataIndex_5 + 11], (val) => data.armMode = val);
 
     hasChanged |= data.legStatus.updateIfChanged(
-      value[subCmdDataIndex_5 + 5], (val) => data.legStatus = val);
+      value[subCmdDataIndex_5 + 12], (val) => data.legStatus = val);
 
     hasChanged |= data.legMode.updateIfChanged(
-      value[subCmdDataIndex_5 + 6], (val) => data.legMode = val);
+      value[subCmdDataIndex_5 + 13], (val) => data.legMode = val);
 
     if (hasChanged) {
       // Corresponding notifications can be added
@@ -212,30 +204,24 @@ class PowerAdvancedRepository {
       ){
     bool hasChanged = false;
 
-    hasChanged |= data.curLeftSlider.updateIfChanged(
-      Tools.getTwoByteByBigEndian(
-        value[subCmdDataIndex_5],
-        value[subCmdDataIndex_5 + 1],
-      ),
-          (val) => data.curLeftSlider = val,
-    );
-
-    hasChanged |= data.curRightSlider.updateIfChanged(
-      Tools.getTwoByteByBigEndian(
-        value[subCmdDataIndex_5 + 2],
-        value[subCmdDataIndex_5 + 3],
-      ),
-          (val) => data.curRightSlider = val,
-    );
-
     hasChanged |= data.curBackDegree.updateIfChanged(
-      value[subCmdDataIndex_5 + 4],
+      value[subCmdDataIndex_5],
           (val) => data.curBackDegree = val,
     );
 
     hasChanged |= data.curSeakDegree.updateIfChanged(
-      value[subCmdDataIndex_5 + 5],
+      value[subCmdDataIndex_5 + 1],
           (val) => data.curSeakDegree = val,
+    );
+
+    hasChanged |= data.curLeftArmSwing.updateIfChanged(
+      value[subCmdDataIndex_5 + 2],
+          (val) => data.curLeftArmSwing = val,
+    );
+
+    hasChanged |= data.curRightArmSwing.updateIfChanged(
+      value[subCmdDataIndex_5 + 3],
+          (val) => data.curRightArmSwing = val,
     );
 
     if (hasChanged) {
