@@ -3,7 +3,8 @@
   "permission_bluetooth_title": "\"Cabina Ble\"permission request",
   "permission_bluetooth_detail": "permission request",
   "a_cancel": "Cancel",
-
+  "real_time_weight": "Real-Time Weight",
+  "remote_button_press": "Remote button pressed",
   "ble_name": "BLE Name",
   "used_motors": "Used Motors",
   "main": "Main",
@@ -32,7 +33,7 @@
   "isometric_mode": "Isometric Mode",
   "cable_length": "Cable Length：",
   "start": "Start",
-  "stop": "stop",
+  "stop": "Stop",
   "counts": "Counts:",
   "left": "Left",
   "right": "Right",
@@ -40,6 +41,7 @@
   "motor_status": "Motor Status",
   "cmd_log": "Cmd log",
   "waveform": "Waveform",
+  "setting_before_tips": "Please stop the device before setting",
 
   "device_type": "Device Type: ",
   "device_code": "Device Code: ",
@@ -76,6 +78,4 @@
   "motor_group_3_step_size_imperial": "Group 3 Step Size (Imperial): ",
   "metric": "Metric",
   "imperial": "Imperial"
-
-
 }

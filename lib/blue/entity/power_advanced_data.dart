@@ -65,7 +65,7 @@ class PowerAdvancedData extends BaseDeviceData {
   int legMode = 0;
   /// current number of active motor groups
   bool isStart = false;
-  int curMotorGroup = 3;
+  int curMotorGroup = 0;
 
   ///Current mode
   PowerMode curMode = PowerMode.standard;
@@ -105,15 +105,18 @@ class PowerAdvancedData extends BaseDeviceData {
   int legRPM = 0;
 
   updateMotorStatus() {
-    if (mainStatus == 4) {
+    if (mainStatus == 1) {
+      isStart = true;
+      curMotorGroup = 0;
+      curMode = PowerMode.fromInt(mainMode);
+    } else if (armStatus == 1) {
       isStart = true;
       curMotorGroup = 1;
-    } else if (armStatus == 4) {
+      curMode = PowerMode.fromInt(armMode);
+    } else if (legStatus == 1) {
       isStart = true;
       curMotorGroup = 2;
-    } else if (legStatus == 4) {
-      isStart = true;
-      curMotorGroup = 3;
+      curMode = PowerMode.fromInt(legMode);
     } else {
       isStart = false;
       // If no motor is in the start state, the default value is 0

@@ -71,11 +71,11 @@ class HomePage extends GetView<HomeCtrl> {
                 return ListView.separated(
                     itemBuilder: (_, index) {
                       RHBlueScanResult rhBlueScanResult = controller.bleResultList[index];
-                      ScanResult scanResult = rhBlueScanResult.scanResult;
-                      var adv = scanResult.advertisementData;
+                      // ScanResult scanResult = rhBlueScanResult.scanResult;
+                      // var adv = scanResult.advertisementData;
                       return GestureDetector(
                         onTap: () {
-                          // controller.connectDevice(rhBlueScanResult);
+                          controller.connectDevice(rhBlueScanResult);
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
@@ -87,24 +87,25 @@ class HomePage extends GetView<HomeCtrl> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               RHText(
-                                text: scanResult.device.platformName.isNotEmpty ? scanResult.device.platformName : scanResult.device.remoteId.str,
+                                text: rhBlueScanResult.bluetoothDevice.advName,
+                                // text: scanResult.device.platformName.isNotEmpty ? scanResult.device.platformName : scanResult.device.remoteId.str,
                                 fontSize: 20,
                                 fontColor: RHColor.black,
                               ),
                               const Gap(8),
                               RHText(
-                                text: scanResult.device.remoteId.str,
+                                // text: scanResult.device.remoteId.str,
                                 fontSize: 14,
                                 fontColor: RHColor.black,
                               ),
-                              if (scanResult.device.platformName.isNotEmpty)
-                                Column(
-                                  children: <Widget>[
-                                    if (adv.msd.isNotEmpty) _buildAdvRow(context, 'Manufacturer Data', getNiceManufacturerData(adv.msd)),
-                                    if (adv.serviceUuids.isNotEmpty) _buildAdvRow(context, 'Service UUIDs', getNiceServiceUuids(adv.serviceUuids)),
-                                    if (adv.serviceData.isNotEmpty) _buildAdvRow(context, 'Service Data', getNiceServiceData(adv.serviceData)),
-                                  ],
-                                )
+                              // if (scanResult.device.platformName.isNotEmpty)
+                              //   Column(
+                              //     children: <Widget>[
+                              //       if (adv.msd.isNotEmpty) _buildAdvRow(context, 'Manufacturer Data', getNiceManufacturerData(adv.msd)),
+                              //       if (adv.serviceUuids.isNotEmpty) _buildAdvRow(context, 'Service UUIDs', getNiceServiceUuids(adv.serviceUuids)),
+                              //       if (adv.serviceData.isNotEmpty) _buildAdvRow(context, 'Service Data', getNiceServiceData(adv.serviceData)),
+                              //     ],
+                              //   )
                             ],
                           ),
                         ),
@@ -122,8 +123,8 @@ class HomePage extends GetView<HomeCtrl> {
                     padding: EdgeInsets.only(bottom: bottom + 20),
                     child: GestureDetector(
                       onTap: () {
-                        // controller.btnStartScan();
-                        Get.toNamed(RHRoute.powerDetailPage);
+                        controller.btnStartScan();
+                        // Get.toNamed(RHRoute.powerDetailPage);
                       },
                       child: Container(
                         width: 216,

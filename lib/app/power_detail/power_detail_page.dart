@@ -1,7 +1,9 @@
 import 'package:cabina_ble/app/power_detail/power_detail_ctrl.dart';
 import 'package:cabina_ble/app/power_detail/view/message_dialog.dart';
 import 'package:cabina_ble/app/power_detail/view/power_line_chart.dart';
+import 'package:cabina_ble/app/power_detail/view/power_line_single_chart.dart';
 import 'package:cabina_ble/app/power_detail/view/power_weight_chart.dart';
+import 'package:cabina_ble/app/power_detail/view/power_weight_single_chart.dart';
 import 'package:cabina_ble/base_tool/log_utils.dart';
 import 'package:cabina_ble/base_views/rh_text.dart';
 import 'package:cabina_ble/base_views/rh_text_input.dart';
@@ -18,6 +20,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
   @override
   Widget build(BuildContext context) {
     double bottom = MediaQuery.of(context).padding.bottom;
+    double width = MediaQuery.of(context).size.width;
     Widget lineChart() {
       return Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -29,11 +32,11 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
             fontColor: RHColor.black,
           ),
           Obx(() {
-            int flag = controller.listUpdate.value;
-            return Row(
+            int flag = controller.paramUpdate.value;
+            return controller.motorType.value != 2 ? Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Container(
+                SizedBox(
                   width: MediaQuery.of(context).size.width - 130,
                   height: 100,
                   child: PowerLineChart(list1: controller.leftRope, list2: controller.rightRope,),
@@ -59,6 +62,22 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                   ],
                 )
               ],
+            ):Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width - 130,
+                  height: 100,
+                  child: PowerLineSingleChart(list1: controller.legRope),
+                ),
+                const Gap(10),
+                RHText(
+                  text: "Leg: ${controller.powerModel.mPowerData.legCableLength}mm",
+                  fontSize: 18,
+                  fontColor: RHColor.line_1,
+                  fontWeight: 7,
+                )
+              ],
             );
           }),
           const Gap(20),
@@ -68,10 +87,10 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
             fontColor: RHColor.black,
           ),
           Obx(() {
-            int flag = controller.listUpdate.value;
-            return Row(
+            int update = controller.paramUpdate.value;
+            return controller.motorType.value != 2 ? Row(
               children: [
-                Container(
+                SizedBox(
                   width: MediaQuery.of(context).size.width - 130,
                   height: 100,
                   child: PowerWeightChart(list1: controller.leftWeight, list2: controller.rightWeight),
@@ -82,21 +101,37 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     RHText(
-                      // text: "L ${(controller.powerModel.mPowerData.realTimeLeft / 10).toStringAsFixed(1)}kg",
-                      text: "L 0${controller.getUnitStr()}",
+                      text: "L ${(controller.powerModel.mPowerData.curLeftWeight / 10).toStringAsFixed(1)} ${controller.powerData.unitStr()}",
+                      // text: "L 0${controller.getUnitStr()}",
                       fontSize: 18,
                       fontColor: RHColor.line_1,
                       fontWeight: 7,
                     ),
                     const Gap(10),
                     RHText(
-                      // text: "R ${(controller.powerModel.mPowerData.realTimeRight / 10).toStringAsFixed(1)}kg",
-                      text: "R 0${controller.getUnitStr()}",
+                      text: "R ${(controller.powerModel.mPowerData.curRightWeight / 10).toStringAsFixed(1)} ${controller.powerData.unitStr()}",
+                      // text: "R 0${controller.getUnitStr()}",
                       fontSize: 18,
                       fontColor: RHColor.line_2,
                       fontWeight: 7,
                     ),
                   ],
+                )
+              ],
+            ):Row(
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width - 130,
+                  height: 100,
+                  child: PowerWeightSingleChart(list1: controller.legWeight),
+                ),
+                const Gap(10),
+                RHText(
+                  text: "Leg: ${(controller.powerModel.mPowerData.legWeight / 10).toStringAsFixed(1)} ${controller.powerData.unitStr()}",
+                  // text: "L 0${controller.getUnitStr()}",
+                  fontSize: 18,
+                  fontColor: RHColor.line_1,
+                  fontWeight: 7,
                 )
               ],
             );
@@ -109,7 +144,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
     Widget cmdLog() {
       return SizedBox(
         width: MediaQuery.of(context).size.width,
-        height: 250,
+        height: 300,
         child: Container(
           padding: EdgeInsets.all(8.0),
           decoration: BoxDecoration(
@@ -118,36 +153,26 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
           ),
           child: SingleChildScrollView(
             reverse: true,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                RHText(text: "--> This is cmd lod test： ", fontColor: RHColor.line_1, fontSize: 18),
-                RHText(text: "<--This is cmd lod test： ", fontColor: RHColor.line_2, fontSize: 18),
-                RHText(text: "-->This is cmd lod testThis is cmd lod testThis is cmd lod testThis is cmd lod testThis is cmd lod testThis is cmd lod test： ", fontColor: RHColor.line_1, fontSize: 18),
-                RHText(text: "<--This is cmd lod test： ", fontColor: RHColor.line_2, fontSize: 18),
-                RHText(text: "-->This is cmd lod test： ", fontColor: RHColor.line_1, fontSize: 18),
-                RHText(text: "<--This is cmd lod test： ", fontColor: RHColor.line_2, fontSize: 18),
-                RHText(text: "-->This is cmd lod test： ", fontColor: RHColor.line_1, fontSize: 18),
-                RHText(text: "<--This is cmd lod test： ", fontColor: RHColor.line_2, fontSize: 18),
-                RHText(text: "-->This is cmd lod test： ", fontColor: RHColor.line_1, fontSize: 18),
-                RHText(text: "<--This is cmd lod test： ", fontColor: RHColor.line_2, fontSize: 18),
-                RHText(text: "-->This is cmd lod test： ", fontColor: RHColor.line_1, fontSize: 18),
-                RHText(text: "<--This is cmd lod test： ", fontColor: RHColor.line_1, fontSize: 18),
-                RHText(text: "<--This is cmd lod test： ", fontColor: RHColor.line_2, fontSize: 18),
-                RHText(text: "-->This is cmd lod test： ", fontColor: RHColor.line_1, fontSize: 18),
-                RHText(text: "-->This is cmd lod test： ", fontColor: RHColor.line_1, fontSize: 18),
-                RHText(text: "<--This is cmd lod test： ", fontColor: RHColor.line_2, fontSize: 18),
-                RHText(text: "-->This is cmd lod test： ", fontColor: RHColor.line_1, fontSize: 18),
-                RHText(text: "<--This is cmd lod test1  ", fontColor: RHColor.line_2, fontSize: 18)
-              ],
-            ),
+            child: Obx(() {
+              int list = controller.logUpdate.value;
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: controller.powerModel.logList.map((data) {
+                  return RHText(text: "${data.isOut ? '-->' : '--<'} ${data.log} ", fontColor: data.isOut? RHColor.line_1 : RHColor.line_2, fontSize: 18);
+                }).toList(),
+                // children: [
+                //   RHText(text: "--> This is cmd lod test： ", fontColor: RHColor.line_1, fontSize: 18),
+                //   RHText(text: "<--This is cmd lod test： ", fontColor: RHColor.line_2, fontSize: 18),
+                //   RHText(text: "-->This is cmd lod testThis is cmd lod testThis is cmd lod testThis is cmd lod testThis is cmd lod testThis is cmd lod test： ", fontColor: RHColor.line_1, fontSize: 18),
+                // ],
+              );
+            }),
           ),
         ),
       );
     }
 
-    final PowerAdvancedData powerAdvancedData = PowerAdvancedData();
     return Scaffold(
       appBar: AppBar(
         title: Text(controller.powerModel.mDevice == null? 'ble_name'.tr : controller.powerModel.mDevice!.platformName),
@@ -156,7 +181,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
         actions: [
           Center(
             child: IconButton(onPressed: () {
-              MessageDialog.showMessageDialog(context, powerAdvancedData);
+              MessageDialog.showMessageDialog(context, controller.powerData);
             }, icon: Icon(Icons.message_outlined)),
           ),
         ],
@@ -202,6 +227,16 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                 int type = controller.motorType.value;
                 return Row(
                   children: [
+                    CheckboxMenuButton(value: type == 0, onChanged: (value) {
+                      if (controller.powerData.isStart) {
+                        RHToast.showToast(msg: "setting_before_tips");
+                        return;
+                      }
+                      bool check = value ?? false;
+                      if (check) {
+                        controller.motorType.value = 0;
+                      }
+                    }, child: RHText(textKey: 'main', fontSize: 18, fontColor: RHColor.black,)),
                     CheckboxMenuButton(value: type == 1, onChanged: (value) {
                       if (controller.powerData.isStart) {
                         RHToast.showToast(msg: "setting_before_tips");
@@ -211,7 +246,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                       if (check) {
                         controller.motorType.value = 1;
                       }
-                    }, child: RHText(textKey: 'main', fontSize: 18, fontColor: RHColor.black,)),
+                    }, child: RHText(textKey: 'arm', fontSize: 18, fontColor: RHColor.black,)),
                     CheckboxMenuButton(value: type == 2, onChanged: (value) {
                       if (controller.powerData.isStart) {
                         RHToast.showToast(msg: "setting_before_tips");
@@ -220,16 +255,6 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                       bool check = value ?? false;
                       if (check) {
                         controller.motorType.value = 2;
-                      }
-                    }, child: RHText(textKey: 'arm', fontSize: 18, fontColor: RHColor.black,)),
-                    CheckboxMenuButton(value: type == 3, onChanged: (value) {
-                      if (controller.powerData.isStart) {
-                        RHToast.showToast(msg: "setting_before_tips");
-                        return;
-                      }
-                      bool check = value ?? false;
-                      if (check) {
-                        controller.motorType.value = 3;
                       }
                     }, child: RHText(textKey: 'leg', fontSize: 18, fontColor: RHColor.black,))
                   ],
@@ -432,18 +457,19 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
               ),
               Obx(() {
                 int mode = controller.trainingMode.value;
+                int value = controller.paramUpdate.value;
                 return Column(
                   children: [
                     RHText(
                       text: '${"current_mode".tr} ${controller.powerData.curMode.name.tr}',
-                      fontSize: 18,
+                      fontSize: 22,
                       fontWeight: 6,
                       textAlign: TextAlign.center,
                     ),
                     const Gap(5),
                     RHText(
                       text: controller.getModeParameter(),
-                      fontSize: 16,
+                      fontSize: 20,
                       fontWeight: 6,
                       textAlign: TextAlign.center,
                     ),
@@ -709,30 +735,31 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
               Obx(() {
                 bool isStart = controller.isStart.value;
                 return Center(
-                  child: Container(
-                      width: 120,
-                      height: 50,
-                      decoration: BoxDecoration(
-                          color: RHColor.primary,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: GestureDetector(
-                        onTap: () {
-                          controller.startOrStopPower();
-                        },
+                  child: GestureDetector(
+                    onTap: () {
+                      controller.startOrStopPower();
+                    },
+                    child: Container(
+                        width: 120,
+                        height: 50,
+                        decoration: BoxDecoration(
+                            color: RHColor.primary,
+                            borderRadius: BorderRadius.circular(10)),
                         child: Center(
                           child: RHText(
                             textKey: isStart? "stop" : "start",
                             fontColor: RHColor.white,
                             fontSize: 18,
                           ),
-                        ),
-                      )
+                        )
+                    ),
                   ),
                 );
               }),
               const Gap(20),
               Obx(() {
-                int update = controller.listUpdate.value;
+                int update = controller.paramUpdate.value;
+                int motorType = controller.motorType.value;
                 return Column(
                   children: [
                     Column(
@@ -745,6 +772,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                           fontWeight: 6,
                         ),
                         const Gap(6),
+                        motorType != 2 ?
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -759,6 +787,15 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                               fontSize: 18,
                             ),
                           ],
+                        ):
+                        SizedBox(
+                          width: width,
+                          child: RHText(
+                            text: "${controller.powerModel.mPowerData.legCounts}",
+                            fontColor: RHColor.black,
+                            fontSize: 18,
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ],
                     ),
@@ -773,6 +810,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                           fontWeight: 6,
                         ),
                         const Gap(6),
+                        motorType != 2 ?
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -787,6 +825,14 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                               fontSize: 18,
                             ),
                           ],
+                        ):SizedBox(
+                          width: width,
+                          child: RHText(
+                            text: "${controller.powerModel.mPowerData.legLinearVelocity}",
+                            fontColor: RHColor.black,
+                            fontSize: 18,
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ],
                     ),
@@ -801,6 +847,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                           fontWeight: 6,
                         ),
                         const Gap(6),
+                        motorType != 2 ?
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -815,6 +862,14 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                               fontSize: 18,
                             ),
                           ],
+                        ):SizedBox(
+                          width: width,
+                          child: RHText(
+                            text: "${controller.powerModel.mPowerData.legRPM}",
+                            fontColor: RHColor.black,
+                            fontSize: 18,
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ],
                     ),

@@ -1,9 +1,12 @@
 import 'dart:async';
 
+import 'package:cabina_ble/base_tool/log_utils.dart';
 import 'package:cabina_ble/base_tool/rh_int.dart';
+import 'package:cabina_ble/base_views/rh_toast.dart';
 import 'package:cabina_ble/blue/commands/power_commands.dart';
 import 'package:cabina_ble/blue/entity/power_advanced_data.dart';
 import 'package:cabina_ble/blue/enum/power_mode.dart';
+import 'package:get/get.dart';
 
 import '../entity/device_info.dart';
 import '../enum/ble_device_data_msg.dart';
@@ -34,11 +37,14 @@ class PowerAdvancedRepository {
   ) {
     switch (value[cmdIndex]) {
       case PowerCommands.cmdQueryParam_0x01:
+        // LogUtils.d("0x01指令: ${Tools.getNiceHexArray(value)}");
         _handleDeviceInfo(value, data, deviceInfo);
         break;
       case PowerCommands.cmdQueryExtParam_0x03:
+        // LogUtils.d("0x03指令: ${Tools.getNiceHexArray(value)}");
         _handleExtendedParams(value, data, deviceInfo);
       case PowerCommands.cmdQueryData_0x09:
+        // LogUtils.d("0x09指令: ${Tools.getNiceHexArray(value)}");
         switch (value[subCmdIndex]) {
           case PowerCommands.queryDataState_0x02: {
               data.unit = value[subCmdDataIndex_5];
@@ -57,8 +63,11 @@ class PowerAdvancedRepository {
             break;
         }
         break;
-      case PowerCommands.cmdQueryData_0x0A:
-
+      case PowerCommands.cmdQueryData_0x0B:
+        int handleKey = value[subCmdIndex];
+        if (handleKey != 0) {
+          RHToast.showToast(msg: "${'remote_button_press'.tr}: $handleKey");
+        }
       default:
         break;
     }
@@ -100,6 +109,7 @@ class PowerAdvancedRepository {
       value[cmdDataIndex + 15],
       value[cmdDataIndex + 16],
     );
+    LogUtils.d("01指令： ${data.mainMinWeightMe} : ${data.mainMaxWeightMe} : ${data.mainStepSizeMe}");
     data.mainMaxWeightIm = Tools.getTwoByteByBigEndian(
       value[cmdDataIndex + 17],
       value[cmdDataIndex + 18],
@@ -173,22 +183,22 @@ class PowerAdvancedRepository {
       value[subCmdDataIndex_5], (val) => data.errorCode = val);
 
     hasChanged |= data.mainStatus.updateIfChanged(
-      value[subCmdDataIndex_5 + 8], (val) => data.mainStatus = val);
+        value[subCmdDataIndex_5 + 3], (val) => data.mainStatus = val);
 
     hasChanged |= data.mainMode.updateIfChanged(
-      value[subCmdDataIndex_5 + 9], (val) => data.mainMode = val);
+        value[subCmdDataIndex_5 + 4], (val) => data.mainMode = val);
 
     hasChanged |= data.armStatus.updateIfChanged(
-      value[subCmdDataIndex_5 + 10], (val) => data.armStatus = val);
+        value[subCmdDataIndex_5 + 5], (val) => data.armStatus = val);
 
     hasChanged |= data.armMode.updateIfChanged(
-      value[subCmdDataIndex_5 + 11], (val) => data.armMode = val);
+        value[subCmdDataIndex_5 + 6], (val) => data.armMode = val);
 
     hasChanged |= data.legStatus.updateIfChanged(
-      value[subCmdDataIndex_5 + 12], (val) => data.legStatus = val);
+        value[subCmdDataIndex_5 + 7], (val) => data.legStatus = val);
 
     hasChanged |= data.legMode.updateIfChanged(
-      value[subCmdDataIndex_5 + 13], (val) => data.legMode = val);
+        value[subCmdDataIndex_5 + 8], (val) => data.legMode = val);
 
     if (hasChanged) {
       // Corresponding notifications can be added
@@ -270,9 +280,9 @@ class PowerAdvancedRepository {
         );
     }
 
-    if (data.curMotorGroup == 0) return;
+    // if (data.curMotorGroup == 0) return;
 
-    if (data.curMotorGroup == 3) {
+    if (data.curMotorGroup == 2) {
       data.legWeight = Tools.getTwoByteByBigEndian(
         value[subCmdDataIndex_5 + 7],
         value[subCmdDataIndex_5 + 8],
@@ -302,7 +312,8 @@ class PowerAdvancedRepository {
       }else {
         data.legLinearVelocity = rpm;
       }
-    }else {
+    }
+    else {
       data.curLeftWeight = Tools.getTwoByteByBigEndian(
         value[subCmdDataIndex_5 + 7],
         value[subCmdDataIndex_5 + 8],

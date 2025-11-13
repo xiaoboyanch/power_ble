@@ -25,6 +25,7 @@ class PowerCommands {
   static const int cmdControl_0x06 = 0x06;
   static const int cmdQueryData_0x09 = 0x09;
   static const int cmdQueryData_0x0A = 0x0A;
+  static const int cmdQueryData_0x0B = 0x0B;
   static const int cmdDeviceConf_0x0C = 0x0C;
   static const int cmdError = 0x0E;
   static const int cmdResponse_0xD0 = 0xD0;
@@ -79,7 +80,7 @@ class PowerCommands {
   }
 
   static List<int> getMainInfo_03Data() {
-    return CrcTools.encryptCmd([cmdControl_0x02]);
+    return CrcTools.encryptCmd([cmdQueryExtParam_0x03]);
   }
 
   static List<int> getDeviceState0902CMD() {
@@ -275,7 +276,7 @@ class PowerCommands {
   static List<int> setBackSeat(int backDegree, int seatDegree) {
     return CrcTools.encryptCmd([
       cmdControl_0x06,
-      0x02,
+      0x01,
       backDegree,
       seatDegree
     ]);
@@ -301,5 +302,13 @@ class PowerCommands {
 
   static List<int> getMotorData(int motorNumber) {
     return CrcTools.encryptCmd([cmdQueryData_0x09, queryDataSport_0x14, motorNumber]);
+  }
+
+  static List<int> getHandle() {
+    return CrcTools.encryptCmd([cmdQueryData_0x0B]);
+  }
+
+  static List<int> pushHandle(int key) {
+    return CrcTools.encryptCmd([cmdQueryData_0x0A, key]);
   }
 }

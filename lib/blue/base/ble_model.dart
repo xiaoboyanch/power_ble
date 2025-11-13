@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cabina_ble/blue/entity/log_dto.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get.dart';
 import '../enum/device_type.dart';
@@ -46,8 +47,10 @@ abstract class BleModel {
   Timer? _sendTimer;
   Timer? paramsTimer;
 
+  List<LogDTO> logList = [];
+
   static const int MAX_SEND_COUNT = 9;
-  static const int SEND_DURATION = 299; // 500毫秒
+  static const int SEND_DURATION = 470; // 500毫秒
 
   var _connectCount = 0;
   var scanSize = 0;
@@ -342,8 +345,13 @@ abstract class BleModel {
   void _write(List<int> value) async {
     if (mDevice != null && mDevice!.isConnected) {
       try {
-        // LogUtils.d("发送指令: ${Tools.getNiceHexArray(value)}");
+        String hex = Tools.getNiceHexArray(value);
+        LogUtils.d("发送指令: ${hex}");
         await _writeCharacteristic?.write(value, withoutResponse: true);
+        logList.add(LogDTO(isOut: false, log: hex));
+        if (logList.length > 100) {
+          logList.removeAt(0);
+        }
       } catch (e) {
         LogUtils.d("Error issue： ${e.toString()}");
         bleDeviceStateController.add(BleDeviceStateMsg.bleCharacteristicError);
@@ -399,7 +407,13 @@ abstract class BleModel {
       _notifyStream = null;
       await _notifyCharacteristic!.setNotifyValue(true);
       _notifyStream = _notifyCharacteristic!.lastValueStream.listen((event) {
+        String hex = Tools.getNiceHexArray(event);
+        LogUtils.d("回复数据： ${hex}");
         if (event.isEmpty) return;
+        logList.add(LogDTO(isOut: true, log: hex));
+        if (logList.length > 100) {
+          logList.removeAt(0);
+        }
         notifyCharacteristicValue(event);
       });
     } else {
@@ -427,6 +441,9 @@ abstract class BleModel {
     paramsTimer = Timer.periodic(const Duration(milliseconds: 200), (timer) {
       checkDeviceInfo(PowerCommands.getMainInfo_01Data());
     });
+    // checkDeviceInfo(PowerCommands.getMainInfo_01Data());
+    // checkDeviceInfo(PowerCommands.getMainInfo_03Data());
+    // checkDeviceInfo(PowerCommands.getDeviceState0902CMD());
   }
 
   cleanParamsTimer() {

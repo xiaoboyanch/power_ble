@@ -5,7 +5,6 @@ import '../../base_tool/log_utils.dart';
 import '../enum/device_type.dart';
 
 import '../base/ble_model.dart';
-import '../model/power_model.dart';
 
 class BleFactory {
   static final BleFactory _instance = BleFactory._internal();

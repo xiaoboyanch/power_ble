@@ -6,6 +6,7 @@ import 'package:cabina_ble/blue/entity/power_advanced_data.dart';
 import 'package:cabina_ble/blue/enum/ble_device_state_msg.dart';
 import 'package:cabina_ble/blue/repository/power_adv_repository.dart';
 import 'package:cabina_ble/blue/tools/crc_tools.dart';
+import 'package:cabina_ble/blue/tools/tools.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 import '../../base_tool/log_utils.dart';
@@ -24,11 +25,14 @@ class PowerAdvancedModel extends BleModel {
   List<RHBlueScanResult> bleResultList = [];
   StreamController<BleDeviceDataMsg> get bleDeviceDataController => _repository.bleDeviceDataController;
   List<RHDeviceType> typeList = [RHDeviceType.powerAdvanced, RHDeviceType.powerBoard, RHDeviceType.running, RHDeviceType.walking];
+  Timer? degreeTimer;
+  Timer? paramsTimer;
 
   PowerAdvancedModel() {
     setDeviceType(RHDeviceType.powerAdvanced);
     _repository = PowerAdvancedRepository(bleDeviceStateController);
     _repository.powerAdvancedData = mPowerData;
+    mQueryCmdData = PowerCommands.getDeviceStatus();
     bleDeviceStateController.stream.listen((msg) {
       switch (msg) {
         case BleDeviceStateMsg.deviceCheckSuccess: {
@@ -38,6 +42,9 @@ class PowerAdvancedModel extends BleModel {
         }
         case BleDeviceStateMsg.deviceUnitState: {
           sendCmd(PowerCommands.getMainInfo_03Data());
+          startSendTimer();
+          startDegreeTimer();
+          // startParamTimer();
         }
         case BleDeviceStateMsg.bleBleReConnect: {
 
@@ -47,13 +54,42 @@ class PowerAdvancedModel extends BleModel {
       }
     });
   }
+  bool handleCounter = false;
+  startDegreeTimer() {
+    degreeTimer?.cancel();
+    degreeTimer = Timer.periodic(const Duration(milliseconds: 870), (timer) {
+      if (handleCounter) {
+        getBackSeatDegree();
+        handleCounter = false;
+      } else {
+        getHandleKey();
+        handleCounter = true;
+      }
+    });
+  }
+
+  startParamTimer() {
+    paramsTimer?.cancel();
+    paramsTimer = Timer.periodic(const Duration(milliseconds: 200), (timer) {
+      sendCmd(PowerCommands.getMotorData(mPowerData.curMotorGroup));
+      // sendCmd(PowerCommands.getMotorData(0));
+      // sendCmd(PowerCommands.getMotorData(1));
+      // sendCmd(PowerCommands.getMotorData(2));
+      // sendCmd(PowerCommands.getBackSeatDegree());
+    });
+  }
+
+  stopParamTimer() {
+    paramsTimer?.cancel();
+    paramsTimer = null;
+  }
 
   @override
   Future<void> startScan() async {
     if (await checkPermission()) {
       super.startScan();
       int _flag = 0;
-      BleManager.instance.startScan([Guid(BlueUUID.FS_UUID), Guid(BlueUUID.FTMS_UUID)], [], typeList, (result) {
+      BleManager.instance.startScan([Guid(BlueUUID.FS_UUID)], [], typeList, (result) {
         int newFlag = ++_flag;
         Future.delayed(const Duration(milliseconds: 300), () {
           if (newFlag == _flag) {
@@ -123,6 +159,45 @@ class PowerAdvancedModel extends BleModel {
     }
   }
 
+  // @override
+  // notifyCharacteristicValue(List<int> event) {
+  //   // 处理粘包数据
+  //   List<List<int>> packets = splitPackets(event);
+  //
+  //   for (List<int> packet in packets) {
+  //     if (packet.length > 5) {
+  //       List<int> value = CrcTools.receiveDecodeCmd(packet);
+  //       if (CrcTools.checkCRC(value)) {
+  //         _repository.handleCharacteristic(value, mPowerData, mDeviceInfo!);
+  //       }
+  //     }
+  //   }
+  // }
+
+  List<List<int>> splitPackets(List<int> rawData) {
+    List<List<int>> packets = [];
+    int start = 0;
+
+    while (start < rawData.length) {
+      // 查找包头 F5
+      int headIndex = rawData.indexOf(0xF5, start);
+      if (headIndex == -1) break;
+
+      // 查找从包头开始的包尾 FA
+      int tailIndex = rawData.indexOf(0xFA, headIndex);
+      if (tailIndex == -1) break;
+
+      // 提取完整数据包
+      List<int> packet = rawData.sublist(headIndex, tailIndex + 1);
+      packets.add(packet);
+
+      // 更新下次查找的起始位置
+      start = tailIndex + 1;
+    }
+
+    return packets;
+  }
+
   @override
   void sendMessage(BleDeviceStateMsg msg) {
     bleDeviceStateController.add(msg);
@@ -146,11 +221,10 @@ class PowerAdvancedModel extends BleModel {
   ///
 
   setBackSeatDegree(int backDegree, int seatDegree) {
-    mCmdData.add(PowerCommands.setBackSeat(backDegree, seatDegree));
-  }
-
-  setSideSlider(int leftSlider, int rightSlider) {
-    mCmdData.add(PowerCommands.setSideSlider(leftSlider, rightSlider));
+    // mCmdData.clear();
+    List<int> cmdData = PowerCommands.setBackSeat(backDegree, seatDegree);
+    LogUtils.d("发送扬升： ${Tools.getNiceHexArray(cmdData)}");
+    sendCmd(cmdData);
   }
 
   setUnit(bool isKG) {
@@ -158,7 +232,18 @@ class PowerAdvancedModel extends BleModel {
   }
 
   setPowerMode(int motorNumber, int status, int mode, List<int> modeList) {
-    mCmdData.add(PowerCommands.setPowerMode(motorNumber, status, mode, modeList));
+    // mCmdData.clear();
+    // mCmdData.add();
+    LogUtils.d("下发： 数据：aaaaaaa");
+    sendCmd(PowerCommands.setPowerMode(motorNumber, status, mode, modeList));
+  }
+
+  getBackSeatDegree() {
+    sendCmd(PowerCommands.getBackSeatDegree());
+  }
+
+  getHandleKey() {
+    sendCmd(PowerCommands.getHandle());
   }
 
   @override
@@ -167,6 +252,8 @@ class PowerAdvancedModel extends BleModel {
   }
 
   stopConnect() {
+    degreeTimer?.cancel();
+    degreeTimer = null;
     disconnectDevice(clean:  true);
     disposeConnect();
   }

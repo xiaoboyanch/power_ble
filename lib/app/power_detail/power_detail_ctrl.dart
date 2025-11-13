@@ -1,8 +1,10 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:cabina_ble/base_tool/log_utils.dart';
 import 'package:cabina_ble/blue/entity/power_advanced_data.dart';
 import 'package:cabina_ble/blue/enum/power_mode.dart';
 import 'package:cabina_ble/blue/model/power_adv_model.dart';
-import 'package:cabina_ble/blue/model/power_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -17,7 +19,7 @@ class PowerDetailCtrl extends GetxController {
   late PowerAdvancedData powerData;
 
   ///Motor type
-  RxInt motorType = 1.obs;
+  RxInt motorType = 0.obs;
   ///Training mode status
   RxInt trainingMode = 0.obs;
   ///Device is Start or Stop
@@ -26,14 +28,17 @@ class PowerDetailCtrl extends GetxController {
   RxInt statusType = 1.obs;
   ///Backrest and seat, including slide rail status
   RxInt backSeatStatus = 0.obs;
+  ///Data update:
+  RxInt paramUpdate = 0.obs;
 
-  RxInt listUpdate = 0.obs;
+  RxInt logUpdate = 0.obs;
+
   List<double>  leftWeight = [220, 330, 380, 330, 220, 110, 180, 260, 330, 330,];
   List<double> rightWeight = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,];
   List<double>  leftRope = [490, 300, 120, 433, 400, 200, 600, 340, 440, 230, ];
   List<double> rightRope = [122, 100, 230, 170, 400, 500, 600, 300, 800, 500, ];
-  // List<double> leftWeight = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-  // List<double> rightWeight = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  List<double> legWeight = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  List<double> legRope = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   // List<double> leftRope = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   // List<double> rightRope = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
@@ -58,6 +63,8 @@ class PowerDetailCtrl extends GetxController {
   //isometric mode
   TextEditingController cableCtrl = TextEditingController();
 
+  Timer? logTimer;
+
   @override
   void onInit() {
     super.onInit();
@@ -74,9 +81,17 @@ class PowerDetailCtrl extends GetxController {
           //device status include training mode, motor status,
           if (isStart.value != powerData.isStart) {
             isStart.value = powerData.isStart;
+            // if (powerData.isStart) {
+            //   // if (powerData.curMode != )
+            // }
+          }
+          if (powerData.isStart) {
+            powerModel.startParamTimer();
+          }else {
+            powerModel.stopParamTimer();
           }
           if (isStart.value) {
-            if (powerData.curMotorGroup != 0 && motorType.value != powerData.curMotorGroup) {
+            if (motorType.value != powerData.curMotorGroup) {
               motorType.value = powerData.curMotorGroup;
             }
           }
@@ -87,34 +102,58 @@ class PowerDetailCtrl extends GetxController {
         }
         case BleDeviceDataMsg.dataQueryUpdate_0x14: {
           // power data
+          LogUtils.d("这里会刷新吗： ？");
+          // onDataCallBack(powerData);
+          paramUpdate.value++;
         }
         default: {}
       }
     });
+    startLogTimer();
   }
 
-  onDataCallBack(PowerDeviceData data) {
-    leftRope.add(data.leftLength.toDouble());
-    rightRope.add(data.rightLength.toDouble());
-    if (leftRope.length > 150) {
-      leftRope.removeAt(0);
-      rightRope.removeAt(0);
+  startLogTimer() {
+    logTimer = Timer.periodic(Duration(milliseconds: 800), (timer) {
+      if (statusType.value == 2) {
+        logUpdate.value++;
+      }
+    });
+  }
+
+  onDataCallBack(PowerAdvancedData data) {
+    if (motorType.value != 2) {
+      leftRope.add(data.curLeftCableLength.toDouble());
+      rightRope.add(data.curRightCableLength.toDouble());
+      if (leftRope.length > 80) {
+        leftRope.removeAt(0);
+        rightRope.removeAt(0);
+      }
+      leftWeight.add(data.curLeftWeight.toDouble());
+      rightWeight.add(data.curRightWeight.toDouble());
+      if (leftWeight.length > 80) {
+        leftWeight.removeAt(0);
+        rightWeight.removeAt(0);
+      }
+    }else {
+      legRope.add(data.legCableLength.toDouble());
+      legWeight.add(data.legWeight.toDouble());
+      if (legRope.length > 80) {
+        legRope.removeAt(0);
+      }
+      if (legWeight.length > 80) {
+        legWeight.removeAt(0);
+      }
     }
-    leftWeight.add(data.realTimeLeft.toDouble());
-    rightWeight.add(data.realTimeRight.toDouble());
-    if (leftWeight.length > 80) {
-      leftWeight.removeAt(0);
-      rightWeight.removeAt(0);
-    }
+
     // LogUtils.d("实时配重： ${data.realTimeLeft} : ${data.realTimeRight} : ${data.leftWeightOriginal}");
-    listUpdate.value++;
   }
 
   @override
   void onClose() {
     super.onClose();
     powerModel.stopConnect();
-
+    logTimer?.cancel();
+    logTimer = null;
   }
 
   getUnitStr() {
@@ -129,18 +168,13 @@ class PowerDetailCtrl extends GetxController {
     }
   }
 
-  setSideSlider() {
-    int left = int.parse(leftSideCtrl.text);
-    int right = int.parse(rightSideCtrl.text);
-    powerModel.setSideSlider(left * 10, right * 10);
-  }
 
   /// Start applying Power or releasing force
   startOrStopPower() {
     if (powerData.isStart) {
       //stop Power
-      List<int> modeData = [00, 00, 00, 00, 00, 00];
-      powerModel.setPowerMode(motorType.value, 2, powerData.curMode.value, modeData);
+      List<int> modeData = [00, 32, 00, 00, 00, 00];
+      powerModel.setPowerMode(motorType.value, 0, powerData.curMode.value, modeData);
     }else {
       //start Power
       List<int> modeData = [];
@@ -171,25 +205,25 @@ class PowerDetailCtrl extends GetxController {
           modeData.add((initial * 10)%256);
           modeData.add((max * 10)~/256);
           modeData.add((max * 10)%256);
-          modeData.add((spring * 10)~/256);
-          modeData.add((spring * 10)%256);
+          modeData.add((spring)~/256);
+          modeData.add((spring)%256);
         }
         case PowerMode.isokinetic: {
           //isokinetic mode
           int velocity = int.parse(velocityCtrl.text);
-          modeData.add((velocity * 10)~/256);
-          modeData.add((velocity * 10)%256);
+          modeData.add((velocity)~/256);
+          modeData.add((velocity)%256);
           modeData.addAll([00,00,00,00]);
         }
         case PowerMode.isometric: {
           //isometric mode
           int cable = int.parse(cableCtrl.text);
-          modeData.add((cable * 10)~/256);
-          modeData.add((cable * 10)%256);
+          modeData.add((cable)~/256);
+          modeData.add((cable)%256);
           modeData.addAll([00,00,00,00]);
         }
       }
-      powerModel.setPowerMode(motorType.value, 4, powerData.curMode.value, modeData);
+      powerModel.setPowerMode(motorType.value, 1, trainingMode.value, modeData);
     }
   }
 
@@ -197,15 +231,15 @@ class PowerDetailCtrl extends GetxController {
     switch (PowerMode.fromInt(powerData.curMode.value)) {
       case PowerMode.standard: {
         //standard mode
-        return "${"weight".tr}: ${powerData.modeStandardWeight} ${powerData.unitStr()}";
+        return "${"weight".tr}: ${(powerData.modeStandardWeight/ 10).toStringAsFixed(1)} ${powerData.unitStr()}";
       }
       case PowerMode.eccentric: {
         //eccentric mode
-        return "${"eccentric_force".tr}: ${powerData.modeEccentricForce} ${powerData.unitStr()} \n ${"concentric_force".tr}: ${powerData.modeConcentricForce} ${powerData.unitStr()}";
+        return "${"eccentric_force".tr}: ${(powerData.modeEccentricForce/ 10).toStringAsFixed(1)} ${powerData.unitStr()} \n ${"concentric_force".tr}: ${(powerData.modeConcentricForce/ 10).toStringAsFixed(1)} ${powerData.unitStr()} ";
       }
       case PowerMode.elastic: {
         //elastic mode
-        return "${"initial_force".tr}: ${powerData.modeInitialForce} ${powerData.unitStr()} \n ${"maximum_force".tr}: ${powerData.modeMaximumForce} ${powerData.unitStr()} \n ${"spring_length".tr}: ${powerData.modeSpringLength} mm";
+        return "${"initial_force".tr}: ${(powerData.modeInitialForce/ 10).toStringAsFixed(1)}${powerData.unitStr()} \n ${"maximum_force".tr}: ${(powerData.modeMaximumForce/ 10).toStringAsFixed(1)}${powerData.unitStr()}  \n ${"spring_length".tr}: ${powerData.modeSpringLength} mm";
       }
       case PowerMode.isokinetic: {
         //isokinetic mode

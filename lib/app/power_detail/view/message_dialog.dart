@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../base_tool/log_utils.dart';
+
 class MessageDialog {
 
   static void showMessageDialog(BuildContext context, PowerAdvancedData data) {
@@ -27,6 +29,7 @@ class MessageDialog {
     showDialog(
         context: context,
         builder: (context) {
+          LogUtils.d("01指令： ${data.mainMinWeightMe} : ${data.mainMaxWeightMe} : ${data.mainStepSizeMe}");
           return Center(
             child: Material(
               type: MaterialType.transparency,
@@ -58,28 +61,28 @@ class MessageDialog {
                       contentStr("${"motor_group_count".tr}${data.motorGroupNumber}"),
                       line(),
                       contentStr("${"motor_group_1_count".tr}${data.mainMotorCount}"),
-                      contentStr("${"motor_group_1_max_weight_metric".tr} ${data.mainMaxWeightMe}"),
-                      contentStr("${"motor_group_1_min_weight_metric".tr} ${data.mainMinWeightMe}"),
-                      contentStr("${"motor_group_1_step_size_metric".tr} ${data.mainStepSizeMe}"),
-                      contentStr("${"motor_group_1_max_weight_imperial".tr} ${data.mainMaxWeightIm}"),
-                      contentStr("${"motor_group_1_min_weight_imperial".tr} ${data.mainMinWeightIm}"),
-                      contentStr("${"motor_group_1_step_size_imperial".tr} ${data.mainStepSizeIm}"),
+                      contentStr("${"motor_group_1_max_weight_metric".tr} ${(data.mainMaxWeightMe/ 10).toStringAsFixed(1)}KG"),
+                      contentStr("${"motor_group_1_min_weight_metric".tr} ${(data.mainMinWeightMe/ 10).toStringAsFixed(1)}KG"),
+                      contentStr("${"motor_group_1_step_size_metric".tr} ${(data.mainStepSizeMe/ 10).toStringAsFixed(1)}KG"),
+                      contentStr("${"motor_group_1_max_weight_imperial".tr} ${(data.mainMaxWeightIm/ 10).toStringAsFixed(1)}LB"),
+                      contentStr("${"motor_group_1_min_weight_imperial".tr} ${(data.mainMinWeightIm/ 10).toStringAsFixed(1)}LB"),
+                      contentStr("${"motor_group_1_step_size_imperial".tr} ${(data.mainStepSizeIm/ 10).toStringAsFixed(1)}LB"),
                       line(),
                       contentStr("${"motor_group_2_count".tr}${data.armMotorCount}"),
-                      contentStr("${"motor_group_2_max_weight_metric".tr} ${data.armMaxWeightMe}"),
-                      contentStr("${"motor_group_2_min_weight_metric".tr} ${data.armMinWeightMe}"),
-                      contentStr("${"motor_group_2_step_size_metric".tr} ${data.armStepSizeMe}"),
-                      contentStr("${"motor_group_2_max_weight_imperial".tr} ${data.armMaxWeightIm}"),
-                      contentStr("${"motor_group_2_min_weight_imperial".tr} ${data.armMinWeightIm}"),
-                      contentStr("${"motor_group_2_step_size_imperial".tr} ${data.armStepSizeIm}"),
+                      contentStr("${"motor_group_2_max_weight_metric".tr} ${(data.armMaxWeightMe/ 10).toStringAsFixed(1)}KG"),
+                      contentStr("${"motor_group_2_min_weight_metric".tr} ${(data.armMinWeightMe/ 10).toStringAsFixed(1)}KG"),
+                      contentStr("${"motor_group_2_step_size_metric".tr} ${(data.armStepSizeMe/ 10).toStringAsFixed(1)}KG"),
+                      contentStr("${"motor_group_2_max_weight_imperial".tr} ${(data.armMaxWeightIm/ 10).toStringAsFixed(1)}LB"),
+                      contentStr("${"motor_group_2_min_weight_imperial".tr} ${(data.armMinWeightIm/ 10).toStringAsFixed(1)}LB"),
+                      contentStr("${"motor_group_2_step_size_imperial".tr} ${(data.armStepSizeIm/ 10).toStringAsFixed(1)}LB"),
                       line(),
                       contentStr("${"motor_group_3_count".tr}${data.legMotorCount}"),
-                      contentStr("${"motor_group_3_max_weight_metric".tr} ${data.legMaxWeightMe}"),
-                      contentStr("${"motor_group_3_min_weight_metric".tr} ${data.legMinWeightMe}"),
-                      contentStr("${"motor_group_3_step_size_metric".tr} ${data.legStepSizeMe}"),
-                      contentStr("${"motor_group_3_max_weight_imperial".tr} ${data.legMaxWeightIm}"),
-                      contentStr("${"motor_group_3_min_weight_imperial".tr} ${data.legMinWeightIm}"),
-                      contentStr("${"motor_group_3_step_size_imperial".tr} ${data.legStepSizeIm}"),
+                      contentStr("${"motor_group_3_max_weight_metric".tr} ${(data.legMaxWeightMe/ 10).toStringAsFixed(1)}KG"),
+                      contentStr("${"motor_group_3_min_weight_metric".tr} ${(data.legMinWeightMe/ 10).toStringAsFixed(1)}KG"),
+                      contentStr("${"motor_group_3_step_size_metric".tr} ${(data.legStepSizeMe/ 10).toStringAsFixed(1)}KG"),
+                      contentStr("${"motor_group_3_max_weight_imperial".tr} ${(data.legMaxWeightIm/ 10).toStringAsFixed(1)}LB"),
+                      contentStr("${"motor_group_3_min_weight_imperial".tr} ${(data.legMinWeightIm/ 10).toStringAsFixed(1)}LB"),
+                      contentStr("${"motor_group_3_step_size_imperial".tr} ${(data.legStepSizeIm/ 10).toStringAsFixed(1)}LB"),
 
                     ],
                   ),
