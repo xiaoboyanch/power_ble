@@ -57,7 +57,7 @@ class PowerAdvancedModel extends BleModel {
   bool handleCounter = false;
   startDegreeTimer() {
     degreeTimer?.cancel();
-    degreeTimer = Timer.periodic(const Duration(milliseconds: 870), (timer) {
+    degreeTimer = Timer.periodic(const Duration(milliseconds: 230), (timer) {
       if (handleCounter) {
         getBackSeatDegree();
         handleCounter = false;
@@ -70,7 +70,7 @@ class PowerAdvancedModel extends BleModel {
 
   startParamTimer() {
     paramsTimer?.cancel();
-    paramsTimer = Timer.periodic(const Duration(milliseconds: 200), (timer) {
+    paramsTimer = Timer.periodic(const Duration(milliseconds: 150), (timer) {
       sendCmd(PowerCommands.getMotorData(mPowerData.curMotorGroup));
       // sendCmd(PowerCommands.getMotorData(0));
       // sendCmd(PowerCommands.getMotorData(1));
@@ -149,30 +149,31 @@ class PowerAdvancedModel extends BleModel {
     checkDeviceInfo(value);
   }
 
-  @override
-  notifyCharacteristicValue(List<int> event) {
-    if (event.length > 5) {
-      List<int> value = CrcTools.receiveDecodeCmd(event);
-      if (CrcTools.checkCRC(value)) {
-        _repository.handleCharacteristic(value, mPowerData, mDeviceInfo!);
-      }
-    }
-  }
-
   // @override
   // notifyCharacteristicValue(List<int> event) {
-  //   // 处理粘包数据
-  //   List<List<int>> packets = splitPackets(event);
-  //
-  //   for (List<int> packet in packets) {
-  //     if (packet.length > 5) {
-  //       List<int> value = CrcTools.receiveDecodeCmd(packet);
-  //       if (CrcTools.checkCRC(value)) {
-  //         _repository.handleCharacteristic(value, mPowerData, mDeviceInfo!);
-  //       }
+  //   if (event.length > 5) {
+  //     List<int> value = CrcTools.receiveDecodeCmd(event);
+  //     if (CrcTools.checkCRC(value)) {
+  //       _repository.handleCharacteristic(value, mPowerData, mDeviceInfo!);
   //     }
   //   }
   // }
+
+  @override
+  notifyCharacteristicValue(List<int> event) {
+
+    // 处理粘包数据
+    List<List<int>> packets = splitPackets(event);
+
+    for (List<int> packet in packets) {
+      if (packet.length > 5) {
+        List<int> value = CrcTools.receiveDecodeCmd(packet);
+        if (CrcTools.checkCRC(value)) {
+          _repository.handleCharacteristic(value, mPowerData, mDeviceInfo!);
+        }
+      }
+    }
+  }
 
   List<List<int>> splitPackets(List<int> rawData) {
     List<List<int>> packets = [];

@@ -65,8 +65,9 @@ class PowerAdvancedRepository {
         break;
       case PowerCommands.cmdQueryData_0x0B:
         int handleKey = value[subCmdIndex];
-        if (handleKey != 0) {
-          RHToast.showToast(msg: "${'remote_button_press'.tr}: $handleKey");
+        if (handleKey != data.handlePress) {
+          data.handlePress = handleKey;
+          bleDeviceDataController.add(BleDeviceDataMsg.dataQueryUpdate_0x0B);
         }
       default:
         break;
@@ -167,8 +168,8 @@ class PowerAdvancedRepository {
   ) {
     data.backMinDegree = value[cmdDataIndex];
     data.backMaxDegree = value[cmdDataIndex + 1];
-    data.seakMinDegree = value[cmdDataIndex + 2];
-    data.seakMaxDegree = value[cmdDataIndex + 3];
+    data.seatMinDegree = value[cmdDataIndex + 2];
+    data.seatMaxDegree = value[cmdDataIndex + 3];
     bleDeviceDataController.add(BleDeviceDataMsg.dataQueryUpdate_0x03);
   }
 
@@ -219,9 +220,9 @@ class PowerAdvancedRepository {
           (val) => data.curBackDegree = val,
     );
 
-    hasChanged |= data.curSeakDegree.updateIfChanged(
+    hasChanged |= data.curSeatDegree.updateIfChanged(
       value[subCmdDataIndex_5 + 1],
-          (val) => data.curSeakDegree = val,
+          (val) => data.curSeatDegree = val,
     );
 
     hasChanged |= data.curLeftArmSwing.updateIfChanged(
@@ -344,12 +345,12 @@ class PowerAdvancedRepository {
         data.curLeftRPM = rpm;
       }
 
-      data.curLeftWeight = Tools.getTwoByteByBigEndian(
+      data.curRightWeight = Tools.getTwoByteByBigEndian(
         value[subCmdDataIndex_5 + 17],
         value[subCmdDataIndex_5 + 18],
       );
-      data.curLeftCount = value[subCmdDataIndex_5 + 19];
-      data.curLeftCableLength = Tools.getTwoByteByBigEndian(
+      data.curRightCount = value[subCmdDataIndex_5 + 19];
+      data.curRightCableLength = Tools.getTwoByteByBigEndian(
         value[subCmdDataIndex_5 + 20],
         value[subCmdDataIndex_5 + 21],
       );
@@ -359,9 +360,9 @@ class PowerAdvancedRepository {
         velocityStr1 = velocityStr1.replaceAll('0', '6');
         velocityStr1 = velocityStr1.replaceAll('1', '0');
         velocityStr1 = velocityStr1.replaceAll('6', '1');
-        data.curLeftLinearVelocity = -int.parse(velocityStr1, radix: 2);
+        data.curRightLinearVelocity = -int.parse(velocityStr1, radix: 2);
       }else {
-        data.curLeftLinearVelocity = cableVelocity1;
+        data.curRightLinearVelocity = cableVelocity1;
       }
       int rpm1 = Tools.getTwoByteByBigEndian(value[subCmdDataIndex_5 + 24], value[subCmdDataIndex_5 + 25]);
       String rpmStr1 = rpm1.toRadixString(2).padLeft(16,'0');
@@ -369,9 +370,9 @@ class PowerAdvancedRepository {
         rpmStr1 = rpmStr1.replaceAll('0', '6');
         rpmStr1 = rpmStr1.replaceAll('1', '0');
         rpmStr1 = rpmStr1.replaceAll('6', '1');
-        data.curLeftRPM = -int.parse(rpmStr1, radix: 2);
+        data.curRightRPM = -int.parse(rpmStr1, radix: 2);
       }else {
-        data.curLeftRPM = rpm1;
+        data.curRightRPM = rpm1;
       }
     }
     bleDeviceDataController.add(BleDeviceDataMsg.dataQueryUpdate_0x14);

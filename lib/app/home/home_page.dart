@@ -86,6 +86,7 @@ class HomePage extends GetView<HomeCtrl> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              const Gap(12),
                               RHText(
                                 text: rhBlueScanResult.bluetoothDevice.advName,
                                 // text: scanResult.device.platformName.isNotEmpty ? scanResult.device.platformName : scanResult.device.remoteId.str,

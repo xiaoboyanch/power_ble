@@ -346,7 +346,7 @@ abstract class BleModel {
     if (mDevice != null && mDevice!.isConnected) {
       try {
         String hex = Tools.getNiceHexArray(value);
-        LogUtils.d("发送指令: ${hex}");
+        LogUtils.d("Send cmd: ${hex}");
         await _writeCharacteristic?.write(value, withoutResponse: true);
         logList.add(LogDTO(isOut: false, log: hex));
         if (logList.length > 100) {
@@ -408,7 +408,7 @@ abstract class BleModel {
       await _notifyCharacteristic!.setNotifyValue(true);
       _notifyStream = _notifyCharacteristic!.lastValueStream.listen((event) {
         String hex = Tools.getNiceHexArray(event);
-        LogUtils.d("回复数据： ${hex}");
+        LogUtils.d("Callback cmd： ${hex}");
         if (event.isEmpty) return;
         logList.add(LogDTO(isOut: true, log: hex));
         if (logList.length > 100) {
@@ -417,7 +417,7 @@ abstract class BleModel {
         notifyCharacteristicValue(event);
       });
     } else {
-      LogUtils.d("蓝牙通知-未找到通知通道");
+      LogUtils.d("Bluetooth Notification - Notification channel not found");
     }
   }
 

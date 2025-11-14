@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:cabina_ble/base_tool/log_utils.dart';
+import 'package:cabina_ble/base_views/rh_toast.dart';
 import 'package:cabina_ble/blue/entity/power_advanced_data.dart';
 import 'package:cabina_ble/blue/enum/power_mode.dart';
 import 'package:cabina_ble/blue/model/power_adv_model.dart';
@@ -32,6 +33,8 @@ class PowerDetailCtrl extends GetxController {
   RxInt paramUpdate = 0.obs;
 
   RxInt logUpdate = 0.obs;
+
+  RxInt handlePress = 0.obs;
 
   List<double>  leftWeight = [220, 330, 380, 330, 220, 110, 180, 260, 330, 330,];
   List<double> rightWeight = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,];
@@ -89,6 +92,7 @@ class PowerDetailCtrl extends GetxController {
             powerModel.startParamTimer();
           }else {
             powerModel.stopParamTimer();
+            cleanParamData();
           }
           if (isStart.value) {
             if (motorType.value != powerData.curMotorGroup) {
@@ -102,9 +106,12 @@ class PowerDetailCtrl extends GetxController {
         }
         case BleDeviceDataMsg.dataQueryUpdate_0x14: {
           // power data
-          LogUtils.d("这里会刷新吗： ？");
-          // onDataCallBack(powerData);
+          onDataCallBack(powerData);
           paramUpdate.value++;
+        }
+        case BleDeviceDataMsg.dataQueryUpdate_0x0B: {
+          //update slider
+          handlePress.value++;
         }
         default: {}
       }
@@ -112,8 +119,27 @@ class PowerDetailCtrl extends GetxController {
     startLogTimer();
   }
 
+  cleanParamData() {
+    powerData.curRightWeight = 0;
+    powerData.curLeftWeight = 0;
+    powerData.curLeftCount = 0;
+    powerData.curRightCount = 0;
+    powerData.curLeftCableLength = 0;
+    powerData.curRightCableLength = 0;
+    powerData.curRightLinearVelocity = 0;
+    powerData.curLeftLinearVelocity = 0;
+    powerData.curLeftRPM = 0;
+    powerData.curRightRPM = 0;
+    powerData.legWeight = 0;
+    powerData.legCounts = 0;
+    powerData.legCableLength = 0;
+    powerData.legLinearVelocity = 0;
+    powerData.legRPM = 0;
+    paramUpdate.value++;
+  }
+
   startLogTimer() {
-    logTimer = Timer.periodic(Duration(milliseconds: 800), (timer) {
+    logTimer = Timer.periodic(Duration(milliseconds: 500), (timer) {
       if (statusType.value == 2) {
         logUpdate.value++;
       }
@@ -163,8 +189,10 @@ class PowerDetailCtrl extends GetxController {
   setBackSeatDegree() {
     int back = int.parse(backCtrl.text);
     int seat = int.parse(seatCtrl.text);
-    if (back >= 0 && back <= 255 && seat >= 0 && seat <= 255) {
+    if (seat >= powerData.seatMinDegree && seat <= powerData.seatMaxDegree && back >= powerData.backMinDegree && back <= powerData.backMaxDegree) {
       powerModel.setBackSeatDegree(back, seat);
+    }else {
+      RHToast.showToast(msg: "The degree is out of range");
     }
   }
 
@@ -182,6 +210,10 @@ class PowerDetailCtrl extends GetxController {
         case PowerMode.standard: {
           //standard mode
           int power = int.parse(standardCtrl.text);
+          if (power <= 0) {
+            RHToast.showToast(msg: "Power must be greater than 0");
+            return;
+          }
           modeData.add((power * 10)~/256);
           modeData.add((power * 10)%256);
           modeData.addAll([00,00,00,00]);
@@ -190,6 +222,10 @@ class PowerDetailCtrl extends GetxController {
           //eccentric mode
           int eccentric = int.parse(eccentricCtrl.text);
           int concern = int.parse(concernCtrl.text);
+          if (eccentric <= 0 || concern <= 0) {
+            RHToast.showToast(msg: "Eccentric and concern must be greater than 0");
+            return;
+          }
           modeData.add((eccentric * 10)~/256);
           modeData.add((eccentric * 10)%256);
           modeData.add((concern * 10)~/256);
@@ -201,6 +237,10 @@ class PowerDetailCtrl extends GetxController {
           int initial = int.parse(initialCtrl.text);
           int max = int.parse(maxCtrl.text);
           int spring = int.parse(springCtrl.text);
+          if (initial <= 0 || max <= 0 || spring <= 0) {
+            RHToast.showToast(msg: "Initial, max and spring must be greater than 0");
+            return;
+          }
           modeData.add((initial * 10)~/256);
           modeData.add((initial * 10)%256);
           modeData.add((max * 10)~/256);
@@ -211,6 +251,10 @@ class PowerDetailCtrl extends GetxController {
         case PowerMode.isokinetic: {
           //isokinetic mode
           int velocity = int.parse(velocityCtrl.text);
+          if (velocity <= 0) {
+            RHToast.showToast(msg: "Velocity must be greater than 0");
+            return;
+          }
           modeData.add((velocity)~/256);
           modeData.add((velocity)%256);
           modeData.addAll([00,00,00,00]);
@@ -218,6 +262,10 @@ class PowerDetailCtrl extends GetxController {
         case PowerMode.isometric: {
           //isometric mode
           int cable = int.parse(cableCtrl.text);
+          if (cable <= 0) {
+            RHToast.showToast(msg: "Cable must be greater than 0");
+            return;
+          }
           modeData.add((cable)~/256);
           modeData.add((cable)%256);
           modeData.addAll([00,00,00,00]);

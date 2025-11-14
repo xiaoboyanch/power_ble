@@ -144,7 +144,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
     Widget cmdLog() {
       return SizedBox(
         width: MediaQuery.of(context).size.width,
-        height: 300,
+        height: 400,
         child: Container(
           padding: EdgeInsets.all(8.0),
           decoration: BoxDecoration(
@@ -302,7 +302,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                               fontColor: RHColor.black,
                             ),
                             RHText(
-                              text: "${controller.powerData.curSeakDegree} Degree",
+                              text: "${controller.powerData.curSeatDegree} Degree",
                               fontWeight: 7,
                               fontSize: 18,
                             ),
@@ -420,24 +420,24 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                   const Spacer(),
                   Column(
                     children: [
-                      Container(
-                        width: 70,
-                        height: 40,
-                        decoration: BoxDecoration(
-                            color: RHColor.primary,
-                            borderRadius: BorderRadius.circular(10)),
-                        child: GestureDetector(
-                          onTap: () {
-                            controller.setBackSeatDegree();
-                          },
+                      GestureDetector(
+                        onTap: () {
+                          controller.setBackSeatDegree();
+                        },
+                        child: Container(
+                          width: 70,
+                          height: 40,
+                          decoration: BoxDecoration(
+                              color: RHColor.primary,
+                              borderRadius: BorderRadius.circular(10)),
                           child: Center(
                             child: RHText(
                               textKey: "setup",
                               fontColor: RHColor.white,
                               fontSize: 16,
                             ),
-                          ),
-                        )
+                          )
+                        ),
                       ),
                     ],
                   )
@@ -458,21 +458,30 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
               Obx(() {
                 int mode = controller.trainingMode.value;
                 int value = controller.paramUpdate.value;
+                return Center(
+                  child: Column(
+                    children: [
+                      RHText(
+                        text: '${"current_mode".tr} ${controller.powerData.curMode.name.tr}',
+                        fontSize: 22,
+                        fontWeight: 6,
+                        textAlign: TextAlign.center,
+                      ),
+                      const Gap(5),
+                      RHText(
+                        text: controller.getModeParameter(),
+                        fontSize: 20,
+                        fontWeight: 6,
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                );
+              }),
+              Obx(() {
+                int mode = controller.trainingMode.value;
                 return Column(
                   children: [
-                    RHText(
-                      text: '${"current_mode".tr} ${controller.powerData.curMode.name.tr}',
-                      fontSize: 22,
-                      fontWeight: 6,
-                      textAlign: TextAlign.center,
-                    ),
-                    const Gap(5),
-                    RHText(
-                      text: controller.getModeParameter(),
-                      fontSize: 20,
-                      fontWeight: 6,
-                      textAlign: TextAlign.center,
-                    ),
                     CheckboxMenuButton(value: mode == 0, onChanged: (value) {
                       bool check = value ?? false;
                       if (check) {
@@ -480,32 +489,32 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                       }
                     }, child: RHText(textKey: 'standard_mode', fontSize: 18, fontColor: RHColor.black,)),
                     if (mode == 0)
-                    Row(
-                      children: [
-                        const Gap(40),
-                        RHText(text: '${"weight".tr}：', fontSize: 18, fontColor: RHColor.black,),
-                        const Spacer(),
-                        RHTextInput(
-                          text: controller.standardCtrl.text,
-                          textCtrl: controller.standardCtrl,
-                          width: 80,
-                          height: 40,
-                          isPassword: false,
-                          isPhone: true,
-                          radius: 10,
-                          backColor: RHColor.greyF0,
-                          onChange: (ctrl, value) {
-                            return null;
-                          },
-                        ),
-                        RHText(
-                          text: controller.getUnitStr(),
-                          fontWeight: 7,
-                          fontSize: 18,
-                        ),
-                        const Gap(20),
-                      ],
-                    ),
+                      Row(
+                        children: [
+                          const Gap(40),
+                          RHText(text: '${"weight".tr}：', fontSize: 18, fontColor: RHColor.black,),
+                          const Spacer(),
+                          RHTextInput(
+                            text: controller.standardCtrl.text,
+                            textCtrl: controller.standardCtrl,
+                            width: 80,
+                            height: 40,
+                            isPassword: false,
+                            isPhone: true,
+                            radius: 10,
+                            backColor: RHColor.greyF0,
+                            onChange: (ctrl, value) {
+                              return null;
+                            },
+                          ),
+                          RHText(
+                            text: controller.getUnitStr(),
+                            fontWeight: 7,
+                            fontSize: 18,
+                          ),
+                          const Gap(20),
+                        ],
+                      ),
                     CheckboxMenuButton(value: mode == 1, onChanged: (value) {
                       bool check = value ?? false;
                       if (check) {
@@ -513,63 +522,63 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                       }
                     }, child: RHText(textKey: 'eccentric_mode', fontSize: 18, fontColor: RHColor.black,)),
                     if (mode == 1)
-                    Column(
-                      children: [
-                        Row(
-                          children: [
-                            const Gap(40),
-                            RHText(textKey: 'eccentric_force', fontSize: 18, fontColor: RHColor.black,),
-                            const Spacer(),
-                            RHTextInput(
-                              text: controller.eccentricCtrl.text,
-                              textCtrl: controller.eccentricCtrl,
-                              width: 80,
-                              height: 40,
-                              isPassword: false,
-                              isPhone: true,
-                              radius: 10,
-                              backColor: RHColor.greyF0,
-                              onChange: (ctrl, value) {
-                                return null;
-                              },
-                            ),
-                            RHText(
-                              text: controller.getUnitStr(),
-                              fontWeight: 7,
-                              fontSize: 18,
-                            ),
-                            const Gap(20),
-                          ],
-                        ),
-                        const Gap(10),
-                        Row(
-                          children: [
-                            const Gap(40),
-                            RHText(textKey: 'concentric_force', fontSize: 18, fontColor: RHColor.black,),
-                            const Spacer(),
-                            RHTextInput(
-                              text: controller.concernCtrl.text,
-                              textCtrl: controller.concernCtrl,
-                              width: 80,
-                              height: 40,
-                              isPassword: false,
-                              isPhone: true,
-                              radius: 10,
-                              backColor: RHColor.greyF0,
-                              onChange: (ctrl, value) {
-                                return null;
-                              },
-                            ),
-                            RHText(
-                              text: controller.getUnitStr(),
-                              fontWeight: 7,
-                              fontSize: 18,
-                            ),
-                            const Gap(20),
-                          ],
-                        ),
-                      ],
-                    ),
+                      Column(
+                        children: [
+                          Row(
+                            children: [
+                              const Gap(40),
+                              RHText(textKey: 'eccentric_force', fontSize: 18, fontColor: RHColor.black,),
+                              const Spacer(),
+                              RHTextInput(
+                                text: controller.eccentricCtrl.text,
+                                textCtrl: controller.eccentricCtrl,
+                                width: 80,
+                                height: 40,
+                                isPassword: false,
+                                isPhone: true,
+                                radius: 10,
+                                backColor: RHColor.greyF0,
+                                onChange: (ctrl, value) {
+                                  return null;
+                                },
+                              ),
+                              RHText(
+                                text: controller.getUnitStr(),
+                                fontWeight: 7,
+                                fontSize: 18,
+                              ),
+                              const Gap(20),
+                            ],
+                          ),
+                          const Gap(10),
+                          Row(
+                            children: [
+                              const Gap(40),
+                              RHText(textKey: 'concentric_force', fontSize: 18, fontColor: RHColor.black,),
+                              const Spacer(),
+                              RHTextInput(
+                                text: controller.concernCtrl.text,
+                                textCtrl: controller.concernCtrl,
+                                width: 80,
+                                height: 40,
+                                isPassword: false,
+                                isPhone: true,
+                                radius: 10,
+                                backColor: RHColor.greyF0,
+                                onChange: (ctrl, value) {
+                                  return null;
+                                },
+                              ),
+                              RHText(
+                                text: controller.getUnitStr(),
+                                fontWeight: 7,
+                                fontSize: 18,
+                              ),
+                              const Gap(20),
+                            ],
+                          ),
+                        ],
+                      ),
 
                     CheckboxMenuButton(value: mode == 2, onChanged: (value) {
                       bool check = value ?? false;
@@ -578,90 +587,90 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                       }
                     }, child: RHText(textKey: 'elastic_mode', fontSize: 18, fontColor: RHColor.black,)),
                     if (mode == 2)
-                    Column(
-                      children: [
-                        Row(
-                          children: [
-                            const Gap(40),
-                            RHText(textKey: 'initial_force', fontSize: 18, fontColor: RHColor.black,),
-                            const Spacer(),
-                            RHTextInput(
-                              text: controller.initialCtrl.text,
-                              textCtrl: controller.initialCtrl,
-                              width: 80,
-                              height: 40,
-                              isPassword: false,
-                              isPhone: true,
-                              radius: 10,
-                              backColor: RHColor.greyF0,
-                              onChange: (ctrl, value) {
-                                return null;
-                              },
-                            ),
-                            RHText(
-                              text: controller.getUnitStr(),
-                              fontWeight: 7,
-                              fontSize: 18,
-                            ),
-                            const Gap(20),
-                          ],
-                        ),
-                        const Gap(10),
-                        Row(
-                          children: [
-                            const Gap(40),
-                            RHText(textKey: 'maximum_force', fontSize: 18, fontColor: RHColor.black,),
-                            const Spacer(),
-                            RHTextInput(
-                              text: controller.maxCtrl.text,
-                              textCtrl: controller.maxCtrl,
-                              width: 80,
-                              height: 40,
-                              isPassword: false,
-                              isPhone: true,
-                              radius: 10,
-                              backColor: RHColor.greyF0,
-                              onChange: (ctrl, value) {
-                                return null;
-                              },
-                            ),
-                            RHText(
-                              text: controller.getUnitStr(),
-                              fontWeight: 7,
-                              fontSize: 18,
-                            ),
-                            const Gap(20),
-                          ],
-                        ),
-                        const Gap(10),
-                        Row(
-                          children: [
-                            const Gap(40),
-                            RHText(textKey: 'spring_length', fontSize: 18, fontColor: RHColor.black,),
-                            const Spacer(),
-                            RHTextInput(
-                              text: controller.springCtrl.text,
-                              textCtrl: controller.springCtrl,
-                              width: 80,
-                              height: 40,
-                              isPassword: false,
-                              isPhone: true,
-                              radius: 10,
-                              backColor: RHColor.greyF0,
-                              onChange: (ctrl, value) {
-                                return null;
-                              },
-                            ),
-                            RHText(
-                              text: "mm",
-                              fontWeight: 7,
-                              fontSize: 18,
-                            ),
-                            const Gap(20),
-                          ],
-                        ),
-                      ],
-                    ),
+                      Column(
+                        children: [
+                          Row(
+                            children: [
+                              const Gap(40),
+                              RHText(textKey: 'initial_force', fontSize: 18, fontColor: RHColor.black,),
+                              const Spacer(),
+                              RHTextInput(
+                                text: controller.initialCtrl.text,
+                                textCtrl: controller.initialCtrl,
+                                width: 80,
+                                height: 40,
+                                isPassword: false,
+                                isPhone: true,
+                                radius: 10,
+                                backColor: RHColor.greyF0,
+                                onChange: (ctrl, value) {
+                                  return null;
+                                },
+                              ),
+                              RHText(
+                                text: controller.getUnitStr(),
+                                fontWeight: 7,
+                                fontSize: 18,
+                              ),
+                              const Gap(20),
+                            ],
+                          ),
+                          const Gap(10),
+                          Row(
+                            children: [
+                              const Gap(40),
+                              RHText(textKey: 'maximum_force', fontSize: 18, fontColor: RHColor.black,),
+                              const Spacer(),
+                              RHTextInput(
+                                text: controller.maxCtrl.text,
+                                textCtrl: controller.maxCtrl,
+                                width: 80,
+                                height: 40,
+                                isPassword: false,
+                                isPhone: true,
+                                radius: 10,
+                                backColor: RHColor.greyF0,
+                                onChange: (ctrl, value) {
+                                  return null;
+                                },
+                              ),
+                              RHText(
+                                text: controller.getUnitStr(),
+                                fontWeight: 7,
+                                fontSize: 18,
+                              ),
+                              const Gap(20),
+                            ],
+                          ),
+                          const Gap(10),
+                          Row(
+                            children: [
+                              const Gap(40),
+                              RHText(textKey: 'spring_length', fontSize: 18, fontColor: RHColor.black,),
+                              const Spacer(),
+                              RHTextInput(
+                                text: controller.springCtrl.text,
+                                textCtrl: controller.springCtrl,
+                                width: 80,
+                                height: 40,
+                                isPassword: false,
+                                isPhone: true,
+                                radius: 10,
+                                backColor: RHColor.greyF0,
+                                onChange: (ctrl, value) {
+                                  return null;
+                                },
+                              ),
+                              RHText(
+                                text: "mm",
+                                fontWeight: 7,
+                                fontSize: 18,
+                              ),
+                              const Gap(20),
+                            ],
+                          ),
+                        ],
+                      ),
                     CheckboxMenuButton(value: mode == 3, onChanged: (value) {
                       bool check = value ?? false;
                       if (check) {
@@ -669,65 +678,32 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                       }
                     }, child: RHText(textKey: 'strength_measurement', fontSize: 18, fontColor: RHColor.black,)),
                     if (mode == 3)
-                    Row(
-                      children: [
-                        const Gap(40),
-                        RHText(textKey: 'linear_velocity', fontSize: 18, fontColor: RHColor.black,),
-                        const Spacer(),
-                        RHTextInput(
-                          text: controller.velocityCtrl.text,
-                          textCtrl: controller.velocityCtrl,
-                          width: 80,
-                          height: 40,
-                          isPassword: false,
-                          isPhone: true,
-                          radius: 10,
-                          backColor: RHColor.greyF0,
-                          onChange: (ctrl, value) {
-                            return null;
-                          },
-                        ),
-                        RHText(
-                          text: "mm/s",
-                          fontWeight: 7,
-                          fontSize: 18,
-                        ),
-                        const Gap(20),
-                      ],
-                    ),
-                    CheckboxMenuButton(value: mode == 4, onChanged: (value) {
-                      bool check = value ?? false;
-                      if (check) {
-                        controller.trainingMode.value = 4;
-                      }
-                    }, child: RHText(textKey: 'isometric_mode', fontSize: 18, fontColor: RHColor.black,)),
-                    if (mode == 4)
-                    Row(
-                      children: [
-                        const Gap(40),
-                        RHText(textKey: 'cable_length', fontSize: 18, fontColor: RHColor.black,),
-                        const Spacer(),
-                        RHTextInput(
-                          text: controller.cableCtrl.text,
-                          textCtrl: controller.cableCtrl,
-                          width: 80,
-                          height: 40,
-                          isPassword: false,
-                          isPhone: true,
-                          radius: 10,
-                          backColor: RHColor.greyF0,
-                          onChange: (ctrl, value) {
-                            return null;
-                          },
-                        ),
-                        RHText(
-                          text: "mm",
-                          fontWeight: 7,
-                          fontSize: 18,
-                        ),
-                        const Gap(20),
-                      ],
-                    ),
+                      Row(
+                        children: [
+                          const Gap(40),
+                          RHText(textKey: 'linear_velocity', fontSize: 18, fontColor: RHColor.black,),
+                          const Spacer(),
+                          RHTextInput(
+                            text: controller.velocityCtrl.text,
+                            textCtrl: controller.velocityCtrl,
+                            width: 80,
+                            height: 40,
+                            isPassword: false,
+                            isPhone: true,
+                            radius: 10,
+                            backColor: RHColor.greyF0,
+                            onChange: (ctrl, value) {
+                              return null;
+                            },
+                          ),
+                          RHText(
+                            text: "mm/s",
+                            fontWeight: 7,
+                            fontSize: 18,
+                          ),
+                          const Gap(20),
+                        ],
+                      ),
                   ],
                 );
               }),
@@ -754,6 +730,16 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                         )
                     ),
                   ),
+                );
+              }),
+              const Gap(20),
+              Obx(() {
+                int motorType = controller.handlePress.value;
+                return RHText(
+                  fontColor: RHColor.black,
+                  fontSize: 18,
+                  fontWeight: 6,
+                  text: "${"remote_button_press".tr}: ${controller.powerData.handlePress}",
                 );
               }),
               const Gap(20),
@@ -815,12 +801,12 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             RHText(
-                              text: "${"left".tr}: ${controller.powerModel.mPowerData.curLeftLinearVelocity}",
+                              text: "${"left".tr}: ${controller.powerModel.mPowerData.curLeftLinearVelocity}mm/s",
                               fontColor: RHColor.black,
                               fontSize: 18,
                             ),
                             RHText(
-                              text: "${"right".tr}: ${controller.powerModel.mPowerData.curRightLinearVelocity}",
+                              text: "${"right".tr}: ${controller.powerModel.mPowerData.curRightLinearVelocity}mm/s",
                               fontColor: RHColor.black,
                               fontSize: 18,
                             ),
@@ -828,7 +814,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                         ):SizedBox(
                           width: width,
                           child: RHText(
-                            text: "${controller.powerModel.mPowerData.legLinearVelocity}",
+                            text: "${controller.powerModel.mPowerData.legLinearVelocity}mm/s",
                             fontColor: RHColor.black,
                             fontSize: 18,
                             textAlign: TextAlign.center,

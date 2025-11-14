@@ -45,12 +45,12 @@ class PowerAdvancedData extends BaseDeviceData {
   ///Seat, Back, Slider parameters
   int backMinDegree = 0;
   int backMaxDegree = 180;
-  int seakMinDegree = 0;
-  int seakMaxDegree = 180;
+  int seatMinDegree = 0;
+  int seatMaxDegree = 180;
 
   /// Current backrest, seat, and left/right slider data
   int curBackDegree = 0;
-  int curSeakDegree = 0;
+  int curSeatDegree = 0;
   int curLeftArmSwing = 0;
   int curRightArmSwing = 0;
   ///Mode parameters
@@ -104,6 +104,9 @@ class PowerAdvancedData extends BaseDeviceData {
   int legLinearVelocity = 0;
   int legRPM = 0;
 
+  ///handle button press
+  int handlePress = 0;
+
   updateMotorStatus() {
     if (mainStatus == 1) {
       isStart = true;
@@ -125,7 +128,7 @@ class PowerAdvancedData extends BaseDeviceData {
   }
 
   unitStr() {
-    return unit == 0 ? "kg" : "lb";
+    return unit == 0 ? "KG" : "LB";
   }
 
 }
