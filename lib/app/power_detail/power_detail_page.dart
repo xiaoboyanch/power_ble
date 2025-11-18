@@ -790,7 +790,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         RHText(
-                          textKey: "linear_velocity",
+                          text: "${'linear_velocity'.tr} (mm/s)",
                           fontColor: RHColor.black,
                           fontSize: 18,
                           fontWeight: 6,
@@ -801,12 +801,12 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             RHText(
-                              text: "${"left".tr}: ${controller.powerModel.mPowerData.curLeftLinearVelocity}mm/s",
+                              text: "${"left".tr}: ${controller.powerModel.mPowerData.curLeftLinearVelocity} : ${controller.leftMinVelocity}",
                               fontColor: RHColor.black,
                               fontSize: 18,
                             ),
                             RHText(
-                              text: "${"right".tr}: ${controller.powerModel.mPowerData.curRightLinearVelocity}mm/s",
+                              text: "${"right".tr}: ${controller.powerModel.mPowerData.curRightLinearVelocity} : ${controller.rightMinVelocity}",
                               fontColor: RHColor.black,
                               fontSize: 18,
                             ),
@@ -814,7 +814,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                         ):SizedBox(
                           width: width,
                           child: RHText(
-                            text: "${controller.powerModel.mPowerData.legLinearVelocity}mm/s",
+                            text: "${controller.powerModel.mPowerData.legLinearVelocity}  : ${controller.minVelocity}",
                             fontColor: RHColor.black,
                             fontSize: 18,
                             textAlign: TextAlign.center,
@@ -838,12 +838,12 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             RHText(
-                              text: "${"left".tr}: ${controller.powerModel.mPowerData.curLeftRPM}",
+                              text: "${"left".tr}: ${controller.powerModel.mPowerData.curLeftRPM} : ${controller.leftMinRPM}",
                               fontColor: RHColor.black,
                               fontSize: 18,
                             ),
                             RHText(
-                              text: "${"right".tr}:  ${controller.powerModel.mPowerData.curRightRPM}",
+                              text: "${"right".tr}:  ${controller.powerModel.mPowerData.curRightRPM} : ${controller.rightMinRPM}",
                               fontColor: RHColor.black,
                               fontSize: 18,
                             ),
@@ -851,7 +851,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                         ):SizedBox(
                           width: width,
                           child: RHText(
-                            text: "${controller.powerModel.mPowerData.legRPM}",
+                            text: "${controller.powerModel.mPowerData.legRPM}  : ${controller.minRPM}",
                             fontColor: RHColor.black,
                             fontSize: 18,
                             textAlign: TextAlign.center,

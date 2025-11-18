@@ -2,6 +2,7 @@ import 'package:cabina_ble/base_views/rh_toast.dart';
 import 'package:cabina_ble/blue/commands/power_commands.dart';
 import 'package:cabina_ble/blue/model/power_adv_model.dart';
 import 'package:cabina_ble/blue/tools/tools.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -46,6 +47,9 @@ class HomeCtrl extends GetxController {
           break;
       }
     });
+    // SystemChrome.setPreferredOrientations([
+    //   DeviceOrientation.landscapeRight,
+    // ]);
     // Future.delayed(Duration(milliseconds: 500), () {
     //   powerModel.startScan();
     // });
@@ -84,5 +88,13 @@ class HomeCtrl extends GetxController {
 
   connectDevice(RHBlueScanResult rhBlueScanResult) {
     powerModel.selectDevice(rhBlueScanResult);
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+    // SystemChrome.setPreferredOrientations([
+    //   DeviceOrientation.portraitUp,
+    // ]);
   }
 }

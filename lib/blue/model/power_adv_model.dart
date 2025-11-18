@@ -27,6 +27,7 @@ class PowerAdvancedModel extends BleModel {
   List<RHDeviceType> typeList = [RHDeviceType.powerAdvanced, RHDeviceType.powerBoard, RHDeviceType.running, RHDeviceType.walking];
   Timer? degreeTimer;
   Timer? paramsTimer;
+  Timer? curMotorTimer;
 
   PowerAdvancedModel() {
     setDeviceType(RHDeviceType.powerAdvanced);
@@ -44,6 +45,7 @@ class PowerAdvancedModel extends BleModel {
           sendCmd(PowerCommands.getMainInfo_03Data());
           startSendTimer();
           startDegreeTimer();
+          startCurMotorTimer();
           // startParamTimer();
         }
         case BleDeviceStateMsg.bleBleReConnect: {
@@ -57,7 +59,7 @@ class PowerAdvancedModel extends BleModel {
   bool handleCounter = false;
   startDegreeTimer() {
     degreeTimer?.cancel();
-    degreeTimer = Timer.periodic(const Duration(milliseconds: 230), (timer) {
+    degreeTimer = Timer.periodic(const Duration(milliseconds: 190), (timer) {
       if (handleCounter) {
         getBackSeatDegree();
         handleCounter = false;
@@ -65,6 +67,15 @@ class PowerAdvancedModel extends BleModel {
         getHandleKey();
         handleCounter = true;
       }
+    });
+  }
+
+  startCurMotorTimer() {
+    curMotorTimer?.cancel();
+    curMotorTimer = Timer.periodic(const Duration(milliseconds: 270), (timer) {
+
+      getCurMotorData();
+      LogUtils.d("AAAAAAAAA");
     });
   }
 
@@ -245,6 +256,10 @@ class PowerAdvancedModel extends BleModel {
 
   getHandleKey() {
     sendCmd(PowerCommands.getHandle());
+  }
+
+  getCurMotorData() {
+    sendCmd(PowerCommands.getCurMotor());
   }
 
   @override

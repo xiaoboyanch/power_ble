@@ -59,6 +59,9 @@ class PowerAdvancedRepository {
           case PowerCommands.queryDataSport_0x14: {
               _handleDataSport0x14(value, data, deviceInfo);
             }
+          case PowerCommands.queryDataSport_0x16: {
+            _handleDataSport0x16(value, data, deviceInfo);
+          }
           default:
             break;
         }
@@ -67,6 +70,11 @@ class PowerAdvancedRepository {
         int handleKey = value[subCmdIndex];
         if (handleKey != data.handlePress) {
           data.handlePress = handleKey;
+          if (data.handlePress != 0) {
+            RHToast.showToast(msg: 'Handle Pressed Key: ${data.handlePress}');
+          }
+          bleDeviceDataController.add(BleDeviceDataMsg.dataQueryUpdate_0x0B);
+        }else if (handleKey != 0) {
           bleDeviceDataController.add(BleDeviceDataMsg.dataQueryUpdate_0x0B);
         }
       default:
@@ -92,6 +100,7 @@ class PowerAdvancedRepository {
       value[cmdDataIndex + 5],
     );
     data.deviceType = deviceInfo.type;
+    LogUtils.d("数据显： ${data.brandCode} : ${data.deviceCode} : ${data.deviceType}");
     data.version = Tools.getSignNumber(value[cmdDataIndex + 6]);
     data.subVersion = Tools.getSignNumber(value[cmdDataIndex + 7]);
 
@@ -309,9 +318,9 @@ class PowerAdvancedRepository {
         rpmStr = rpmStr.replaceAll('0', '6');
         rpmStr = rpmStr.replaceAll('1', '0');
         rpmStr = rpmStr.replaceAll('6', '1');
-        data.legLinearVelocity = -int.parse(rpmStr, radix: 2);
+        data.legRPM = -int.parse(rpmStr, radix: 2);
       }else {
-        data.legLinearVelocity = rpm;
+        data.legRPM = rpm;
       }
     }
     else {
@@ -366,7 +375,7 @@ class PowerAdvancedRepository {
       }
       int rpm1 = Tools.getTwoByteByBigEndian(value[subCmdDataIndex_5 + 24], value[subCmdDataIndex_5 + 25]);
       String rpmStr1 = rpm1.toRadixString(2).padLeft(16,'0');
-      if (rpm > 32767) {
+      if (rpm1 > 32767) {
         rpmStr1 = rpmStr1.replaceAll('0', '6');
         rpmStr1 = rpmStr1.replaceAll('1', '0');
         rpmStr1 = rpmStr1.replaceAll('6', '1');
@@ -378,9 +387,16 @@ class PowerAdvancedRepository {
     bleDeviceDataController.add(BleDeviceDataMsg.dataQueryUpdate_0x14);
   }
 
+  _handleDataSport0x16(List<int> value, PowerAdvancedData data, RHBluetoothDeviceInfo deviceInfo) {
+    var data = value[subCmdDataIndex_5];
+    LogUtils.d("当前表头电机组： ${data}");
+  }
+
   void dispose() {
     bleDeviceDataController.close();
   }
+
+
 
 
 }

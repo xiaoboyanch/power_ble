@@ -58,6 +58,7 @@ class PowerCommands {
   static const int queryDataSport_0x10 = 0x10; //
   static const int queryDataSport_0x12 = 0x12; //
   static const int queryDataSport_0x14 = 0x14; //
+  static const int queryDataSport_0x16 = 0x16; //
   static const int getVolume_0x0B = 0x0B;
   static const int setVolume_0x0D = 0x0D; //
   static const int queryMode = 0x06;
@@ -310,5 +311,9 @@ class PowerCommands {
 
   static List<int> pushHandle(int key) {
     return CrcTools.encryptCmd([cmdQueryData_0x0A, key]);
+  }
+
+  static List<int> getCurMotor() {
+    return CrcTools.encryptCmd([cmdQueryData_0x09, queryDataSport_0x16]);
   }
 }

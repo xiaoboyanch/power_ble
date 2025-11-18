@@ -36,10 +36,10 @@ class PowerDetailCtrl extends GetxController {
 
   RxInt handlePress = 0.obs;
 
-  List<double>  leftWeight = [220, 330, 380, 330, 220, 110, 180, 260, 330, 330,];
-  List<double> rightWeight = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,];
-  List<double>  leftRope = [490, 300, 120, 433, 400, 200, 600, 340, 440, 230, ];
-  List<double> rightRope = [122, 100, 230, 170, 400, 500, 600, 300, 800, 500, ];
+  List<double>  leftWeight = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  List<double> rightWeight = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  List<double>  leftRope = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  List<double> rightRope = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   List<double> legWeight = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   List<double> legRope = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   // List<double> leftRope = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -68,11 +68,25 @@ class PowerDetailCtrl extends GetxController {
 
   Timer? logTimer;
 
+  int minRPM = 0;
+  int minVelocity = 0;
+  int leftMinRPM = 0;
+  int rightMinRPM = 0;
+  int leftMinVelocity = 0;
+  int rightMinVelocity = 0;
+
   @override
   void onInit() {
     super.onInit();
     powerModel = BleFactory.createModel(RHDeviceType.powerAdvanced) as PowerAdvancedModel;
     powerData = powerModel.mPowerData;
+    standardCtrl.text = "5";
+    eccentricCtrl.text = "8";
+    concernCtrl.text = "5";
+    initialCtrl.text = "5";
+    maxCtrl.text = "10";
+    springCtrl.text = "200";
+    velocityCtrl.text = "200";
     powerModel.bleDeviceStateController.stream.listen((msg) {
 
     });
@@ -107,10 +121,34 @@ class PowerDetailCtrl extends GetxController {
         case BleDeviceDataMsg.dataQueryUpdate_0x14: {
           // power data
           onDataCallBack(powerData);
+          if (motorType.value == 2) {
+            if (powerData.legLinearVelocity < minVelocity) {
+              minVelocity = powerData.legLinearVelocity;
+            }
+            if (powerData.legRPM < minRPM){
+              minRPM = powerData.legRPM;
+            }
+          }else {
+            if (powerData.curLeftRPM < leftMinRPM) {
+              leftMinRPM = powerData.curLeftRPM;
+            }
+            if (powerData.curRightRPM < rightMinRPM){
+              rightMinRPM = powerData.curRightRPM;
+            }
+            if (powerData.curLeftLinearVelocity < leftMinVelocity) {
+              leftMinVelocity = powerData.curLeftLinearVelocity;
+            }
+            if (powerData.curRightLinearVelocity < rightMinVelocity){
+              rightMinVelocity = powerData.curRightLinearVelocity;
+            }
+          }
           paramUpdate.value++;
         }
         case BleDeviceDataMsg.dataQueryUpdate_0x0B: {
           //update slider
+          if (powerData.handlePress != 0) {
+            startOrStopPower();
+          }
           handlePress.value++;
         }
         default: {}
@@ -136,6 +174,12 @@ class PowerDetailCtrl extends GetxController {
     powerData.legLinearVelocity = 0;
     powerData.legRPM = 0;
     paramUpdate.value++;
+    minRPM = 0;
+    minVelocity = 0;
+    leftMinRPM = 0;
+    rightMinRPM = 0;
+    leftMinVelocity = 0;
+    rightMinVelocity = 0;
   }
 
   startLogTimer() {
@@ -201,7 +245,73 @@ class PowerDetailCtrl extends GetxController {
   startOrStopPower() {
     if (powerData.isStart) {
       //stop Power
-      List<int> modeData = [00, 32, 00, 00, 00, 00];
+      // List<int> modeData = [00, 32, 00, 00, 00, 00];
+      List<int> modeData = [];
+      switch (PowerMode.fromInt(trainingMode.value)) {
+        case PowerMode.standard: {
+          //standard mode
+          int power = int.parse(standardCtrl.text);
+          if (power <= 0) {
+            RHToast.showToast(msg: "Power must be greater than 0");
+            return;
+          }
+          modeData.add((power * 10)~/256);
+          modeData.add((power * 10)%256);
+          modeData.addAll([00,00,00,00]);
+        }
+        case PowerMode.eccentric: {
+          //eccentric mode
+          int eccentric = int.parse(eccentricCtrl.text);
+          int concern = int.parse(concernCtrl.text);
+          if (eccentric <= 0 || concern <= 0) {
+            RHToast.showToast(msg: "Eccentric and concern must be greater than 0");
+            return;
+          }
+          modeData.add((eccentric * 10)~/256);
+          modeData.add((eccentric * 10)%256);
+          modeData.add((concern * 10)~/256);
+          modeData.add((concern * 10)%256);
+          modeData.addAll([00,00]);
+        }
+        case PowerMode.elastic: {
+          //elastic mode
+          int initial = int.parse(initialCtrl.text);
+          int max = int.parse(maxCtrl.text);
+          int spring = int.parse(springCtrl.text);
+          if (initial <= 0 || max <= 0 || spring <= 0) {
+            RHToast.showToast(msg: "Initial, max and spring must be greater than 0");
+            return;
+          }
+          modeData.add((initial * 10)~/256);
+          modeData.add((initial * 10)%256);
+          modeData.add((max * 10)~/256);
+          modeData.add((max * 10)%256);
+          modeData.add((spring)~/256);
+          modeData.add((spring)%256);
+        }
+        case PowerMode.isokinetic: {
+          //isokinetic mode
+          int velocity = int.parse(velocityCtrl.text);
+          if (velocity <= 0) {
+            RHToast.showToast(msg: "Velocity must be greater than 0");
+            return;
+          }
+          modeData.add((velocity)~/256);
+          modeData.add((velocity)%256);
+          modeData.addAll([00,00,00,00]);
+        }
+        case PowerMode.isometric: {
+          //isometric mode
+          int cable = int.parse(cableCtrl.text);
+          if (cable <= 0) {
+            RHToast.showToast(msg: "Cable must be greater than 0");
+            return;
+          }
+          modeData.add((cable)~/256);
+          modeData.add((cable)%256);
+          modeData.addAll([00,00,00,00]);
+        }
+      }
       powerModel.setPowerMode(motorType.value, 0, powerData.curMode.value, modeData);
     }else {
       //start Power
