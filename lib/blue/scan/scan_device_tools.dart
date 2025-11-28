@@ -74,7 +74,7 @@ class ScanDeviceTools {
   static Future<List<RHBlueScanResult>> sortDeviceInfo(List<ScanResult> result, List<RHDeviceType> deviceType) async{
     List<RHBlueScanResult> list = [];
     for (var item in result) {
-      if (item.device.platformName.toUpperCase().contains("BT SONY") || item.device.platformName.toUpperCase().contains("SPERAX_RM01") || item.device.platformName.toUpperCase().contains("BT_SONY") ) {
+      if (item.device.platformName.toUpperCase().contains("BT SONY") || item.device.platformName.toUpperCase().contains("BT_SONY") ) {
         list.add(addScanItem(RHDeviceCode.walkP1.value, item.device));
         LogUtils.d("deviceAAAAAAAAAACode: ${list.length}");
       }

@@ -38,7 +38,14 @@ class PowerAdvancedRepository {
     switch (value[cmdIndex]) {
       case PowerCommands.cmdQueryParam_0x01:
         // LogUtils.d("0x01指令: ${Tools.getNiceHexArray(value)}");
+      try {
         _handleDeviceInfo(value, data, deviceInfo);
+
+      } catch (e) {
+        LogUtils.e(e.toString());
+      }
+      bleDeviceStateController.add(BleDeviceStateMsg.deviceCheckSuccess);
+      bleDeviceDataController.add(BleDeviceDataMsg.deviceInfoUpdate_0x01);
         break;
       case PowerCommands.cmdQueryExtParam_0x03:
         // LogUtils.d("0x03指令: ${Tools.getNiceHexArray(value)}");
@@ -126,48 +133,51 @@ class PowerAdvancedRepository {
     );
     data.mainStepSizeIm = value[cmdDataIndex + 19];
 
-    data.armMotorCount = value[cmdDataIndex + 20];
-    data.armMinWeightMe = Tools.getTwoByteByBigEndian(
-      value[cmdDataIndex + 21],
-      value[cmdDataIndex + 22],
-    );
-    data.armMaxWeightMe = Tools.getTwoByteByBigEndian(
-      value[cmdDataIndex + 23],
-      value[cmdDataIndex + 24],
-    );
-    data.armStepSizeMe = value[cmdDataIndex + 25];
-    data.armMinWeightIm = Tools.getTwoByteByBigEndian(
-      value[cmdDataIndex + 26],
-      value[cmdDataIndex + 27],
-    );
-    data.armMaxWeightIm = Tools.getTwoByteByBigEndian(
-      value[cmdDataIndex + 28],
-      value[cmdDataIndex + 29],
-    );
-    data.armStepSizeIm = value[cmdDataIndex + 30];
+    if (value.length > cmdDataIndex + 20) {
+      data.armMotorCount = value[cmdDataIndex + 20];
+      data.armMinWeightMe = Tools.getTwoByteByBigEndian(
+        value[cmdDataIndex + 21],
+        value[cmdDataIndex + 22],
+      );
+      data.armMaxWeightMe = Tools.getTwoByteByBigEndian(
+        value[cmdDataIndex + 23],
+        value[cmdDataIndex + 24],
+      );
+      data.armStepSizeMe = value[cmdDataIndex + 25];
+      data.armMinWeightIm = Tools.getTwoByteByBigEndian(
+        value[cmdDataIndex + 26],
+        value[cmdDataIndex + 27],
+      );
+      data.armMaxWeightIm = Tools.getTwoByteByBigEndian(
+        value[cmdDataIndex + 28],
+        value[cmdDataIndex + 29],
+      );
+      data.armStepSizeIm = value[cmdDataIndex + 30];
+    }
 
-    data.legMotorCount = value[cmdDataIndex + 31];
-    data.legMinWeightMe = Tools.getTwoByteByBigEndian(
-      value[cmdDataIndex + 32],
-      value[cmdDataIndex + 33],
-    );
-    data.legMaxWeightMe = Tools.getTwoByteByBigEndian(
-      value[cmdDataIndex + 34],
-      value[cmdDataIndex + 35],
-    );
-    data.legStepSizeMe = value[cmdDataIndex + 36];
-    data.legMinWeightIm = Tools.getTwoByteByBigEndian(
-      value[cmdDataIndex + 37],
-      value[cmdDataIndex + 38],
-    );
-    data.legMaxWeightIm = Tools.getTwoByteByBigEndian(
-      value[cmdDataIndex + 39],
-      value[cmdDataIndex + 40],
-    );
-    data.legStepSizeIm = value[cmdDataIndex + 41];
+    if (value.length > cmdDataIndex + 31) {
+      data.legMotorCount = value[cmdDataIndex + 31];
+      data.legMinWeightMe = Tools.getTwoByteByBigEndian(
+        value[cmdDataIndex + 32],
+        value[cmdDataIndex + 33],
+      );
+      data.legMaxWeightMe = Tools.getTwoByteByBigEndian(
+        value[cmdDataIndex + 34],
+        value[cmdDataIndex + 35],
+      );
+      data.legStepSizeMe = value[cmdDataIndex + 36];
+      data.legMinWeightIm = Tools.getTwoByteByBigEndian(
+        value[cmdDataIndex + 37],
+        value[cmdDataIndex + 38],
+      );
+      data.legMaxWeightIm = Tools.getTwoByteByBigEndian(
+        value[cmdDataIndex + 39],
+        value[cmdDataIndex + 40],
+      );
+      data.legStepSizeIm = value[cmdDataIndex + 41];
+    }
 
-    bleDeviceStateController.add(BleDeviceStateMsg.deviceCheckSuccess);
-    bleDeviceDataController.add(BleDeviceDataMsg.deviceInfoUpdate_0x01);
+
   }
 
   _handleExtendedParams(
@@ -298,10 +308,21 @@ class PowerAdvancedRepository {
         value[subCmdDataIndex_5 + 8],
       );
       data.legCounts = value[subCmdDataIndex_5 + 9];
-      data.legCableLength = Tools.getTwoByteByBigEndian(
-        value[subCmdDataIndex_5 + 10],
-        value[subCmdDataIndex_5 + 11],
-      );
+      // data.legCableLength = Tools.getTwoByteByBigEndian(
+      //   value[subCmdDataIndex_5 + 10],
+      //   value[subCmdDataIndex_5 + 11],
+      // );
+      int legCableLength = Tools.getTwoByteByBigEndian(value[subCmdDataIndex_5 + 10], value[subCmdDataIndex_5 + 11]);
+      String legCableLengthStr = legCableLength.toRadixString(2).padLeft(16,'0');
+      if (legCableLength > 32767) {
+        legCableLengthStr = legCableLengthStr.replaceAll('0', '6');
+        legCableLengthStr = legCableLengthStr.replaceAll('1', '0');
+        legCableLengthStr = legCableLengthStr.replaceAll('6', '1');
+        data.legCableLength = -int.parse(legCableLengthStr, radix: 2);
+        // RHToast.showToast(msg: "left cable: ${data.curLeftCableLength}");
+      }else {
+        data.legCableLength = legCableLength;
+      }
       int cableVelocity = Tools.getTwoByteByBigEndian(value[subCmdDataIndex_5 + 12], value[subCmdDataIndex_5 + 13]);
       String velocityStr = cableVelocity.toRadixString(2).padLeft(16,'0');
       if (cableVelocity > 32767) {
@@ -329,10 +350,21 @@ class PowerAdvancedRepository {
         value[subCmdDataIndex_5 + 8],
       );
       data.curLeftCount = value[subCmdDataIndex_5 + 9];
-      data.curLeftCableLength = Tools.getTwoByteByBigEndian(
-        value[subCmdDataIndex_5 + 10],
-        value[subCmdDataIndex_5 + 11],
-      );
+      // data.curLeftCableLength = Tools.getTwoByteByBigEndian(
+      //   value[subCmdDataIndex_5 + 10],
+      //   value[subCmdDataIndex_5 + 11],
+      // );
+      int leftCableLength = Tools.getTwoByteByBigEndian(value[subCmdDataIndex_5 + 10], value[subCmdDataIndex_5 + 11]);
+      String leftCableLengthStr = leftCableLength.toRadixString(2).padLeft(16,'0');
+      if (leftCableLength > 32767) {
+        leftCableLengthStr = leftCableLengthStr.replaceAll('0', '6');
+        leftCableLengthStr = leftCableLengthStr.replaceAll('1', '0');
+        leftCableLengthStr = leftCableLengthStr.replaceAll('6', '1');
+        data.curLeftCableLength = -int.parse(leftCableLengthStr, radix: 2);
+        // RHToast.showToast(msg: "left cable: ${data.curLeftCableLength}");
+      }else {
+        data.curLeftCableLength = leftCableLength;
+      }
       int cableVelocity = Tools.getTwoByteByBigEndian(value[subCmdDataIndex_5 + 12], value[subCmdDataIndex_5 + 13]);
       String velocityStr = cableVelocity.toRadixString(2).padLeft(16,'0');
       if (cableVelocity > 32767) {
@@ -359,10 +391,20 @@ class PowerAdvancedRepository {
         value[subCmdDataIndex_5 + 18],
       );
       data.curRightCount = value[subCmdDataIndex_5 + 19];
-      data.curRightCableLength = Tools.getTwoByteByBigEndian(
-        value[subCmdDataIndex_5 + 20],
-        value[subCmdDataIndex_5 + 21],
-      );
+      // data.curRightCableLength = Tools.getTwoByteByBigEndian(
+      //   value[subCmdDataIndex_5 + 20],
+      //   value[subCmdDataIndex_5 + 21],
+      // );
+      int rightCableLength = Tools.getTwoByteByBigEndian(value[subCmdDataIndex_5 + 20], value[subCmdDataIndex_5 + 21]);
+      String rightCableLengthStr = rightCableLength.toRadixString(2).padLeft(16,'0');
+      if (rightCableLength > 32767) {
+        rightCableLengthStr = rightCableLengthStr.replaceAll('0', '6');
+        rightCableLengthStr = rightCableLengthStr.replaceAll('1', '0');
+        rightCableLengthStr = rightCableLengthStr.replaceAll('6', '1');
+        data.curRightCableLength = -int.parse(rightCableLengthStr, radix: 2);
+      }else {
+        data.curRightCableLength = rightCableLength;
+      }
       int cableVelocity1 = Tools.getTwoByteByBigEndian(value[subCmdDataIndex_5 + 22], value[subCmdDataIndex_5 + 23]);
       String velocityStr1 = cableVelocity1.toRadixString(2).padLeft(16,'0');
       if (cableVelocity1 > 32767) {
@@ -388,8 +430,12 @@ class PowerAdvancedRepository {
   }
 
   _handleDataSport0x16(List<int> value, PowerAdvancedData data, RHBluetoothDeviceInfo deviceInfo) {
-    var data = value[subCmdDataIndex_5];
-    LogUtils.d("当前表头电机组： ${data}");
+    var group = value[subCmdDataIndex_5];
+    if (group != data.curKnobNumber) {
+      data.curKnobNumber = group;
+      bleDeviceDataController.add(BleDeviceDataMsg.dataQueryUpdate_0x16);
+      LogUtils.d("Current Sport Motor： ${data}");
+    }
   }
 
   void dispose() {

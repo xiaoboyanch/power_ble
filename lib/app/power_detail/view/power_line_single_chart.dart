@@ -29,7 +29,7 @@ class _PowerLineChartState extends State<PowerLineSingleChart> {
   }
 
   LineChartData get sampledData1 => LineChartData(
-    minY: 0,
+    minY:-300,
     maxY: 900,
     baselineY: 0,
     lineBarsData: randomLineData,

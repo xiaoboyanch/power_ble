@@ -151,6 +151,9 @@ class PowerDetailCtrl extends GetxController {
           }
           handlePress.value++;
         }
+        case BleDeviceDataMsg.dataQueryUpdate_0x16: {
+
+        }
         default: {}
       }
     });
