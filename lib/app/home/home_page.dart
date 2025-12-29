@@ -124,8 +124,8 @@ class HomePage extends GetView<HomeCtrl> {
                     padding: EdgeInsets.only(bottom: bottom + 20),
                     child: GestureDetector(
                       onTap: () {
-                        // controller.btnStartScan();
-                        Get.toNamed(RHRoute.powerDetailPage);
+                        controller.btnStartScan();
+                        // Get.toNamed(RHRoute.powerDetailPage);
                       },
                       child: Container(
                         width: 216,
