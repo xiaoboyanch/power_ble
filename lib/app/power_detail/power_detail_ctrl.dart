@@ -50,8 +50,8 @@ class PowerDetailCtrl extends GetxController {
   TextEditingController seatCtrl = TextEditingController();
 
   //side slider
-  TextEditingController leftSideCtrl = TextEditingController();
-  TextEditingController rightSideCtrl = TextEditingController();
+  // TextEditingController leftSideCtrl = TextEditingController();
+  // TextEditingController rightSideCtrl = TextEditingController();
   //standard mode
   TextEditingController standardCtrl = TextEditingController();
   //eccentric mode
@@ -80,6 +80,8 @@ class PowerDetailCtrl extends GetxController {
     super.onInit();
     powerModel = BleFactory.createModel(RHDeviceType.powerAdvanced) as PowerAdvancedModel;
     powerData = powerModel.mPowerData;
+    backCtrl.text = "0";
+    seatCtrl.text = "0";
     standardCtrl.text = "5";
     eccentricCtrl.text = "8";
     concernCtrl.text = "5";
@@ -87,6 +89,7 @@ class PowerDetailCtrl extends GetxController {
     maxCtrl.text = "10";
     springCtrl.text = "200";
     velocityCtrl.text = "200";
+    isStart.value = powerData.isStart;
     powerModel.bleDeviceStateController.stream.listen((msg) {
 
     });
@@ -322,42 +325,51 @@ class PowerDetailCtrl extends GetxController {
       switch (PowerMode.fromInt(trainingMode.value)) {
         case PowerMode.standard: {
           //standard mode
-          int power = int.parse(standardCtrl.text);
+          double data = double.parse(standardCtrl.text);
+          int power = (data * 10).toInt();
           if (power <= 0) {
             RHToast.showToast(msg: "Power must be greater than 0");
             return;
           }
-          modeData.add((power * 10)~/256);
-          modeData.add((power * 10)%256);
+          modeData.add(power ~/ 256);
+          modeData.add(power % 256);
           modeData.addAll([00,00,00,00]);
         }
         case PowerMode.eccentric: {
           //eccentric mode
-          int eccentric = int.parse(eccentricCtrl.text);
-          int concern = int.parse(concernCtrl.text);
+          // int eccentric = int.parse(eccentricCtrl.text);
+          // int concern = int.parse(concernCtrl.text);
+          double data = double.parse(eccentricCtrl.text);
+          double data2 = double.parse(concernCtrl.text);
+          int eccentric = (data * 10).toInt();
+          int concern = (data2 * 10).toInt();
           if (eccentric <= 0 || concern <= 0) {
             RHToast.showToast(msg: "Eccentric and concern must be greater than 0");
             return;
           }
-          modeData.add((eccentric * 10)~/256);
-          modeData.add((eccentric * 10)%256);
-          modeData.add((concern * 10)~/256);
-          modeData.add((concern * 10)%256);
+          modeData.add((eccentric)~/256);
+          modeData.add((eccentric)%256);
+          modeData.add((concern)~/256);
+          modeData.add((concern)%256);
           modeData.addAll([00,00]);
         }
         case PowerMode.elastic: {
           //elastic mode
-          int initial = int.parse(initialCtrl.text);
-          int max = int.parse(maxCtrl.text);
+          // int initial = int.parse(initialCtrl.text);
+          // int max = int.parse(maxCtrl.text);
+          double data = double.parse(initialCtrl.text);
+          double data2 = double.parse(maxCtrl.text);
+          int initial = (data * 10).toInt();
+          int max = (data2 * 10).toInt();
           int spring = int.parse(springCtrl.text);
           if (initial <= 0 || max <= 0 || spring <= 0) {
             RHToast.showToast(msg: "Initial, max and spring must be greater than 0");
             return;
           }
-          modeData.add((initial * 10)~/256);
-          modeData.add((initial * 10)%256);
-          modeData.add((max * 10)~/256);
-          modeData.add((max * 10)%256);
+          modeData.add((initial)~/256);
+          modeData.add((initial)%256);
+          modeData.add((max)~/256);
+          modeData.add((max)%256);
           modeData.add((spring)~/256);
           modeData.add((spring)%256);
         }

@@ -17,6 +17,8 @@ class PowerAdvancedData extends BaseDeviceData {
   ///The current group number displayed on the device's knob header.
   int curKnobNumber = 0;
 
+  int emergencyStop = 0;
+
   /// Basic maximum and minimum weight parameters for Motor Group 1
   int mainMotorCount = 2;
   int mainMaxWeightMe = 300;

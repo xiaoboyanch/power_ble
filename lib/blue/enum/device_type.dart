@@ -21,7 +21,8 @@ enum RHDeviceType {
   ///柔力机
   softPower(33),
   ///Cabina
-  powerAdvanced(34),
+  powerSony(34),
+  powerAdvanced(35),
 
   /// 心率手表
   bracelet(99);
@@ -60,6 +61,10 @@ enum RHDeviceType {
         return RHDeviceType.trainBench;
       case 33:
         return RHDeviceType.softPower;
+      case 34:
+        return RHDeviceType.powerSony;
+      case 35:
+        return RHDeviceType.powerAdvanced;
     }
     return RHDeviceType.none;
   }
@@ -76,6 +81,7 @@ enum RHDeviceType {
       //   return 'rowing_machine';
       // case RHDeviceType.bicycle:
       //   return 'indoor_bike';
+      case RHDeviceType.powerSony:
       case RHDeviceType.powerAdvanced:
       case RHDeviceType.powerBoard:
         return 'power_device';
@@ -108,6 +114,7 @@ enum RHDeviceType {
       //   return 'rowing_machine';
       // case RHDeviceType.bicycle:
       //   return 'indoor_bike';
+      case RHDeviceType.powerSony:
       case RHDeviceType.powerAdvanced:
       case RHDeviceType.powerBoard:
         return 'power_device';
@@ -141,6 +148,7 @@ enum RHDeviceType {
       //   return 'home_top_hcj';
       // case RHDeviceType.bicycle:
       //   return 'indoor_bike';
+      case RHDeviceType.powerSony:
       case RHDeviceType.powerAdvanced:
       case RHDeviceType.powerBoard:
         return 'device_power';

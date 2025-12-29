@@ -124,8 +124,8 @@ class HomePage extends GetView<HomeCtrl> {
                     padding: EdgeInsets.only(bottom: bottom + 20),
                     child: GestureDetector(
                       onTap: () {
-                        controller.btnStartScan();
-                        // Get.toNamed(RHRoute.powerDetailPage);
+                        // controller.btnStartScan();
+                        Get.toNamed(RHRoute.powerDetailPage);
                       },
                       child: Container(
                         width: 216,
@@ -138,7 +138,7 @@ class HomePage extends GetView<HomeCtrl> {
                           child: RHText(
                             fontSize: 16,
                             fontColor: RHColor.white,
-                            text: scanning ? 'Stop Scanning':'Start Scanning',
+                            textKey: scanning ? 'stop_scanning':'start_scanning',
                           ),
                         ),
                       ),

@@ -27,7 +27,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           RHText(
-            text: "Cable Position",
+            textKey: "cable_position",
             fontSize: 18,
             fontColor: RHColor.black,
           ),
@@ -82,7 +82,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
           }),
           const Gap(20),
           RHText(
-            text: "Strength Measurement",
+            textKey: "strength_measurement",
             fontSize: 18,
             fontColor: RHColor.black,
           ),
@@ -121,7 +121,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
             ):Row(
               children: [
                 SizedBox(
-                  width: MediaQuery.of(context).size.width - 130,
+                  width: MediaQuery.of(context).size.width - 133,
                   height: 100,
                   child: PowerWeightSingleChart(list1: controller.legWeight),
                 ),
@@ -288,7 +288,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                               fontColor: RHColor.black,
                             ),
                             RHText(
-                              text: "${controller.powerData.curBackDegree} Degree",
+                              text: "${controller.powerData.curBackDegree} ${"degree".tr}",
                               fontWeight: 7,
                               fontSize: 18,
                             ),
@@ -302,7 +302,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                               fontColor: RHColor.black,
                             ),
                             RHText(
-                              text: "${controller.powerData.curSeatDegree} Degree",
+                              text: "${controller.powerData.curSeatDegree} ${"degree".tr}",
                               fontWeight: 7,
                               fontSize: 18,
                             ),
@@ -378,7 +378,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                               },
                             ),
                             RHText(
-                              text: " Degree",
+                              textKey: "degree",
                               fontWeight: 7,
                               fontSize: 18,
                             ),
@@ -407,7 +407,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                               },
                             ),
                             RHText(
-                              text: " Degree",
+                              textKey: "degree",
                               fontWeight: 7,
                               fontSize: 18,
                             ),
@@ -676,7 +676,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                       if (check) {
                         controller.trainingMode.value = 3;
                       }
-                    }, child: RHText(textKey: 'strength_measurement', fontSize: 18, fontColor: RHColor.black,)),
+                    }, child: RHText(textKey: 'isokinetic_mode', fontSize: 18, fontColor: RHColor.black,)),
                     if (mode == 3)
                       Row(
                         children: [

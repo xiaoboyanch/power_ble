@@ -436,6 +436,15 @@ class PowerAdvancedRepository {
       bleDeviceDataController.add(BleDeviceDataMsg.dataQueryUpdate_0x16);
       LogUtils.d("Current Sport Motor： ${data}");
     }
+    if (value.length >= 10) {
+      var saveState = value[subCmdDataIndex_5 + 1];
+      if (data.emergencyStop != saveState) {
+        data.emergencyStop = saveState;
+        if (data.emergencyStop == 1) {
+          RHToast.showToast(msg: "${'emergency_stop'.tr}: $saveState");
+        }
+      }
+    }
   }
 
   void dispose() {

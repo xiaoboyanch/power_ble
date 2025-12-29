@@ -24,7 +24,7 @@ class PowerAdvancedModel extends BleModel {
   late PowerAdvancedRepository _repository;
   List<RHBlueScanResult> bleResultList = [];
   StreamController<BleDeviceDataMsg> get bleDeviceDataController => _repository.bleDeviceDataController;
-  List<RHDeviceType> typeList = [RHDeviceType.powerAdvanced, RHDeviceType.powerBoard, RHDeviceType.running, RHDeviceType.walking];
+  List<RHDeviceType> typeList = [RHDeviceType.powerAdvanced, RHDeviceType.powerSony];
   Timer? degreeTimer;
   Timer? paramsTimer;
   Timer? curMotorTimer;
@@ -72,7 +72,7 @@ class PowerAdvancedModel extends BleModel {
 
   startCurMotorTimer() {
     curMotorTimer?.cancel();
-    curMotorTimer = Timer.periodic(const Duration(milliseconds: 270), (timer) {
+    curMotorTimer = Timer.periodic(const Duration(milliseconds: 230), (timer) {
 
       getCurMotorData();
       LogUtils.d("AAAAAAAAA");
