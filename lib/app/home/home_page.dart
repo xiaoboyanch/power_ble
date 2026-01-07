@@ -62,6 +62,14 @@ class HomePage extends GetView<HomeCtrl> {
         title: Text('Cabina BLE'),
         backgroundColor: RHColor.primary,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Get.toNamed(RHRoute.ai);
+            },
+          ),
+        ],
         elevation: 0,
       ),
         body: Stack(
@@ -124,8 +132,8 @@ class HomePage extends GetView<HomeCtrl> {
                     padding: EdgeInsets.only(bottom: bottom + 20),
                     child: GestureDetector(
                       onTap: () {
-                        // controller.btnStartScan();
-                        Get.toNamed(RHRoute.powerDetailPage);
+                        controller.btnStartScan();
+                        // Get.toNamed(RHRoute.powerDetailPage);
                       },
                       child: Container(
                         width: 216,

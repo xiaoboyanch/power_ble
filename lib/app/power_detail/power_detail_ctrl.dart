@@ -161,6 +161,9 @@ class PowerDetailCtrl extends GetxController {
       }
     });
     startLogTimer();
+    // Timer.periodic(Duration(seconds: 2), (_) {
+    //   powerModel.setBackSeatDegree(back, seat);
+    // });
   }
 
   cleanParamData() {
