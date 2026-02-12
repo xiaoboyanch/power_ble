@@ -36,12 +36,21 @@ class PowerDetailCtrl extends GetxController {
 
   RxInt handlePress = 0.obs;
 
+  RxInt pressureFlag = 0.obs;
+
+  RxInt motorFlag = 0.obs;
+
   List<double>  leftWeight = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   List<double> rightWeight = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   List<double>  leftRope = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   List<double> rightRope = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  List<double>  leftAbsRope = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  List<double> rightAbsRope = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   List<double> legWeight = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   List<double> legRope = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  List<double> legAbsRope = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+  List<double> pressureList = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   // List<double> leftRope = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   // List<double> rightRope = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
@@ -65,6 +74,9 @@ class PowerDetailCtrl extends GetxController {
   TextEditingController velocityCtrl = TextEditingController();
   //isometric mode
   TextEditingController cableCtrl = TextEditingController();
+  //pull-up mode
+  TextEditingController pullUpCtrl = TextEditingController();
+  TextEditingController raiseHeightCtrl = TextEditingController();
 
   Timer? logTimer;
 
@@ -89,6 +101,9 @@ class PowerDetailCtrl extends GetxController {
     maxCtrl.text = "10";
     springCtrl.text = "200";
     velocityCtrl.text = "200";
+    cableCtrl.text = "500";
+    pullUpCtrl.text = "20";
+    raiseHeightCtrl.text = "20";
     isStart.value = powerData.isStart;
     powerModel.bleDeviceStateController.stream.listen((msg) {
 
@@ -105,11 +120,13 @@ class PowerDetailCtrl extends GetxController {
             //   // if (powerData.curMode != )
             // }
           }
-          if (powerData.isStart) {
-            powerModel.startParamTimer();
-          }else {
-            powerModel.stopParamTimer();
-            cleanParamData();
+          if (powerData.deviceType != RHDeviceType.powerAdvanced.value) {
+            if (powerData.isStart) {
+              powerModel.startParamTimer();
+            }else {
+              powerModel.stopParamTimer();
+              cleanParamData();
+            }
           }
           if (isStart.value) {
             if (motorType.value != powerData.curMotorGroup) {
@@ -149,13 +166,18 @@ class PowerDetailCtrl extends GetxController {
         }
         case BleDeviceDataMsg.dataQueryUpdate_0x0B: {
           //update slider
-          if (powerData.handlePress != 0) {
-            startOrStopPower();
+          if (powerData.deviceType != RHDeviceType.powerAdvanced.value) {
+            if (powerData.handlePress != 0) {
+              startOrStopPower();
+            }
           }
           handlePress.value++;
         }
         case BleDeviceDataMsg.dataQueryUpdate_0x16: {
-
+          motorFlag.value++;
+        }
+        case BleDeviceDataMsg.dataQueryUpdate_0x40: {
+          onPressureCallBack(powerData);
         }
         default: {}
       }
@@ -207,6 +229,14 @@ class PowerDetailCtrl extends GetxController {
         leftRope.removeAt(0);
         rightRope.removeAt(0);
       }
+
+      leftAbsRope.add(data.curLeftRPM.toDouble());
+      rightAbsRope.add(data.curRightRPM.toDouble());
+      if (leftAbsRope.length > 80) {
+        leftAbsRope.removeAt(0);
+        rightAbsRope.removeAt(0);
+      }
+
       leftWeight.add(data.curLeftWeight.toDouble());
       rightWeight.add(data.curRightWeight.toDouble());
       if (leftWeight.length > 80) {
@@ -215,6 +245,7 @@ class PowerDetailCtrl extends GetxController {
       }
     }else {
       legRope.add(data.legCableLength.toDouble());
+      legAbsRope.add(data.legRPM.toDouble());
       legWeight.add(data.legWeight.toDouble());
       if (legRope.length > 80) {
         legRope.removeAt(0);
@@ -222,8 +253,20 @@ class PowerDetailCtrl extends GetxController {
       if (legWeight.length > 80) {
         legWeight.removeAt(0);
       }
+      if (legAbsRope.length > 80) {
+        legAbsRope.removeAt(0);
+      }
     }
 
+    // LogUtils.d("实时配重： ${data.realTimeLeft} : ${data.realTimeRight} : ${data.leftWeightOriginal}");
+  }
+
+  onPressureCallBack(PowerAdvancedData data) {
+      pressureList.add(data.pressureSensor.toDouble());
+      if (pressureList.length > 120) {
+        pressureList.removeAt(0);
+      }
+      pressureFlag.value++;
     // LogUtils.d("实时配重： ${data.realTimeLeft} : ${data.realTimeRight} : ${data.leftWeightOriginal}");
   }
 
@@ -320,6 +363,20 @@ class PowerDetailCtrl extends GetxController {
           modeData.add((cable)%256);
           modeData.addAll([00,00,00,00]);
         }
+        case PowerMode.pullUp: {
+          //pull-up mode
+          int assist = int.parse(pullUpCtrl.text);
+          if (assist <= 0) {
+            RHToast.showToast(msg: "assist must be greater than 0");
+            return;
+          }
+          int raise = int.parse(raiseHeightCtrl.text);
+          modeData.add((assist)~/256);
+          modeData.add((assist)%256);
+          modeData.add((raise)~/256);
+          modeData.add((raise)%256);
+          modeData.addAll([00,00]);
+        }
       }
       powerModel.setPowerMode(motorType.value, 0, powerData.curMode.value, modeData);
     }else {
@@ -398,6 +455,19 @@ class PowerDetailCtrl extends GetxController {
           modeData.add((cable)%256);
           modeData.addAll([00,00,00,00]);
         }
+        case PowerMode.pullUp: {
+          //pull-up mode
+          int assist = int.parse(pullUpCtrl.text);
+          if (assist <= 0) {
+            RHToast.showToast(msg: "assist must be greater than 0");
+            return;
+          }
+          int raise = int.parse(raiseHeightCtrl.text);
+          modeData.add((assist)~/256);
+          modeData.add((assist)%256);
+          modeData.add(raise);
+          modeData.addAll([00,00,00,00,00]);
+        }
       }
       powerModel.setPowerMode(motorType.value, 1, trainingMode.value, modeData);
     }
@@ -423,6 +493,10 @@ class PowerDetailCtrl extends GetxController {
       }
       case PowerMode.isometric: {
         return "${"cable_length".tr}: ${powerData.modeCableLength} mm";
+      }
+      case  PowerMode.pullUp: {
+        //pull-up mode
+        return "${"assist_value".tr}: ${(powerData.assistValue/ 10).toStringAsFixed(1)} ${powerData.unitStr()} \n ${"上升高度："} ${powerData.raiseHeight}";
       }
     }
   }

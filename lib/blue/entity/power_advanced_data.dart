@@ -89,6 +89,9 @@ class PowerAdvancedData extends BaseDeviceData {
   int modeLinearVelocity = 0;
   /// isometric parameters
   int modeCableLength = 0;
+  ///引体向上
+  int assistValue = 0;
+  int raiseHeight = 0;
 
   ///Real-time weight on the left
   int curLeftWeight = 0;
@@ -108,6 +111,8 @@ class PowerAdvancedData extends BaseDeviceData {
   int legCableLength = 0;
   int legLinearVelocity = 0;
   int legRPM = 0;
+
+  int pressureSensor = 0;
 
   ///handle button press
   int handlePress = 0;

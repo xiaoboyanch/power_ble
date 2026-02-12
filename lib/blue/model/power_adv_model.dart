@@ -46,7 +46,9 @@ class PowerAdvancedModel extends BleModel {
           startSendTimer();
           startDegreeTimer();
           startCurMotorTimer();
-          // startParamTimer();
+          if (mPowerData.deviceType == RHDeviceType.powerAdvanced.value) {
+            startParamTimer();
+          }
         }
         case BleDeviceStateMsg.bleBleReConnect: {
 
@@ -59,22 +61,28 @@ class PowerAdvancedModel extends BleModel {
   bool handleCounter = false;
   startDegreeTimer() {
     degreeTimer?.cancel();
-    degreeTimer = Timer.periodic(const Duration(milliseconds: 190), (timer) {
-      if (handleCounter) {
+    degreeTimer = Timer.periodic(const Duration(milliseconds: 300), (timer) {
+      // if (handleCounter) {
         getBackSeatDegree();
-        handleCounter = false;
-      } else {
-        getHandleKey();
-        handleCounter = true;
-      }
+      //   handleCounter = false;
+      // } else {
+      //   getHandleKey();
+      //   handleCounter = true;
+      // }
     });
   }
 
   startCurMotorTimer() {
     curMotorTimer?.cancel();
-    curMotorTimer = Timer.periodic(const Duration(milliseconds: 230), (timer) {
+    curMotorTimer = Timer.periodic(const Duration(milliseconds: 210), (timer) {
 
-      getCurMotorData();
+      if (handleCounter) {
+        getCurMotorData();
+        handleCounter = false;
+      } else {
+        getHandleKey();
+        handleCounter = true;
+      }
       LogUtils.d("AAAAAAAAA");
     });
   }
@@ -169,12 +177,16 @@ class PowerAdvancedModel extends BleModel {
   //     }
   //   }
   // }
+  List<int> _buffer = []; // 添加缓冲区
 
   @override
   notifyCharacteristicValue(List<int> event) {
-
+    // 将新接收到的数据追加到缓冲区
+    _buffer.addAll(event);
     // 处理粘包数据
-    List<List<int>> packets = splitPackets(event);
+    // List<List<int>> packets = splitPackets(event);
+    // 处理缓冲区中的数据包
+    List<List<int>> packets = splitPackets(_buffer);
 
     for (List<int> packet in packets) {
       if (packet.length > 5) {
@@ -184,6 +196,9 @@ class PowerAdvancedModel extends BleModel {
         }
       }
     }
+
+    // 保留未完成的数据包在缓冲区中
+    _buffer = _getRemainingBuffer(_buffer, packets);
   }
 
   List<List<int>> splitPackets(List<int> rawData) {
@@ -193,11 +208,11 @@ class PowerAdvancedModel extends BleModel {
     while (start < rawData.length) {
       // 查找包头 F5
       int headIndex = rawData.indexOf(0xF5, start);
-      if (headIndex == -1) break;
+      if (headIndex == -1) break; // 没找到包头，跳出循环
 
       // 查找从包头开始的包尾 FA
       int tailIndex = rawData.indexOf(0xFA, headIndex);
-      if (tailIndex == -1) break;
+      if (tailIndex == -1) break; // 没找到包尾，跳出循环，等待更多数据
 
       // 提取完整数据包
       List<int> packet = rawData.sublist(headIndex, tailIndex + 1);
@@ -209,6 +224,70 @@ class PowerAdvancedModel extends BleModel {
 
     return packets;
   }
+
+  // 获取剩余未处理的数据（不完整的包）
+  List<int> _getRemainingBuffer(List<int> originalData, List<List<int>> extractedPackets) {
+    if (extractedPackets.isEmpty) {
+      return originalData; // 如果没有提取出任何完整包，返回原始数据
+    }
+
+    // 找到最后一个完整包的位置
+    int lastPacketEndIndex = 0;
+    for (List<int> packet in extractedPackets) {
+      int index = _findSublistEndIndex(originalData, packet, lastPacketEndIndex);
+      if (index != -1) {
+        lastPacketEndIndex = index;
+      }
+    }
+
+    // 返回未处理的数据部分
+    if (lastPacketEndIndex < originalData.length) {
+      return originalData.sublist(lastPacketEndIndex);
+    }
+
+    return [];
+  }
+
+  // 辅助方法：查找子列表在原列表中的结束索引
+  int _findSublistEndIndex(List<int> list, List<int> sublist, int startIndex) {
+    for (int i = startIndex; i <= list.length - sublist.length; i++) {
+      bool found = true;
+      for (int j = 0; j < sublist.length; j++) {
+        if (list[i + j] != sublist[j]) {
+          found = false;
+          break;
+        }
+      }
+      if (found) {
+        return i + sublist.length;
+      }
+    }
+    return -1;
+  }
+
+  // List<List<int>> splitPackets(List<int> rawData) {
+  //   List<List<int>> packets = [];
+  //   int start = 0;
+  //
+  //   while (start < rawData.length) {
+  //     // 查找包头 F5
+  //     int headIndex = rawData.indexOf(0xF5, start);
+  //     if (headIndex == -1) break;
+  //
+  //     // 查找从包头开始的包尾 FA
+  //     int tailIndex = rawData.indexOf(0xFA, headIndex);
+  //     if (tailIndex == -1) break;
+  //
+  //     // 提取完整数据包
+  //     List<int> packet = rawData.sublist(headIndex, tailIndex + 1);
+  //     packets.add(packet);
+  //
+  //     // 更新下次查找的起始位置
+  //     start = tailIndex + 1;
+  //   }
+  //
+  //   return packets;
+  // }
 
   @override
   void sendMessage(BleDeviceStateMsg msg) {
@@ -272,6 +351,7 @@ class PowerAdvancedModel extends BleModel {
     degreeTimer = null;
     disconnectDevice(clean:  true);
     disposeConnect();
+    _buffer.clear();
   }
 
 }

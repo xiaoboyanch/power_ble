@@ -48,6 +48,8 @@
   "stop_scanning": "Stop Scanning",
   "start_scanning": "Start Scanning",
   "emergency_stop": "Emergency Stop",
+  "pull_up_mode": "Pull-up Assist Mode",
+  "assist_value": "Assist Value: ",
 
   "device_type": "Device Type: ",
   "device_code": "Device Code: ",
