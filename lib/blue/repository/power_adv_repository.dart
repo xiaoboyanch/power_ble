@@ -253,6 +253,13 @@ class PowerAdvancedRepository {
       value[subCmdDataIndex_5 + 3],
           (val) => data.curRightArmSwing = val,
     );
+    if (value.length >= 13) {
+      data.pressureSensor = Tools.getTwoByteByBigEndian(
+        value[subCmdDataIndex_5 + 4],
+        value[subCmdDataIndex_5 + 5],
+      );
+      bleDeviceDataController.add(BleDeviceDataMsg.dataQueryUpdate_0x40);
+    }
 
     if (hasChanged) {
       bleDeviceDataController.add(BleDeviceDataMsg.dateQueryUpdate_0x12);
@@ -298,6 +305,12 @@ class PowerAdvancedRepository {
           value[subCmdDataIndex_5],
           value[subCmdDataIndex_5 + 1],
         );
+      case PowerMode.pullUp:
+        data.assistValue = Tools.getTwoByteByBigEndian(
+          value[subCmdDataIndex_5],
+          value[subCmdDataIndex_5 + 1],
+        );
+        data.raiseHeight = value[subCmdDataIndex_5 + 3];
     }
 
     // if (data.curMotorGroup == 0) return;
@@ -345,6 +358,9 @@ class PowerAdvancedRepository {
       }
     }
     else {
+      if (value.length <= 24) {
+        return;
+      }
       data.curLeftWeight = Tools.getTwoByteByBigEndian(
         value[subCmdDataIndex_5 + 7],
         value[subCmdDataIndex_5 + 8],
@@ -430,12 +446,7 @@ class PowerAdvancedRepository {
   }
 
   _handleDataSport0x16(List<int> value, PowerAdvancedData data, RHBluetoothDeviceInfo deviceInfo) {
-    var group = value[subCmdDataIndex_5];
-    if (group != data.curKnobNumber) {
-      data.curKnobNumber = group;
-      bleDeviceDataController.add(BleDeviceDataMsg.dataQueryUpdate_0x16);
-      LogUtils.d("Current Sport Motor： ${data}");
-    }
+    LogUtils.d("急停： ${Tools.getNiceHexArray(value)}");
     if (value.length >= 10) {
       var saveState = value[subCmdDataIndex_5 + 1];
       if (data.emergencyStop != saveState) {
@@ -443,8 +454,17 @@ class PowerAdvancedRepository {
         if (data.emergencyStop == 1) {
           RHToast.showToast(msg: "${'emergency_stop'.tr}: $saveState");
         }
+        bleDeviceDataController.add(BleDeviceDataMsg.dataQueryUpdate_0x16);
       }
     }
+
+    var group = value[subCmdDataIndex_5];
+    if (group != data.curKnobNumber) {
+      data.curKnobNumber = group;
+      bleDeviceDataController.add(BleDeviceDataMsg.dataQueryUpdate_0x16);
+      LogUtils.d("Current Sport Motor： ${data}");
+    }
+
   }
 
   void dispose() {

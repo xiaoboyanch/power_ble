@@ -1,6 +1,7 @@
 import 'package:cabina_ble/route/rh_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
@@ -14,6 +15,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await RHCache.init();
   await i18n.getInstance().init();
+  await dotenv.load(fileName: ".env",);
   BleManager.instance.init();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp, // 只允许竖屏

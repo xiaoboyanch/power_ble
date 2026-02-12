@@ -32,6 +32,8 @@
   "linear_velocity": "Linear Velocity：",
   "isometric_mode": "Isometric Mode",
   "cable_length": "Cable Length：",
+  "pull_up_mode": "Pull-up Assist Mode",
+  "assist_value": "Assist Value: ",
   "start": "Start",
   "stop": "Stop",
   "counts": "Counts:",

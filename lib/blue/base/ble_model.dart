@@ -50,7 +50,7 @@ abstract class BleModel {
   List<LogDTO> logList = [];
 
   static const int MAX_SEND_COUNT = 9;
-  static const int SEND_DURATION = 470; // 500毫秒
+  static const int SEND_DURATION = 300; // 500毫秒
 
   var _connectCount = 0;
   var scanSize = 0;

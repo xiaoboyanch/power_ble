@@ -30,7 +30,7 @@
   "spring_length": "绳长：",
   "isokinetic_mode": "等速模式",
   "linear_velocity": "线速度：",
-  "isometric_mode": "Isometric Mode",
+  "isometric_mode": "等长模式",
   "cable_length": "绳长：",
   "start": "开始",
   "stop": "停止",
@@ -48,7 +48,8 @@
   "stop_scanning": "停止扫码",
   "start_scanning": "开始扫描",
   "emergency_stop": "急停按钮",
-
+  "pull_up_mode": "引体向上助力模式",
+  "assist_value": "助力值: ",
 
   "device_type": "设备类型: ",
   "device_code": "机型码: ",

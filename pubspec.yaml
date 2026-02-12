@@ -49,6 +49,9 @@ dependencies:
   flutter_easyloading: 3.0.5
   gap: ^3.0.1
   pull_to_refresh: ^2.0.0
+  flutter_dotenv: ^6.0.0
+  http: ^1.6.0
+  flutter_markdown_plus: ^1.0.7
 
 dev_dependencies:
   flutter_test:
@@ -75,6 +78,7 @@ flutter:
   assets:
     - assets/img/
     - assets/i18n/
+    - .env
 
   fonts:
     - family: fontNumber

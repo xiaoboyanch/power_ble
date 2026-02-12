@@ -1,5 +1,6 @@
 import 'package:cabina_ble/app/power_detail/power_detail_ctrl.dart';
 import 'package:cabina_ble/app/power_detail/view/message_dialog.dart';
+import 'package:cabina_ble/app/power_detail/view/power_gravity_chart.dart';
 import 'package:cabina_ble/app/power_detail/view/power_line_chart.dart';
 import 'package:cabina_ble/app/power_detail/view/power_line_single_chart.dart';
 import 'package:cabina_ble/app/power_detail/view/power_weight_chart.dart';
@@ -27,7 +28,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           RHText(
-            textKey: "cable_position",
+            text: "相对绳长",
             fontSize: 18,
             fontColor: RHColor.black,
           ),
@@ -73,6 +74,61 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                 const Gap(10),
                 RHText(
                   text: "Leg: ${controller.powerModel.mPowerData.legCableLength}mm",
+                  fontSize: 18,
+                  fontColor: RHColor.line_1,
+                  fontWeight: 7,
+                )
+              ],
+            );
+          }),
+          const Gap(20),
+          RHText(
+            text: "绝对绳长",
+            fontSize: 18,
+            fontColor: RHColor.black,
+          ),
+          Obx(() {
+            int flag = controller.paramUpdate.value;
+            return controller.motorType.value != 2 ? Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width - 130,
+                  height: 100,
+                  child: PowerLineChart(list1: controller.leftAbsRope, list2: controller.rightAbsRope,),
+                ),
+                const Gap(10),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RHText(
+                      text: "L ${controller.powerModel.mPowerData.curLeftRPM}mm",
+                      fontSize: 18,
+                      fontColor: RHColor.line_1,
+                      fontWeight: 7,
+                    ),
+                    const Gap(10),
+                    RHText(
+                      text: "R ${controller.powerModel.mPowerData.curRightRPM}mm",
+                      fontSize: 18,
+                      fontColor: RHColor.line_2,
+                      fontWeight: 7,
+                    ),
+                  ],
+                )
+              ],
+            ):Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width - 130,
+                  height: 100,
+                  child: PowerLineSingleChart(list1: controller.legAbsRope),
+                ),
+                const Gap(10),
+                RHText(
+                  text: "Leg: ${controller.powerModel.mPowerData.legRPM}mm",
                   fontSize: 18,
                   fontColor: RHColor.line_1,
                   fontWeight: 7,
@@ -704,6 +760,103 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                           const Gap(20),
                         ],
                       ),
+                    CheckboxMenuButton(value: mode == 4, onChanged: (value) {
+                      bool check = value ?? false;
+                      if (check) {
+                        controller.trainingMode.value = 4;
+                      }
+                    }, child: RHText(textKey: 'isometric_mode', fontSize: 18, fontColor: RHColor.black,)),
+                    if (mode == 4)
+                      Row(
+                        children: [
+                          const Gap(40),
+                          RHText(textKey: 'cable_length', fontSize: 18, fontColor: RHColor.black,),
+                          const Spacer(),
+                          RHTextInput(
+                            text: controller.cableCtrl.text,
+                            textCtrl: controller.cableCtrl,
+                            width: 80,
+                            height: 40,
+                            isPassword: false,
+                            isPhone: true,
+                            radius: 10,
+                            backColor: RHColor.greyF0,
+                            onChange: (ctrl, value) {
+                              return null;
+                            },
+                          ),
+                          RHText(
+                            text: "mm",
+                            fontWeight: 7,
+                            fontSize: 18,
+                          ),
+                          const Gap(20),
+                        ],
+                      ),
+                    CheckboxMenuButton(value: mode == 10, onChanged: (value) {
+                      bool check = value ?? false;
+                      if (check) {
+                        controller.trainingMode.value = 10;
+                      }
+                    }, child: RHText(textKey: 'pull_up_mode', fontSize: 18, fontColor: RHColor.black,)),
+                    if (mode == 10)
+                      Column(
+                        children: [
+                          Row(
+                            children: [
+                              const Gap(40),
+                              RHText(textKey: 'assist_value', fontSize: 18, fontColor: RHColor.black,),
+                              const Spacer(),
+                              RHTextInput(
+                                text: controller.pullUpCtrl.text,
+                                textCtrl: controller.pullUpCtrl,
+                                width: 80,
+                                height: 40,
+                                isPassword: false,
+                                isPhone: true,
+                                radius: 10,
+                                backColor: RHColor.greyF0,
+                                onChange: (ctrl, value) {
+                                  return null;
+                                },
+                              ),
+                              RHText(
+                                text: controller.getUnitStr(),
+                                fontWeight: 7,
+                                fontSize: 18,
+                              ),
+                              const Gap(20),
+                            ],
+                          ),
+                          const Gap(10),
+                          Row(
+                            children: [
+                              const Gap(40),
+                              RHText(textKey: '上升高度', fontSize: 18, fontColor: RHColor.black,),
+                              const Spacer(),
+                              RHTextInput(
+                                text: controller.raiseHeightCtrl.text,
+                                textCtrl: controller.raiseHeightCtrl,
+                                width: 80,
+                                height: 40,
+                                isPassword: false,
+                                isPhone: true,
+                                radius: 10,
+                                backColor: RHColor.greyF0,
+                                onChange: (ctrl, value) {
+                                  return null;
+                                },
+                              ),
+                              RHText(
+                                text: "cm",
+                                fontWeight: 7,
+                                fontSize: 18,
+                              ),
+                              const Gap(20),
+                            ],
+                          ),
+                        ],
+                      ),
                   ],
                 );
               }),
@@ -740,6 +893,15 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                   fontSize: 18,
                   fontWeight: 6,
                   text: "${"remote_button_press".tr}: ${controller.powerData.handlePress}",
+                );
+              }),
+              Obx(() {
+                int motorFlag = controller.motorFlag.value;
+                return RHText(
+                  fontColor: RHColor.black,
+                  fontSize: 18,
+                  fontWeight: 6,
+                  text: "机箱电机组：: ${controller.powerData.handlePress} ： 急停： ${controller.powerData.emergencyStop}",
                 );
               }),
               const Gap(20),
@@ -859,6 +1021,33 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                         ),
                       ],
                     ),
+                  ],
+                );
+              }),
+              const Gap(10),
+              RHText(
+                text: '压力传感',
+                fontSize: 20,
+                fontWeight: 7,
+              ),
+              const Gap(10),
+              Obx(() {
+                int status = controller.pressureFlag.value;
+                return Row(
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width - 133,
+                      height: 150,
+                      child: PowerGravityChart(list1: controller.pressureList),
+                    ),
+                    const Gap(10),
+                    RHText(
+                      text: "压力: ${(controller.powerModel.mPowerData.pressureSensor / 10).toStringAsFixed(1)}",
+                      // text: "L 0${controller.getUnitStr()}",
+                      fontSize: 16,
+                      fontColor: RHColor.line_1,
+                      fontWeight: 7,
+                    )
                   ],
                 );
               }),

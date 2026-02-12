@@ -5,7 +5,8 @@ enum PowerMode {
   eccentric(1),
   elastic(2),
   isokinetic(3),
-  isometric(4);
+  isometric(4),
+  pullUp(10);
 
   final int value;
 
@@ -24,6 +25,8 @@ enum PowerMode {
         return isokinetic;
       case 4:
         return isometric;
+      case 10:
+        return pullUp;
       default:
         return standard;
     }
@@ -41,6 +44,8 @@ enum PowerMode {
         return "strength_measurement";
       case isometric:
         return "isometric_mode";
+      case pullUp:
+        return "pull_up_mode";
     }
   }
 }
