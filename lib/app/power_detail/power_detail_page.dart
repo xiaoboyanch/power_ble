@@ -28,7 +28,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           RHText(
-            text: "相对绳长",
+            text: "Relative Rope Length",
             fontSize: 18,
             fontColor: RHColor.black,
           ),
@@ -83,7 +83,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
           }),
           const Gap(20),
           RHText(
-            text: "绝对绳长",
+            text: "Absolute Rope Length",
             fontSize: 18,
             fontColor: RHColor.black,
           ),
@@ -760,103 +760,103 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                           const Gap(20),
                         ],
                       ),
-                    CheckboxMenuButton(value: mode == 4, onChanged: (value) {
-                      bool check = value ?? false;
-                      if (check) {
-                        controller.trainingMode.value = 4;
-                      }
-                    }, child: RHText(textKey: 'isometric_mode', fontSize: 18, fontColor: RHColor.black,)),
-                    if (mode == 4)
-                      Row(
-                        children: [
-                          const Gap(40),
-                          RHText(textKey: 'cable_length', fontSize: 18, fontColor: RHColor.black,),
-                          const Spacer(),
-                          RHTextInput(
-                            text: controller.cableCtrl.text,
-                            textCtrl: controller.cableCtrl,
-                            width: 80,
-                            height: 40,
-                            isPassword: false,
-                            isPhone: true,
-                            radius: 10,
-                            backColor: RHColor.greyF0,
-                            onChange: (ctrl, value) {
-                              return null;
-                            },
-                          ),
-                          RHText(
-                            text: "mm",
-                            fontWeight: 7,
-                            fontSize: 18,
-                          ),
-                          const Gap(20),
-                        ],
-                      ),
-                    CheckboxMenuButton(value: mode == 10, onChanged: (value) {
-                      bool check = value ?? false;
-                      if (check) {
-                        controller.trainingMode.value = 10;
-                      }
-                    }, child: RHText(textKey: 'pull_up_mode', fontSize: 18, fontColor: RHColor.black,)),
-                    if (mode == 10)
-                      Column(
-                        children: [
-                          Row(
-                            children: [
-                              const Gap(40),
-                              RHText(textKey: 'assist_value', fontSize: 18, fontColor: RHColor.black,),
-                              const Spacer(),
-                              RHTextInput(
-                                text: controller.pullUpCtrl.text,
-                                textCtrl: controller.pullUpCtrl,
-                                width: 80,
-                                height: 40,
-                                isPassword: false,
-                                isPhone: true,
-                                radius: 10,
-                                backColor: RHColor.greyF0,
-                                onChange: (ctrl, value) {
-                                  return null;
-                                },
-                              ),
-                              RHText(
-                                text: controller.getUnitStr(),
-                                fontWeight: 7,
-                                fontSize: 18,
-                              ),
-                              const Gap(20),
-                            ],
-                          ),
-                          const Gap(10),
-                          Row(
-                            children: [
-                              const Gap(40),
-                              RHText(textKey: '上升高度', fontSize: 18, fontColor: RHColor.black,),
-                              const Spacer(),
-                              RHTextInput(
-                                text: controller.raiseHeightCtrl.text,
-                                textCtrl: controller.raiseHeightCtrl,
-                                width: 80,
-                                height: 40,
-                                isPassword: false,
-                                isPhone: true,
-                                radius: 10,
-                                backColor: RHColor.greyF0,
-                                onChange: (ctrl, value) {
-                                  return null;
-                                },
-                              ),
-                              RHText(
-                                text: "cm",
-                                fontWeight: 7,
-                                fontSize: 18,
-                              ),
-                              const Gap(20),
-                            ],
-                          ),
-                        ],
-                      ),
+                    // CheckboxMenuButton(value: mode == 4, onChanged: (value) {
+                    //   bool check = value ?? false;
+                    //   if (check) {
+                    //     controller.trainingMode.value = 4;
+                    //   }
+                    // }, child: RHText(textKey: 'isometric_mode', fontSize: 18, fontColor: RHColor.black,)),
+                    // if (mode == 4)
+                    //   Row(
+                    //     children: [
+                    //       const Gap(40),
+                    //       RHText(textKey: 'cable_length', fontSize: 18, fontColor: RHColor.black,),
+                    //       const Spacer(),
+                    //       RHTextInput(
+                    //         text: controller.cableCtrl.text,
+                    //         textCtrl: controller.cableCtrl,
+                    //         width: 80,
+                    //         height: 40,
+                    //         isPassword: false,
+                    //         isPhone: true,
+                    //         radius: 10,
+                    //         backColor: RHColor.greyF0,
+                    //         onChange: (ctrl, value) {
+                    //           return null;
+                    //         },
+                    //       ),
+                    //       RHText(
+                    //         text: "mm",
+                    //         fontWeight: 7,
+                    //         fontSize: 18,
+                    //       ),
+                    //       const Gap(20),
+                    //     ],
+                    //   ),
+                    // CheckboxMenuButton(value: mode == 10, onChanged: (value) {
+                    //   bool check = value ?? false;
+                    //   if (check) {
+                    //     controller.trainingMode.value = 10;
+                    //   }
+                    // }, child: RHText(textKey: 'pull_up_mode', fontSize: 18, fontColor: RHColor.black,)),
+                    // if (mode == 10)
+                    //   Column(
+                    //     children: [
+                    //       Row(
+                    //         children: [
+                    //           const Gap(40),
+                    //           RHText(textKey: 'assist_value', fontSize: 18, fontColor: RHColor.black,),
+                    //           const Spacer(),
+                    //           RHTextInput(
+                    //             text: controller.pullUpCtrl.text,
+                    //             textCtrl: controller.pullUpCtrl,
+                    //             width: 80,
+                    //             height: 40,
+                    //             isPassword: false,
+                    //             isPhone: true,
+                    //             radius: 10,
+                    //             backColor: RHColor.greyF0,
+                    //             onChange: (ctrl, value) {
+                    //               return null;
+                    //             },
+                    //           ),
+                    //           RHText(
+                    //             text: controller.getUnitStr(),
+                    //             fontWeight: 7,
+                    //             fontSize: 18,
+                    //           ),
+                    //           const Gap(20),
+                    //         ],
+                    //       ),
+                    //       const Gap(10),
+                    //       Row(
+                    //         children: [
+                    //           const Gap(40),
+                    //           RHText(textKey: '上升高度', fontSize: 18, fontColor: RHColor.black,),
+                    //           const Spacer(),
+                    //           RHTextInput(
+                    //             text: controller.raiseHeightCtrl.text,
+                    //             textCtrl: controller.raiseHeightCtrl,
+                    //             width: 80,
+                    //             height: 40,
+                    //             isPassword: false,
+                    //             isPhone: true,
+                    //             radius: 10,
+                    //             backColor: RHColor.greyF0,
+                    //             onChange: (ctrl, value) {
+                    //               return null;
+                    //             },
+                    //           ),
+                    //           RHText(
+                    //             text: "cm",
+                    //             fontWeight: 7,
+                    //             fontSize: 18,
+                    //           ),
+                    //           const Gap(20),
+                    //         ],
+                    //       ),
+                    //     ],
+                    //   ),
                   ],
                 );
               }),
@@ -901,7 +901,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                   fontColor: RHColor.black,
                   fontSize: 18,
                   fontWeight: 6,
-                  text: "机箱电机组：: ${controller.powerData.handlePress} ： 急停： ${controller.powerData.emergencyStop}",
+                  text: "Motor Assembly ：: ${controller.powerData.handlePress} \n Emergency Stop： ${controller.powerData.emergencyStop}",
                 );
               }),
               const Gap(20),
@@ -1025,32 +1025,32 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                 );
               }),
               const Gap(10),
-              RHText(
-                text: '压力传感',
-                fontSize: 20,
-                fontWeight: 7,
-              ),
-              const Gap(10),
-              Obx(() {
-                int status = controller.pressureFlag.value;
-                return Row(
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width - 133,
-                      height: 150,
-                      child: PowerGravityChart(list1: controller.pressureList),
-                    ),
-                    const Gap(10),
-                    RHText(
-                      text: "压力: ${(controller.powerModel.mPowerData.pressureSensor / 10).toStringAsFixed(1)}",
-                      // text: "L 0${controller.getUnitStr()}",
-                      fontSize: 16,
-                      fontColor: RHColor.line_1,
-                      fontWeight: 7,
-                    )
-                  ],
-                );
-              }),
+              // RHText(
+              //   text: '压力传感',
+              //   fontSize: 20,
+              //   fontWeight: 7,
+              // ),
+              // const Gap(10),
+              // Obx(() {
+              //   int status = controller.pressureFlag.value;
+              //   return Row(
+              //     children: [
+              //       SizedBox(
+              //         width: MediaQuery.of(context).size.width - 133,
+              //         height: 150,
+              //         child: PowerGravityChart(list1: controller.pressureList),
+              //       ),
+              //       const Gap(10),
+              //       RHText(
+              //         text: "压力: ${(controller.powerModel.mPowerData.pressureSensor / 10).toStringAsFixed(1)}",
+              //         // text: "L 0${controller.getUnitStr()}",
+              //         fontSize: 16,
+              //         fontColor: RHColor.line_1,
+              //         fontWeight: 7,
+              //       )
+              //     ],
+              //   );
+              // }),
               const Gap(10),
               Obx(() {
                   int status = controller.statusType.value;
