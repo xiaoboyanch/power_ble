@@ -500,6 +500,53 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                 ],
               ),
               const Gap(10),
+              Obx(() {
+                int flag = controller.unitFlag.value;
+                return Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        controller.setBackSeatDegree();
+                      },
+                      child: Container(
+                          width: 70,
+                          height: 40,
+                          decoration: BoxDecoration(
+                              color: controller.powerData.unit == 0 ? RHColor.primary : RHColor.white,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Center(
+                            child: RHText(
+                              text: "公制",
+                              fontColor: RHColor.black,
+                              fontSize: 16,
+                            ),
+                          )
+                      ),
+                    ),
+                    const Gap(30),
+                    GestureDetector(
+                      onTap: () {
+                        controller.setBackSeatDegree();
+                      },
+                      child: Container(
+                          width: 70,
+                          height: 40,
+                          decoration: BoxDecoration(
+                              color: controller.powerData.unit == 1 ? RHColor.primary : RHColor.white,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Center(
+                            child: RHText(
+                              text: "英制",
+                              fontColor: RHColor.black,
+                              fontSize: 16,
+                            ),
+                          )
+                      ),
+                    ),
+                  ],
+                );
+              }),
+              const Gap(10),
               RHText(
                 textKey: 'training_mode',
                 fontSize: 20,

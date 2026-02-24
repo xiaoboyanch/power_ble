@@ -319,7 +319,7 @@ class PowerAdvancedModel extends BleModel {
   }
 
   setUnit(bool isKG) {
-    mCmdData.add(PowerCommands.getDeviceConfig(isKG));
+    sendCmd(PowerCommands.getDeviceConfig(isKG));
   }
 
   setPowerMode(int motorNumber, int status, int mode, List<int> modeList) {

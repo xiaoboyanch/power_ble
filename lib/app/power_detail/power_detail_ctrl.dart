@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 
 import '../../blue/entity/power_device_data.dart';
 import '../../blue/enum/ble_device_data_msg.dart';
+import '../../blue/enum/ble_device_state_msg.dart';
 import '../../blue/enum/device_type.dart';
 import '../../blue/factory/ble_factory.dart';
 
@@ -39,6 +40,8 @@ class PowerDetailCtrl extends GetxController {
   RxInt pressureFlag = 0.obs;
 
   RxInt motorFlag = 0.obs;
+
+  RxInt unitFlag = 0.obs;
 
   List<double>  leftWeight = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   List<double> rightWeight = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -106,7 +109,13 @@ class PowerDetailCtrl extends GetxController {
     raiseHeightCtrl.text = "20";
     isStart.value = powerData.isStart;
     powerModel.bleDeviceStateController.stream.listen((msg) {
-
+      switch (msg) {
+        case BleDeviceStateMsg.deviceUnitState: {
+          unitFlag.value++;
+        }
+        default: {
+        }
+      }
     });
     powerModel.bleDeviceDataController.stream.listen((msg) {
       switch (msg) {
@@ -280,6 +289,12 @@ class PowerDetailCtrl extends GetxController {
 
   getUnitStr() {
     return powerData.unit == 0 ? "KG" : "LB";
+  }
+
+  setUnit(int unit) {
+    powerModel.setUnit(unit == 0 ? true : false);
+    powerData.unit = unit;
+    unitFlag.value++;
   }
 
   setBackSeatDegree() {
