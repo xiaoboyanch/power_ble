@@ -41,7 +41,7 @@ enum PowerMode {
       case elastic:
         return "elastic_mode";
       case isokinetic:
-        return "strength_measurement";
+        return "isokinetic_mode";
       case isometric:
         return "isometric_mode";
       case pullUp:

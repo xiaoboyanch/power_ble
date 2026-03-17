@@ -66,7 +66,8 @@ class HomePage extends GetView<HomeCtrl> {
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
-              Get.toNamed(RHRoute.ai);
+              // Get.toNamed(RHRoute.ai);
+
             },
           ),
         ],

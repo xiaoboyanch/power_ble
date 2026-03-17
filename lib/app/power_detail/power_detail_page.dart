@@ -16,6 +16,7 @@ import 'package:get/get.dart';
 
 import '../../base_views/rh_colors.dart';
 import '../../blue/entity/power_advanced_data.dart';
+import '../../route/rh_route.dart';
 
 class PowerDetailPage extends GetView<PowerDetailCtrl> {
   @override
@@ -239,6 +240,11 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
             child: IconButton(onPressed: () {
               MessageDialog.showMessageDialog(context, controller.powerData);
             }, icon: Icon(Icons.message_outlined)),
+          ),
+          Center(
+            child: IconButton(onPressed: () {
+              Get.toNamed(RHRoute.otaPage);
+            }, icon: Icon(Icons.upcoming_rounded)),
           ),
         ],
         elevation: 0,
@@ -506,7 +512,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        controller.setBackSeatDegree();
+                        controller.setUnit(0, controller.powerData.pullUpLock);
                       },
                       child: Container(
                           width: 70,
@@ -526,7 +532,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                     const Gap(30),
                     GestureDetector(
                       onTap: () {
-                        controller.setBackSeatDegree();
+                        controller.setUnit(1, controller.powerData.pullUpLock);
                       },
                       child: Container(
                           width: 70,
@@ -537,6 +543,46 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                           child: Center(
                             child: RHText(
                               text: "英制",
+                              fontColor: RHColor.black,
+                              fontSize: 16,
+                            ),
+                          )
+                      ),
+                    ),
+                    const Gap(30),
+                    GestureDetector(
+                      onTap: () {
+                        controller.setUnit(controller.powerData.unit, 1);
+                      },
+                      child: Container(
+                          width: 70,
+                          height: 40,
+                          decoration: BoxDecoration(
+                              color: controller.powerData.pullUpLock == 1 ? RHColor.primary : RHColor.white,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Center(
+                            child: RHText(
+                              text: "引体解锁",
+                              fontColor: RHColor.black,
+                              fontSize: 16,
+                            ),
+                          )
+                      ),
+                    ),
+                    const Gap(30),
+                    GestureDetector(
+                      onTap: () {
+                        controller.setUnit(controller.powerData.unit, 0);
+                      },
+                      child: Container(
+                          width: 90,
+                          height: 40,
+                          decoration: BoxDecoration(
+                              color: controller.powerData.pullUpLock == 0 ? RHColor.primary : RHColor.white,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Center(
+                            child: RHText(
+                              text: "引体未解锁",
                               fontColor: RHColor.black,
                               fontSize: 16,
                             ),
@@ -1071,34 +1117,59 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                   ],
                 );
               }),
-              const Gap(10),
-              RHText(
-                text: '压力传感',
-                fontSize: 20,
-                fontWeight: 7,
-              ),
-              const Gap(10),
+              const Gap(20),
               Obx(() {
-                int status = controller.pressureFlag.value;
-                return Row(
+                int flag = controller.pullUpFlag.value;
+                int flag1 = controller.unitFlag.value;
+                return Column(
                   children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width - 133,
-                      height: 150,
-                      child: PowerGravityChart(list1: controller.pressureList),
+                    RHText(
+                      text: '引体向上解锁状态： ${controller.powerData.pullUpLock}',
+                      fontSize: 20,
+                      fontWeight: 7,
                     ),
                     const Gap(10),
                     RHText(
-                      text: "压力: ${(controller.powerModel.mPowerData.pressureSensor / 10).toStringAsFixed(1)}",
-                      // text: "L 0${controller.getUnitStr()}",
-                      fontSize: 16,
-                      fontColor: RHColor.line_1,
+                      text: '引体向上动作开关状态： ${controller.powerData.pullUpState}',
+                      fontSize: 20,
                       fontWeight: 7,
-                    )
+                    ),
+                    const Gap(10),
+                    RHText(
+                      text: '引体向上空载状态： ${controller.powerData.pullUpNoPeople}',
+                      fontSize: 20,
+                      fontWeight: 7,
+                    ),
                   ],
                 );
               }),
-              const Gap(10),
+              // RHText(
+              //   text: '压力传感',
+              //   fontSize: 20,
+              //   fontWeight: 7,
+              // ),
+              // const Gap(10),
+              // Obx(() {
+              //   int status = controller.pressureFlag.value;
+              //   return Row(
+              //     children: [
+              //       SizedBox(
+              //         width: MediaQuery.of(context).size.width - 133,
+              //         height: 150,
+              //         child: PowerGravityChart(list1: controller.pressureList),
+              //       ),
+              //       const Gap(10),
+              //       RHText(
+              //         text: "压力: ${(controller.powerModel.mPowerData.pressureSensor / 10).toStringAsFixed(1)}",
+              //         // text: "L 0${controller.getUnitStr()}",
+              //         fontSize: 16,
+              //         fontColor: RHColor.line_1,
+              //         fontWeight: 7,
+              //       )
+              //     ],
+              //   );
+              // }),
+              const Gap(20),
               Obx(() {
                   int status = controller.statusType.value;
                   return Row(

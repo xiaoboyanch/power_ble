@@ -114,6 +114,10 @@ class PowerAdvancedData extends BaseDeviceData {
 
   int pressureSensor = 0;
 
+  int pullUpLock = 0;
+  int pullUpState = 0;
+  int pullUpNoPeople = 0;
+
   ///handle button press
   int handlePress = 0;
 

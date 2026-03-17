@@ -5,11 +5,14 @@ import 'package:cabina_ble/app/power_detail/power_detail_page.dart';
 import 'package:cabina_ble/route/bindings.dart';
 import 'package:get/get.dart';
 
+import '../app/ota/ota_page.dart';
+
 class RHRoute {
   static const homePage = "/homePageCtrl";
   static const powerDetailPage = "/powerDetailCtrl";
   static const ai = "/ai";
   static const aiWorkout = "/aiWorkout";
+  static const otaPage = "/otaPage";
 
   static List<GetPage> getPages = [
 
@@ -17,6 +20,7 @@ class RHRoute {
     GetPage(name: powerDetailPage, page: () => PowerDetailPage(), binding: BDPowerDetailBinding()),
 
     GetPage(name: ai, page: () => AiPage(), binding: BDAIBinding()),
-    GetPage(name: aiWorkout, page: () => AIWorkoutPage(), binding: BDAIWorkoutBinding())
+    GetPage(name: aiWorkout, page: () => AIWorkoutPage(), binding: BDAIWorkoutBinding()),
+    GetPage(name: otaPage, page: () => OtaPage(), binding: BDOtaBinding())
   ];
 }

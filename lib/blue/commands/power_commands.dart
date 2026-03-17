@@ -113,11 +113,12 @@ class PowerCommands {
     ]);
   }
 
-  static List<int> getDeviceConfig(bool isKG) {
+  static List<int> getDeviceConfig(bool isKG, bool open) {
     return CrcTools.encryptCmd([
       cmdControl_0x04,
       queryDeviceCtrl_0x01,
-      isKG ? 0 : 1
+      isKG ? 0 : 1,
+      open ? 1:0
     ]);
   }
 

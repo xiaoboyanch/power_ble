@@ -6,6 +6,8 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 
+import 'api/net_config.dart';
+import 'api/rh_urls.dart';
 import 'base_tool/i18n.dart';
 import 'base_tool/rh_cache.dart';
 import 'base_views/rh_colors.dart';
@@ -16,6 +18,7 @@ void main() async {
   await RHCache.init();
   await i18n.getInstance().init();
   await dotenv.load(fileName: ".env",);
+  await getBaseUrl();
   BleManager.instance.init();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp, // 只允许竖屏
@@ -23,6 +26,12 @@ void main() async {
     runApp( MyApp());
   });
 }
+
+Future<void> getBaseUrl() async {
+  RHUrls.baseUrl = NetConfig.testUrl;
+}
+
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 

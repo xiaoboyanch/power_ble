@@ -59,6 +59,8 @@ abstract class BleModel {
   HomeDeviceSelectView? _homeDeviceSelectView;
   late RHDialog disconnectDialog;
   bool isDispose = false;
+
+  bool otaState = false;
   BleModel() {
     _init();
   }
@@ -345,8 +347,31 @@ abstract class BleModel {
   void _write(List<int> value) async {
     if (mDevice != null && mDevice!.isConnected) {
       try {
+        if (otaState) {
+          return;
+        }
         String hex = Tools.getNiceHexArray(value);
         LogUtils.d("Send cmd: ${hex}");
+        await _writeCharacteristic?.write(value, withoutResponse: true);
+        logList.add(LogDTO(isOut: false, log: hex));
+        if (logList.length > 100) {
+          logList.removeAt(0);
+        }
+      } catch (e) {
+        LogUtils.d("Error issue： ${e.toString()}");
+        bleDeviceStateController.add(BleDeviceStateMsg.bleCharacteristicError);
+        // RHLog.i("蓝牙通知-22写入指令出错 $e");
+      }
+    }
+  }
+
+  void otaWrite(List<int> value) async {
+    String hex = Tools.getNiceHexArray(value);
+    LogUtils.d("Send cmd: ${hex}");
+    if (mDevice != null && mDevice!.isConnected) {
+      try {
+        // String hex = Tools.getNiceHexArray(value);
+        // LogUtils.d("Send cmd: ${hex}");
         await _writeCharacteristic?.write(value, withoutResponse: true);
         logList.add(LogDTO(isOut: false, log: hex));
         if (logList.length > 100) {

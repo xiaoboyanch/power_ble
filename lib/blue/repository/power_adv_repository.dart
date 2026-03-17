@@ -55,6 +55,9 @@ class PowerAdvancedRepository {
         switch (value[subCmdIndex]) {
           case PowerCommands.queryDataState_0x02: {
               data.unit = value[subCmdDataIndex_5];
+              if (value.length >= 10) {
+                data.pullUpLock = value[subCmdDataIndex_5 + 1];
+              }
               bleDeviceStateController.add(BleDeviceStateMsg.deviceUnitState);
             }
           case PowerCommands.queryDataSport_0x10: {
@@ -253,12 +256,26 @@ class PowerAdvancedRepository {
       value[subCmdDataIndex_5 + 3],
           (val) => data.curRightArmSwing = val,
     );
-    if (value.length >= 13) {
-      data.pressureSensor = Tools.getTwoByteByBigEndian(
-        value[subCmdDataIndex_5 + 4],
-        value[subCmdDataIndex_5 + 5],
+
+    // if (value.length >= 13) {
+    //   data.pressureSensor = Tools.getTwoByteByBigEndian(
+    //     value[subCmdDataIndex_5 + 4],
+    //     value[subCmdDataIndex_5 + 5],
+    //   );
+    //   bleDeviceDataController.add(BleDeviceDataMsg.dataQueryUpdate_0x40);
+    // }
+    if (value.length >= 15) {
+      hasChanged |= data.pullUpState.updateIfChanged(
+        value[subCmdDataIndex_5 + 6],
+            (val) => data.pullUpState = val,
       );
-      bleDeviceDataController.add(BleDeviceDataMsg.dataQueryUpdate_0x40);
+    }
+
+    if (value.length >= 16) {
+      hasChanged |= data.pullUpNoPeople.updateIfChanged(
+        value[subCmdDataIndex_5 + 7],
+            (val) => data.pullUpNoPeople = val,
+      );
     }
 
     if (hasChanged) {
@@ -310,7 +327,8 @@ class PowerAdvancedRepository {
           value[subCmdDataIndex_5],
           value[subCmdDataIndex_5 + 1],
         );
-        data.raiseHeight = value[subCmdDataIndex_5 + 3];
+        data.raiseHeight = value[subCmdDataIndex_5 + 2];
+        LogUtils.d("pullUP: ${data.raiseHeight}");
     }
 
     // if (data.curMotorGroup == 0) return;

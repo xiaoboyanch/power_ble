@@ -43,6 +43,8 @@ class PowerDetailCtrl extends GetxController {
 
   RxInt unitFlag = 0.obs;
 
+  RxInt pullUpFlag = 0.obs;
+
   List<double>  leftWeight = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   List<double> rightWeight = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   List<double>  leftRope = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -146,6 +148,7 @@ class PowerDetailCtrl extends GetxController {
         case BleDeviceDataMsg.dateQueryUpdate_0x12: {
           //update backrest  seat  slider
           backSeatStatus.value++;
+          pullUpFlag.value++;
         }
         case BleDeviceDataMsg.dataQueryUpdate_0x14: {
           // power data
@@ -186,7 +189,7 @@ class PowerDetailCtrl extends GetxController {
           motorFlag.value++;
         }
         case BleDeviceDataMsg.dataQueryUpdate_0x40: {
-          onPressureCallBack(powerData);
+          // onPressureCallBack(powerData);
         }
         default: {}
       }
@@ -291,9 +294,10 @@ class PowerDetailCtrl extends GetxController {
     return powerData.unit == 0 ? "KG" : "LB";
   }
 
-  setUnit(int unit) {
-    powerModel.setUnit(unit == 0 ? true : false);
+  setUnit(int unit, int open) {
+    powerModel.setUnit(unit == 0 ? true : false, open == 1 ? true : false);
     powerData.unit = unit;
+    powerData.pullUpLock = open;
     unitFlag.value++;
   }
 
@@ -386,11 +390,10 @@ class PowerDetailCtrl extends GetxController {
             return;
           }
           int raise = int.parse(raiseHeightCtrl.text);
-          modeData.add((assist)~/256);
-          modeData.add((assist)%256);
-          modeData.add((raise)~/256);
-          modeData.add((raise)%256);
-          modeData.addAll([00,00]);
+          modeData.add((assist * 10)~/256);
+          modeData.add((assist * 10)%256);
+          modeData.add(raise);
+          modeData.addAll([00,00,00]);
         }
       }
       powerModel.setPowerMode(motorType.value, 0, powerData.curMode.value, modeData);
@@ -478,10 +481,10 @@ class PowerDetailCtrl extends GetxController {
             return;
           }
           int raise = int.parse(raiseHeightCtrl.text);
-          modeData.add((assist)~/256);
-          modeData.add((assist)%256);
+          modeData.add((assist * 10)~/256);
+          modeData.add((assist * 10)%256);
           modeData.add(raise);
-          modeData.addAll([00,00,00,00,00]);
+          modeData.addAll([00,00,00]);
         }
       }
       powerModel.setPowerMode(motorType.value, 1, trainingMode.value, modeData);

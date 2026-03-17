@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 class RHCache {
-
+  static const _tokenKey = 'cache-tokenKey';
 
   static Future<bool> setValue(String key, dynamic value) async {
     bool result = await _CacheUtil.getInstance().setValue(key, value ?? "");
@@ -36,6 +36,11 @@ class RHCache {
   static dynamic getInt(String key) {
     var result = _CacheUtil.getInstance().getInt(key);
     return result;
+  }
+
+  static String getToken() {
+    String result = RHNull.getStr(_CacheUtil.getInstance().get(_tokenKey));
+    return "eyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6ImY5NGU0NzQ1LTA5NjMtNGQyYy1iNDNlLTJiMDAzZWFkODM2NCJ9.2KbQrTWUyEaOTZ2t6ZYO9MG5pm097CK_KIymowDMdTFuiwUdBZ9wtwdXwkyCNvkHxUQkTBFXdNFVHBHDkAiK0g";
   }
 
 
