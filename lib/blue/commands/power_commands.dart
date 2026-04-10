@@ -27,6 +27,7 @@ class PowerCommands {
   static const int cmdQueryData_0x0A = 0x0A;
   static const int cmdQueryData_0x0B = 0x0B;
   static const int cmdDeviceConf_0x0C = 0x0C;
+  static const int cmdQueryData_0x0D = 0x0D;
   static const int cmdError = 0x0E;
   static const int cmdResponse_0xD0 = 0xD0;
 
@@ -308,6 +309,10 @@ class PowerCommands {
 
   static List<int> getHandle() {
     return CrcTools.encryptCmd([cmdQueryData_0x0B]);
+  }
+
+  static List<int> getHandleClear() {
+    return CrcTools.encryptCmd([cmdQueryData_0x0D]);
   }
 
   static List<int> pushHandle(int key) {

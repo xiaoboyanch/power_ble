@@ -148,6 +148,7 @@ abstract class BleModel {
             isDeviceConnect = true;
             deviceConnected();
             BleManager.instance.stopScan();
+            // bleDeviceStateController.add(BleDeviceStateMsg.deviceCheckSuccess);
             LogUtils.d("BLE Connection successful : $isDeviceConnect");
           }
           break;
@@ -373,10 +374,10 @@ abstract class BleModel {
         // String hex = Tools.getNiceHexArray(value);
         // LogUtils.d("Send cmd: ${hex}");
         await _writeCharacteristic?.write(value, withoutResponse: true);
-        logList.add(LogDTO(isOut: false, log: hex));
-        if (logList.length > 100) {
-          logList.removeAt(0);
-        }
+        // logList.add(LogDTO(isOut: false, log: hex));
+        // if (logList.length > 100) {
+        //   logList.removeAt(0);
+        // }
       } catch (e) {
         LogUtils.d("Error issue： ${e.toString()}");
         bleDeviceStateController.add(BleDeviceStateMsg.bleCharacteristicError);

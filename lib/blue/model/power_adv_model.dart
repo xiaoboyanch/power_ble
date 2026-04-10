@@ -62,7 +62,7 @@ class PowerAdvancedModel extends BleModel {
   bool handleCounter = false;
   startDegreeTimer() {
     degreeTimer?.cancel();
-    degreeTimer = Timer.periodic(const Duration(milliseconds: 300), (timer) {
+    degreeTimer = Timer.periodic(const Duration(milliseconds: 150), (timer) {
       // if (handleCounter) {
         getBackSeatDegree();
       //   handleCounter = false;
@@ -346,24 +346,40 @@ class PowerAdvancedModel extends BleModel {
     sendCmd(PowerCommands.getCurMotor());
   }
 
+  getHandleClear() {
+    sendCmd(PowerCommands.getHandleClear());
+  }
+
   ///ota 升级
 // OTA 数据回调接口
   Function(List<int> otaData)? onOtaDataReceived;
 
-  handshake(int mode, int chipNumber, int packetCount, int fileLength, int versionHigh, int versionLow) {
-    otaWrite(OtaCommands.handshake(mode, chipNumber, packetCount, fileLength, versionHigh, versionLow));
+  handshake(int chipNumber, int mode, int packetCount, int fileLength, int versionHigh, int versionLow) {
+    otaWrite(OtaCommands.handshake(chipNumber, mode, packetCount, fileLength, versionHigh, versionLow));
   }
 
-  IAPWrite(int packageNum, List<int> data) {
-    otaWrite(OtaCommands.IAPWrite(packageNum, data));
+  IAPWrite(int chipNumber, int packageNum, int length, List<int> data) {
+    otaWrite(OtaCommands.IAPWrite(chipNumber, packageNum, length, data));
   }
 
-  exitBootloader() {
-    otaWrite(OtaCommands.exitBootloader());
+  exitBootloader(int chipNumber) {
+    otaWrite(OtaCommands.exitBootloader(chipNumber));
   }
 
   queryChipVersion(int chipNumber) {
     otaWrite(OtaCommands.queryChipVersion(chipNumber));
+  }
+
+  readRom(int chipNumber, int addressHigh, int addressLow, int length) {
+    otaWrite(OtaCommands.readRom(chipNumber, addressHigh, addressLow, length));
+  }
+
+  writeRom(int chipNumber, int addressHigh, int addressLow, int length, List<int> data) {
+    otaWrite(OtaCommands.writeRom(chipNumber, addressHigh, addressLow, length, data));
+  }
+
+  eraseRom(int chipNumber, int addressHigh, int addressLow) {
+    otaWrite(OtaCommands.eraseRom(chipNumber, addressHigh, addressLow));
   }
 
   @override

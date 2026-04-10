@@ -47,6 +47,7 @@ class HomeCtrl extends GetxController {
           break;
       }
     });
+    LogUtils.d("指令： ${Tools.getNiceHexArray(PowerCommands.getHandleClear())}");
     // SystemChrome.setPreferredOrientations([
     //   DeviceOrientation.landscapeRight,
     // ]);

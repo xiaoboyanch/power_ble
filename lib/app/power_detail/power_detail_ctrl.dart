@@ -311,6 +311,10 @@ class PowerDetailCtrl extends GetxController {
     }
   }
 
+  getHandleClear() {
+    powerModel.getHandleClear();
+  }
+
 
   /// Start applying Power or releasing force
   startOrStopPower() {

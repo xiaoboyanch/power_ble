@@ -6,6 +6,7 @@ import 'package:cabina_ble/app/power_detail/view/power_line_single_chart.dart';
 import 'package:cabina_ble/app/power_detail/view/power_weight_chart.dart';
 import 'package:cabina_ble/app/power_detail/view/power_weight_single_chart.dart';
 import 'package:cabina_ble/base_tool/log_utils.dart';
+import 'package:cabina_ble/base_views/rh_button.dart';
 import 'package:cabina_ble/base_views/rh_text.dart';
 import 'package:cabina_ble/base_views/rh_text_input.dart';
 import 'package:cabina_ble/base_views/rh_toast.dart';
@@ -238,14 +239,15 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
         actions: [
           Center(
             child: IconButton(onPressed: () {
-              MessageDialog.showMessageDialog(context, controller.powerData);
-            }, icon: Icon(Icons.message_outlined)),
-          ),
-          Center(
-            child: IconButton(onPressed: () {
               Get.toNamed(RHRoute.otaPage);
             }, icon: Icon(Icons.upcoming_rounded)),
           ),
+          Center(
+            child: IconButton(onPressed: () {
+              MessageDialog.showMessageDialog(context, controller.powerData);
+            }, icon: Icon(Icons.message_outlined)),
+          ),
+
         ],
         elevation: 0,
       ),
@@ -508,87 +510,97 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
               const Gap(10),
               Obx(() {
                 int flag = controller.unitFlag.value;
-                return Row(
+                return Column(
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        controller.setUnit(0, controller.powerData.pullUpLock);
-                      },
-                      child: Container(
-                          width: 70,
-                          height: 40,
-                          decoration: BoxDecoration(
-                              color: controller.powerData.unit == 0 ? RHColor.primary : RHColor.white,
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Center(
-                            child: RHText(
-                              text: "公制",
-                              fontColor: RHColor.black,
-                              fontSize: 16,
-                            ),
-                          )
-                      ),
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            controller.setUnit(0, controller.powerData.pullUpLock);
+                          },
+                          child: Container(
+                              width: 70,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                  color: controller.powerData.unit == 0 ? RHColor.primary : RHColor.white,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Center(
+                                child: RHText(
+                                  text: "公制",
+                                  fontColor: RHColor.black,
+                                  fontSize: 16,
+                                ),
+                              )
+                          ),
+                        ),
+                        const Gap(30),
+                        GestureDetector(
+                          onTap: () {
+                            controller.setUnit(1, controller.powerData.pullUpLock);
+                          },
+                          child: Container(
+                              width: 70,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                  color: controller.powerData.unit == 1 ? RHColor.primary : RHColor.white,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Center(
+                                child: RHText(
+                                  text: "英制",
+                                  fontColor: RHColor.black,
+                                  fontSize: 16,
+                                ),
+                              )
+                          ),
+                        ),
+                        const Gap(30),
+
+                      ],
                     ),
-                    const Gap(30),
-                    GestureDetector(
-                      onTap: () {
-                        controller.setUnit(1, controller.powerData.pullUpLock);
-                      },
-                      child: Container(
-                          width: 70,
-                          height: 40,
-                          decoration: BoxDecoration(
-                              color: controller.powerData.unit == 1 ? RHColor.primary : RHColor.white,
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Center(
-                            child: RHText(
-                              text: "英制",
-                              fontColor: RHColor.black,
-                              fontSize: 16,
-                            ),
-                          )
-                      ),
-                    ),
-                    const Gap(30),
-                    GestureDetector(
-                      onTap: () {
-                        controller.setUnit(controller.powerData.unit, 1);
-                      },
-                      child: Container(
-                          width: 70,
-                          height: 40,
-                          decoration: BoxDecoration(
-                              color: controller.powerData.pullUpLock == 1 ? RHColor.primary : RHColor.white,
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Center(
-                            child: RHText(
-                              text: "引体解锁",
-                              fontColor: RHColor.black,
-                              fontSize: 16,
-                            ),
-                          )
-                      ),
-                    ),
-                    const Gap(30),
-                    GestureDetector(
-                      onTap: () {
-                        controller.setUnit(controller.powerData.unit, 0);
-                      },
-                      child: Container(
-                          width: 90,
-                          height: 40,
-                          decoration: BoxDecoration(
-                              color: controller.powerData.pullUpLock == 0 ? RHColor.primary : RHColor.white,
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Center(
-                            child: RHText(
-                              text: "引体未解锁",
-                              fontColor: RHColor.black,
-                              fontSize: 16,
-                            ),
-                          )
-                      ),
-                    ),
+                    const Gap(10),
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            controller.setUnit(controller.powerData.unit, 1);
+                          },
+                          child: Container(
+                              width: 70,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                  color: controller.powerData.pullUpLock == 1 ? RHColor.primary : RHColor.white,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Center(
+                                child: RHText(
+                                  text: "引体解锁",
+                                  fontColor: RHColor.black,
+                                  fontSize: 16,
+                                ),
+                              )
+                          ),
+                        ),
+                        const Gap(30),
+                        GestureDetector(
+                          onTap: () {
+                            controller.setUnit(controller.powerData.unit, 0);
+                          },
+                          child: Container(
+                              width: 90,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                  color: controller.powerData.pullUpLock == 0 ? RHColor.primary : RHColor.white,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Center(
+                                child: RHText(
+                                  text: "引体锁定",
+                                  fontColor: RHColor.black,
+                                  fontSize: 16,
+                                ),
+                              )
+                          ),
+                        ),
+                      ],
+                    )
                   ],
                 );
               }),
@@ -988,6 +1000,25 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                   text: "${"remote_button_press".tr}: ${controller.powerData.handlePress}",
                 );
               }),
+              GestureDetector(
+                onTap: () {
+                  controller.getHandleClear();
+                },
+                child: Container(
+                    width: 120,
+                    height: 50,
+                    decoration: BoxDecoration(
+                        color: RHColor.primary,
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Center(
+                      child: RHText(
+                        textKey: "清空按键值",
+                        fontColor: RHColor.white,
+                        fontSize: 18,
+                      ),
+                    )
+                ),
+              ),
               Obx(() {
                 int motorFlag = controller.motorFlag.value;
                 return RHText(

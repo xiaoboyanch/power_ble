@@ -16,14 +16,17 @@ class OtaCommands {
   static const int cmdQueryData_0xD3 = 0xD3;
   static const int cmdQueryData_0xD5 = 0xD5;
   static const int cmdQueryData_0xD7 = 0xD7;
+  static const int cmdQueryData_0xDD = 0xDD;
+  static const int cmdQueryData_0xDE = 0xDE;
+  static const int cmdQueryData_0xDF = 0xDF;
   static const int cmdQueryData_0xE0 = 0xE0;
 
   /// 握手信号 D1
-  static List<int> handshake(int mode, int chipNumber, int packetCount, int fileLength, int versionHigh, int versionLow) {
+  static List<int> handshake(int chipNumber, int mode, int packetCount, int fileLength, int versionHigh, int versionLow) {
     return CrcTools.encryptCmd([
       cmdQueryData_0xD1,
-      mode,
       chipNumber,
+      mode,
       packetCount ~/ 256,
       packetCount % 256,
       fileLength ~/ 256,
@@ -35,19 +38,21 @@ class OtaCommands {
     ]);
   }
   /// IAP写入操作 D3
-  static List<int> IAPWrite(int packageNum, List<int> data) {
+  static List<int> IAPWrite(int chipNumber, int packageNum, int length, List<int> data) {
     return CrcTools.encryptCmd([
       cmdQueryData_0xD3,
+      chipNumber,
       packageNum ~/ 256,
       packageNum % 256,
+      length,
       ...data,
     ]);
   }
   /// 退出BOOTLOADER操作 D5
-  static List<int> exitBootloader() {
+  static List<int> exitBootloader(int chipNumber) {
     return CrcTools.encryptCmd([
       cmdQueryData_0xD5,
-      cmdQueryData_0xD5,
+      chipNumber,
       0x00,
     ]);
   }
@@ -59,5 +64,37 @@ class OtaCommands {
     ]);
   }
 
+  ///读ROM
+  static List<int> readRom(int chipNumber, int addressHigh, int addressLow, int length) {
+    return CrcTools.encryptCmd([
+      cmdQueryData_0xDD,
+      chipNumber,
+      addressHigh,
+      addressLow,
+      length,
+    ]);
+  }
+
+  /// 写ROM
+  static List<int> writeRom(int chipNumber, int addressHigh, int addressLow, int length, List<int> data) {
+    return CrcTools.encryptCmd([
+      cmdQueryData_0xDE,
+      chipNumber,
+      addressHigh,
+      addressLow,
+      length,
+      ...data,
+    ]);
+  }
+
+  /// 擦除ROM
+  static List<int> eraseRom(int chipNumber, int addressHigh, int addressLow) {
+    return CrcTools.encryptCmd([
+      cmdQueryData_0xDF,
+      chipNumber,
+      addressHigh,
+      addressLow,
+    ]);
+  }
 }
 
