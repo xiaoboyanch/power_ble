@@ -29,13 +29,14 @@ class PowerAdvancedModel extends BleModel {
   Timer? degreeTimer;
   Timer? paramsTimer;
   Timer? curMotorTimer;
+  StreamSubscription? _stateSubscription;
 
   PowerAdvancedModel() {
     setDeviceType(RHDeviceType.powerAdvanced);
     _repository = PowerAdvancedRepository(bleDeviceStateController);
     _repository.powerAdvancedData = mPowerData;
     mQueryCmdData = PowerCommands.getDeviceStatus();
-    bleDeviceStateController.stream.listen((msg) {
+    _stateSubscription = bleDeviceStateController.stream.listen((msg) {
       switch (msg) {
         case BleDeviceStateMsg.deviceCheckSuccess: {
           RHToast.dismiss();
@@ -193,11 +194,7 @@ class PowerAdvancedModel extends BleModel {
       if (packet.length > 5) {
         List<int> value = CrcTools.receiveDecodeCmd(packet);
         if (CrcTools.checkCRC(value)) {
-          if (otaState) {
-            onOtaDataReceived?.call(value);
-          }else {
-            _repository.handleCharacteristic(value, mPowerData, mDeviceInfo!);
-          }
+          _repository.handleCharacteristic(value, mPowerData, mDeviceInfo!);
         }
       }
     }
@@ -390,6 +387,12 @@ class PowerAdvancedModel extends BleModel {
   stopConnect() {
     degreeTimer?.cancel();
     degreeTimer = null;
+    paramsTimer?.cancel();
+    paramsTimer = null;
+    curMotorTimer?.cancel();
+    curMotorTimer = null;
+    _stateSubscription?.cancel();
+    _stateSubscription = null;
     disconnectDevice(clean:  true);
     disposeConnect();
     _buffer.clear();

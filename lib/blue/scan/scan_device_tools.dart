@@ -36,6 +36,14 @@ class ScanDeviceTools {
     return Future.value(list);
   }
 
+  static Future<List<RHBlueScanResult>> sortOtaDeviceInfo(List<ScanResult> result, List<RHDeviceType> deviceType) async {
+    List<RHBlueScanResult> list = [];
+    for (var item in result) {
+      checkRHDeviceInfo(item, deviceType, list);
+    }
+    return Future.value(list);
+  }
+
   static checkRHDeviceInfo(ScanResult item, List<RHDeviceType> typeList, List<RHBlueScanResult> list) {
     final data = Tools.parseManufacturerData(item.advertisementData.manufacturerData);
     if (data.length > 7) {

@@ -60,7 +60,6 @@ abstract class BleModel {
   late RHDialog disconnectDialog;
   bool isDispose = false;
 
-  bool otaState = false;
   BleModel() {
     _init();
   }
@@ -348,11 +347,8 @@ abstract class BleModel {
   void _write(List<int> value) async {
     if (mDevice != null && mDevice!.isConnected) {
       try {
-        if (otaState) {
-          return;
-        }
         String hex = Tools.getNiceHexArray(value);
-        LogUtils.d("Send cmd: ${hex}");
+        LogUtils.d("Send cmd _write: ${hex}");
         await _writeCharacteristic?.write(value, withoutResponse: true);
         logList.add(LogDTO(isOut: false, log: hex));
         if (logList.length > 100) {
@@ -368,7 +364,7 @@ abstract class BleModel {
 
   void otaWrite(List<int> value) async {
     String hex = Tools.getNiceHexArray(value);
-    LogUtils.d("Send cmd: ${hex}");
+    LogUtils.d("Send cmd otaWrite: ${hex}");
     if (mDevice != null && mDevice!.isConnected) {
       try {
         // String hex = Tools.getNiceHexArray(value);

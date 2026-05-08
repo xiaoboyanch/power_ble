@@ -237,11 +237,11 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
         backgroundColor: RHColor.primary,
         foregroundColor: Colors.white,
         actions: [
-          Center(
-            child: IconButton(onPressed: () {
-              Get.toNamed(RHRoute.otaPage);
-            }, icon: Icon(Icons.upcoming_rounded)),
-          ),
+          // Center(
+          //   child: IconButton(onPressed: () {
+          //     Get.toNamed(RHRoute.otaPage);
+          //   }, icon: Icon(Icons.upcoming_rounded)),
+          // ),
           Center(
             child: IconButton(onPressed: () {
               MessageDialog.showMessageDialog(context, controller.powerData);

@@ -1,4 +1,5 @@
 
+import 'package:cabina_ble/blue/model/ota_model.dart';
 import 'package:cabina_ble/blue/model/power_adv_model.dart';
 
 import '../../base_tool/log_utils.dart';
@@ -51,9 +52,9 @@ class BleFactory {
     }
     BleModel model;
     switch (type) {
-      // case RHDeviceType.powerBoard:
-      //   model = PowerModel();
-      //   break;
+      case RHDeviceType.ota:
+        model = OtaModel();
+        break;
       case RHDeviceType.powerAdvanced:
         model = PowerAdvancedModel();
         break;

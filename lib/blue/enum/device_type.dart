@@ -23,7 +23,7 @@ enum RHDeviceType {
   ///Cabina
   powerSony(34),
   powerAdvanced(35),
-
+  ota(100),
   /// 心率手表
   bracelet(99);
 
@@ -84,6 +84,7 @@ enum RHDeviceType {
       case RHDeviceType.powerSony:
       case RHDeviceType.powerAdvanced:
       case RHDeviceType.powerBoard:
+      case RHDeviceType.ota:
         return 'power_device';
       case RHDeviceType.bracelet:
         return 'bracelet';
@@ -117,6 +118,7 @@ enum RHDeviceType {
       case RHDeviceType.powerSony:
       case RHDeviceType.powerAdvanced:
       case RHDeviceType.powerBoard:
+      case RHDeviceType.ota:
         return 'power_device';
       case RHDeviceType.softPower:
         return 'rouli_ji';
@@ -151,6 +153,7 @@ enum RHDeviceType {
       case RHDeviceType.powerSony:
       case RHDeviceType.powerAdvanced:
       case RHDeviceType.powerBoard:
+      case RHDeviceType.ota:
         return 'device_power';
       case RHDeviceType.none:
         break;

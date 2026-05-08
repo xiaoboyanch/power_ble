@@ -6,21 +6,27 @@ import 'package:cabina_ble/route/bindings.dart';
 import 'package:get/get.dart';
 
 import '../app/ota/ota_page.dart';
+import '../app/ota_detail/ota_detail_page.dart';
+import '../app/power/power_page.dart';
 
 class RHRoute {
   static const homePage = "/homePageCtrl";
   static const powerDetailPage = "/powerDetailCtrl";
+  static const powerPage = "/powerCtrl";
   static const ai = "/ai";
   static const aiWorkout = "/aiWorkout";
   static const otaPage = "/otaPage";
+  static const otaDetailPage = "/otaDetailPage";
 
   static List<GetPage> getPages = [
 
     GetPage(name: homePage, page: () => HomePage(), binding: BDHomeBinding()),
     GetPage(name: powerDetailPage, page: () => PowerDetailPage(), binding: BDPowerDetailBinding()),
+    GetPage(name: powerPage, page: () => PowerPage(), binding: BDPowerBinding()),
 
     GetPage(name: ai, page: () => AiPage(), binding: BDAIBinding()),
     GetPage(name: aiWorkout, page: () => AIWorkoutPage(), binding: BDAIWorkoutBinding()),
-    GetPage(name: otaPage, page: () => OtaPage(), binding: BDOtaBinding())
+    GetPage(name: otaPage, page: () => OtaPage(), binding: BDOtaBinding()),
+    GetPage(name: otaDetailPage, page: () => OtaDetailPage(), binding: BDOtaDetailBinding()),
   ];
 }
