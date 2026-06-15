@@ -118,6 +118,14 @@ class PowerAdvancedData extends BaseDeviceData {
   int pullUpState = 0;
   int pullUpNoPeople = 0;
 
+  int protectState = 0;
+  int protectWeight = 0;
+  int protectRopeLength = 0;
+  int protectTime = 0;
+  int ropeBackState = 0;
+  int ropeBackSpeed = 0;
+  // int maxLimitWeight = 0;
+
   ///handle button press
   int handlePress = 0;
 

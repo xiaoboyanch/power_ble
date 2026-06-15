@@ -36,8 +36,8 @@ class _PowerLineChartState extends State<PowerLineChart> {
   }
 
   LineChartData get sampledData1 => LineChartData(
-    minY: 0,
-    maxY: 900,
+    minY: -200,
+    maxY: 1500,
     baselineY: 0,
     lineBarsData: randomLineData,
     gridData: const FlGridData(

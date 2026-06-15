@@ -44,6 +44,7 @@ class OtaDetailCtrl extends GetxController {
   String filePath = '';
 
   int chipNumber = 1;
+  String showName = '';
 
   int newOtaHighVer = 0;
   int newOtaLowVer = 0;
@@ -83,6 +84,7 @@ class OtaDetailCtrl extends GetxController {
 
   Timer? handshakeTimer;
 
+  int currentPacketIndex = 0;
    @override
   void onInit() {
     super.onInit();
@@ -99,12 +101,14 @@ class OtaDetailCtrl extends GetxController {
             case OtaCommands.cmdQueryData_0xD1: {
               // if (state == 0) {
                 // if (chip == chipNumber) {
+              LogUtils.d("AAAAAAAA $isOtaUpgrading");
               if (isOtaUpgrading) {
                 return;
               }
                   LogUtils.d("握手申请成功，开始上传固件包, 芯片号： $chip");
+              isOtaUpgrading = true;
                   ///开始下载
-                  Future.delayed(Duration(milliseconds: 500), () {
+                  Future.delayed(Duration(milliseconds: 300), () {
                     RHToast.showToast(msg: "开始下载");
                     handshakeTimer?.cancel();
                     handshakeTimer = null;
@@ -127,6 +131,7 @@ class OtaDetailCtrl extends GetxController {
                 // 成功，继续发送下一个包
                 if (currentPacketNum + 1 >= totalPacketCount) {
                   // exitBootloader();
+                  isOtaUpgrading = false;
                   LogUtils.d("更新完成");
                   RHToast.showToast(msg: "更新完成");
                 }else {
@@ -136,11 +141,11 @@ class OtaDetailCtrl extends GetxController {
                   //   otaModel.readRom(chip, startAddress~/ 256, startAddress% 256, length);
                   //   startAddress += 64;
                   // }
-                  Future.delayed(const Duration(milliseconds: 1), (){
+                  // Future.delayed(const Duration(milliseconds: 1), (){
                     currentPacketNum++;
                     _sendNextPacket();
                     updateFlag.value++;
-                  });
+                  // });
                 }
               // } else {
               //   // 失败，停止更新并提示
@@ -161,16 +166,16 @@ class OtaDetailCtrl extends GetxController {
         }
         case OtaCommands.cmdQueryData_0xE0: {
           int chip = value[cmdDataIndex];
-          int state = value[cmdDataIndex + 1];
-          int error = value[cmdDataIndex + 2];
-          int msgHigh = value[cmdDataIndex + 3];
-          int msgLow = value[cmdDataIndex + 4];
+          // int state = value[cmdDataIndex + 1];
+          int error = value[cmdDataIndex + 1];
+          int msgHigh = value[cmdDataIndex + 2];
+          int msgLow = value[cmdDataIndex + 3];
 
           if (isOtaUpgrading) {
-            LogUtils.d("当前正下载失败： $state : $chip : $error : $msgHigh : $msgLow");
-            // _sendNextPacket();
+            LogUtils.d("当前正下载失败：$chip : $error : $msgHigh : $msgLow");
+            _sendNextPacket();
           }else {
-            LogUtils.d("报错：$state : $chip : $error : $msgHigh : $msgLow ");
+            LogUtils.d("报错： : $chip : $error : $msgHigh : $msgLow ");
           }
           // switch (requestType) {
           //   case OtaCommands.cmdQueryData_0xD1: {
@@ -228,20 +233,52 @@ class OtaDetailCtrl extends GetxController {
              return dto;
            }).toList();
            if (otaList.isNotEmpty) {
-             currentOta = otaList.last;
+             currentPacketIndex = 0;
+             currentOta = otaList[currentPacketIndex];
              newOtaHighVer = currentOta!.majorVersion;
              newOtaLowVer = currentOta!.minorVersion;
              chipNumber = currentOta!.chipNumber;
+             showName = currentOta!.showName;
              chipCtrl.text = chipNumber.toRadixString(16).toUpperCase();
-             startDownload();
+             // startDownload();
            }
            romFlag.value++;
            msgFlag.value++;
          });
   }
 
+  updateNext() {
+     if (currentPacketIndex + 1 < otaList.length) {
+       currentPacketIndex++;
+       currentOta = otaList[currentPacketIndex];
+       newOtaHighVer = currentOta!.majorVersion;
+       newOtaLowVer = currentOta!.minorVersion;
+       chipNumber = currentOta!.chipNumber;
+       showName = currentOta!.showName;
+       chipCtrl.text = chipNumber.toRadixString(16).toUpperCase();
+       // startDownload();
+       romFlag.value++;
+       msgFlag.value++;
+     }else {
+       if (otaList.isNotEmpty) {
+         currentPacketIndex = 0;
+         currentOta = otaList[currentPacketIndex];
+         newOtaHighVer = currentOta!.majorVersion;
+         newOtaLowVer = currentOta!.minorVersion;
+         chipNumber = currentOta!.chipNumber;
+         chipCtrl.text = chipNumber.toRadixString(16).toUpperCase();
+         // startDownload();
+         romFlag.value++;
+         msgFlag.value++;
+       }
+
+       // RHToast.showToast(msg: "没有其他版本");
+     }
+  }
+
   startDownload() {
      if (currentOta != null) {
+       LogUtils.d("开始下载");
        ApkDownloader.downloadAndInstall(url: currentOta!.downloadUrl, onProgress: (progress, filePath) {
          apkProgress = progress;
          LogUtils.d("下载升级中： $progress");
@@ -283,7 +320,7 @@ class OtaDetailCtrl extends GetxController {
     LogUtils.d("固件包路径： $filePath");
     handshakeTimer?.cancel();
     handshakeTimer = null;
-    handshakeTimer = Timer.periodic(const Duration(milliseconds: 1000), (timer) {
+    handshakeTimer = Timer.periodic(const Duration(milliseconds: 400), (timer) {
       if (!isOtaUpgrading) {
         handshake(chipNumber, 1, totalPacketCount, totalFileLength, newOtaHighVer, newOtaLowVer);
       }
@@ -351,7 +388,7 @@ class OtaDetailCtrl extends GetxController {
       if (isLastPacket && result.length % 4 != 0) {
         int padding = 4 - (result.length % 4);
         for (int i = 0; i < padding; i++) {
-          result.add(0);
+          result.add(0xFF);
         }
         LogUtils.d('最后一个包补零：原长度 ${buffer.length}, 补零后长度 ${result.length}');
       }
@@ -446,8 +483,10 @@ class OtaDetailCtrl extends GetxController {
   void onClose() {
     super.onClose();
     otaModel.stopConnect();
+    otaModel.onOtaDataReceived = null;
     handshakeTimer?.cancel();
     handshakeTimer = null;
+
   }
 
   Timer? timer;

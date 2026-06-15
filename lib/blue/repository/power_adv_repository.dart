@@ -37,7 +37,7 @@ class PowerAdvancedRepository {
   ) {
     switch (value[cmdIndex]) {
       case PowerCommands.cmdQueryParam_0x01:
-        // LogUtils.d("0x01指令: ${Tools.getNiceHexArray(value)}");
+        LogUtils.d("0x01指令: ${Tools.getNiceHexArray(value)}");
       try {
         _handleDeviceInfo(value, data, deviceInfo);
 
@@ -51,12 +51,34 @@ class PowerAdvancedRepository {
         // LogUtils.d("0x03指令: ${Tools.getNiceHexArray(value)}");
         _handleExtendedParams(value, data, deviceInfo);
       case PowerCommands.cmdQueryData_0x09:
-        // LogUtils.d("0x09指令: ${Tools.getNiceHexArray(value)}");
+
         switch (value[subCmdIndex]) {
           case PowerCommands.queryDataState_0x02: {
+            LogUtils.d("0x09指令: ${Tools.getNiceHexArray(value)}");
               data.unit = value[subCmdDataIndex_5];
               if (value.length >= 10) {
                 data.pullUpLock = value[subCmdDataIndex_5 + 1];
+              }
+              if (value.length > 12) {
+                data.protectState = value[subCmdDataIndex_5 + 2];
+                data.protectWeight = Tools.getTwoByteByBigEndian(
+                  value[subCmdDataIndex_5 + 3],
+                  value[subCmdDataIndex_5 + 4],
+                );
+                LogUtils.d("0x09指令: ${data.protectWeight}");
+                data.protectRopeLength = Tools.getTwoByteByBigEndian(
+                  value[subCmdDataIndex_5 + 5],
+                  value[subCmdDataIndex_5 + 6],
+                );
+                data.protectTime = Tools.getTwoByteByBigEndian(
+                  value[subCmdDataIndex_5 + 7],
+                  value[subCmdDataIndex_5 + 8],
+                );
+                data.ropeBackState = value[subCmdDataIndex_5 + 9];
+                data.ropeBackSpeed = Tools.getTwoByteByBigEndian(
+                  value[subCmdDataIndex_5 + 10],
+                  value[subCmdDataIndex_5 + 11],
+                );
               }
               bleDeviceStateController.add(BleDeviceStateMsg.deviceUnitState);
             }
@@ -344,120 +366,144 @@ class PowerAdvancedRepository {
       //   value[subCmdDataIndex_5 + 11],
       // );
       int legCableLength = Tools.getTwoByteByBigEndian(value[subCmdDataIndex_5 + 10], value[subCmdDataIndex_5 + 11]);
-      String legCableLengthStr = legCableLength.toRadixString(2).padLeft(16,'0');
-      if (legCableLength > 32767) {
-        legCableLengthStr = legCableLengthStr.replaceAll('0', '6');
-        legCableLengthStr = legCableLengthStr.replaceAll('1', '0');
-        legCableLengthStr = legCableLengthStr.replaceAll('6', '1');
-        data.legCableLength = -int.parse(legCableLengthStr, radix: 2);
-        // RHToast.showToast(msg: "left cable: ${data.curLeftCableLength}");
-      }else {
-        data.legCableLength = legCableLength;
-      }
+      // String legCableLengthStr = legCableLength.toRadixString(2).padLeft(16,'0');
+      // if (legCableLength > 32767) {
+      //   legCableLengthStr = legCableLengthStr.replaceAll('0', '6');
+      //   legCableLengthStr = legCableLengthStr.replaceAll('1', '0');
+      //   legCableLengthStr = legCableLengthStr.replaceAll('6', '1');
+      //   data.legCableLength = -int.parse(legCableLengthStr, radix: 2);
+      //   // RHToast.showToast(msg: "left cable: ${data.curLeftCableLength}");
+      // }else {
+      //   data.legCableLength = legCableLength;
+      // }
+      data.legCableLength = (legCableLength << 48) >> 48;
+
       int cableVelocity = Tools.getTwoByteByBigEndian(value[subCmdDataIndex_5 + 12], value[subCmdDataIndex_5 + 13]);
-      String velocityStr = cableVelocity.toRadixString(2).padLeft(16,'0');
-      if (cableVelocity > 32767) {
-        velocityStr = velocityStr.replaceAll('0', '6');
-        velocityStr = velocityStr.replaceAll('1', '0');
-        velocityStr = velocityStr.replaceAll('6', '1');
-        data.legLinearVelocity = -int.parse(velocityStr, radix: 2);
-      }else {
-        data.legLinearVelocity = cableVelocity;
-      }
+      // String velocityStr = cableVelocity.toRadixString(2).padLeft(16,'0');
+      // if (cableVelocity > 32767) {
+      //   velocityStr = velocityStr.replaceAll('0', '6');
+      //   velocityStr = velocityStr.replaceAll('1', '0');
+      //   velocityStr = velocityStr.replaceAll('6', '1');
+      //   data.legLinearVelocity = -int.parse(velocityStr, radix: 2);
+      // }else {
+      //   data.legLinearVelocity = cableVelocity;
+      // }
+      data.legLinearVelocity = (cableVelocity << 48) >> 48;
       int rpm = Tools.getTwoByteByBigEndian(value[subCmdDataIndex_5 + 14], value[subCmdDataIndex_5 + 15]);
-      String rpmStr = rpm.toRadixString(2).padLeft(16,'0');
-      if (rpm > 32767) {
-        rpmStr = rpmStr.replaceAll('0', '6');
-        rpmStr = rpmStr.replaceAll('1', '0');
-        rpmStr = rpmStr.replaceAll('6', '1');
-        data.legRPM = -int.parse(rpmStr, radix: 2);
-      }else {
-        data.legRPM = rpm;
-      }
+      // String rpmStr = rpm.toRadixString(2).padLeft(16,'0');
+      // if (rpm > 32767) {
+      //   rpmStr = rpmStr.replaceAll('0', '6');
+      //   rpmStr = rpmStr.replaceAll('1', '0');
+      //   rpmStr = rpmStr.replaceAll('6', '1');
+      //   data.legRPM = -int.parse(rpmStr, radix: 2);
+      // }else {
+      //   data.legRPM = rpm;
+      // }
+      data.legRPM = (rpm << 48) >> 48;
     }
     else {
       if (value.length <= 24) {
         return;
       }
-      data.curLeftWeight = Tools.getTwoByteByBigEndian(
+      int leftWeight = Tools.getTwoByteByBigEndian(
         value[subCmdDataIndex_5 + 7],
         value[subCmdDataIndex_5 + 8],
       );
+      if (leftWeight > 10000) {
+        LogUtils.d("当前重量超出： $leftWeight : ${Tools.getNiceHexArray(value)}");
+      }else {
+        data.curLeftWeight = leftWeight;
+      }
       data.curLeftCount = value[subCmdDataIndex_5 + 9];
       // data.curLeftCableLength = Tools.getTwoByteByBigEndian(
       //   value[subCmdDataIndex_5 + 10],
       //   value[subCmdDataIndex_5 + 11],
       // );
       int leftCableLength = Tools.getTwoByteByBigEndian(value[subCmdDataIndex_5 + 10], value[subCmdDataIndex_5 + 11]);
-      String leftCableLengthStr = leftCableLength.toRadixString(2).padLeft(16,'0');
-      if (leftCableLength > 32767) {
-        leftCableLengthStr = leftCableLengthStr.replaceAll('0', '6');
-        leftCableLengthStr = leftCableLengthStr.replaceAll('1', '0');
-        leftCableLengthStr = leftCableLengthStr.replaceAll('6', '1');
-        data.curLeftCableLength = -int.parse(leftCableLengthStr, radix: 2);
-        // RHToast.showToast(msg: "left cable: ${data.curLeftCableLength}");
-      }else {
-        data.curLeftCableLength = leftCableLength;
-      }
+      // String leftCableLengthStr = leftCableLength.toRadixString(2).padLeft(16,'0');
+      // if (leftCableLength > 32767) {
+      //   leftCableLengthStr = leftCableLengthStr.replaceAll('0', '6');
+      //   leftCableLengthStr = leftCableLengthStr.replaceAll('1', '0');
+      //   leftCableLengthStr = leftCableLengthStr.replaceAll('6', '1');
+      //   data.curLeftCableLength = -int.parse(leftCableLengthStr, radix: 2);
+      //   // RHToast.showToast(msg: "left cable: ${data.curLeftCableLength}");
+      // }else {
+      //   data.curLeftCableLength = leftCableLength;
+      // }
+      data.curLeftCableLength = (leftCableLength << 48) >> 48;
       int cableVelocity = Tools.getTwoByteByBigEndian(value[subCmdDataIndex_5 + 12], value[subCmdDataIndex_5 + 13]);
-      String velocityStr = cableVelocity.toRadixString(2).padLeft(16,'0');
-      if (cableVelocity > 32767) {
-        velocityStr = velocityStr.replaceAll('0', '6');
-        velocityStr = velocityStr.replaceAll('1', '0');
-        velocityStr = velocityStr.replaceAll('6', '1');
-        data.curLeftLinearVelocity = -int.parse(velocityStr, radix: 2);
-      }else {
-        data.curLeftLinearVelocity = cableVelocity;
-      }
+      // String velocityStr = cableVelocity.toRadixString(2).padLeft(16,'0');
+      // if (cableVelocity > 32767) {
+      //   velocityStr = velocityStr.replaceAll('0', '6');
+      //   velocityStr = velocityStr.replaceAll('1', '0');
+      //   velocityStr = velocityStr.replaceAll('6', '1');
+      //   data.curLeftLinearVelocity = -int.parse(velocityStr, radix: 2);
+      // }else {
+      //   data.curLeftLinearVelocity = cableVelocity;
+      // }
+      data.curLeftLinearVelocity = (cableVelocity << 48) >> 48;
       int rpm = Tools.getTwoByteByBigEndian(value[subCmdDataIndex_5 + 14], value[subCmdDataIndex_5 + 15]);
-      String rpmStr = rpm.toRadixString(2).padLeft(16,'0');
-      if (rpm > 32767) {
-        rpmStr = rpmStr.replaceAll('0', '6');
-        rpmStr = rpmStr.replaceAll('1', '0');
-        rpmStr = rpmStr.replaceAll('6', '1');
-        data.curLeftRPM = -int.parse(rpmStr, radix: 2);
-      }else {
-        data.curLeftRPM = rpm;
-      }
+      // String rpmStr = rpm.toRadixString(2).padLeft(16,'0');
+      // if (rpm > 32767) {
+      //   rpmStr = rpmStr.replaceAll('0', '6');
+      //   rpmStr = rpmStr.replaceAll('1', '0');
+      //   rpmStr = rpmStr.replaceAll('6', '1');
+      //   data.curLeftRPM = -int.parse(rpmStr, radix: 2);
+      // }else {
+      //   data.curLeftRPM = rpm;
+      // }
+      data.curLeftRPM = (rpm << 48) >> 48;
 
-      data.curRightWeight = Tools.getTwoByteByBigEndian(
+      int rightWeight = Tools.getTwoByteByBigEndian(
         value[subCmdDataIndex_5 + 17],
         value[subCmdDataIndex_5 + 18],
       );
+      if (rightWeight > 10000) {
+        LogUtils.d("当前重量超出： $rightWeight : ${Tools.getNiceHexArray(value)}");
+      }else {
+        data.curRightWeight = rightWeight;
+      }
       data.curRightCount = value[subCmdDataIndex_5 + 19];
       // data.curRightCableLength = Tools.getTwoByteByBigEndian(
       //   value[subCmdDataIndex_5 + 20],
       //   value[subCmdDataIndex_5 + 21],
       // );
       int rightCableLength = Tools.getTwoByteByBigEndian(value[subCmdDataIndex_5 + 20], value[subCmdDataIndex_5 + 21]);
-      String rightCableLengthStr = rightCableLength.toRadixString(2).padLeft(16,'0');
-      if (rightCableLength > 32767) {
-        rightCableLengthStr = rightCableLengthStr.replaceAll('0', '6');
-        rightCableLengthStr = rightCableLengthStr.replaceAll('1', '0');
-        rightCableLengthStr = rightCableLengthStr.replaceAll('6', '1');
-        data.curRightCableLength = -int.parse(rightCableLengthStr, radix: 2);
-      }else {
-        data.curRightCableLength = rightCableLength;
-      }
+      // String rightCableLengthStr = rightCableLength.toRadixString(2).padLeft(16,'0');
+      // if (rightCableLength > 32767) {
+      //   rightCableLengthStr = rightCableLengthStr.replaceAll('0', '6');
+      //   rightCableLengthStr = rightCableLengthStr.replaceAll('1', '0');
+      //   rightCableLengthStr = rightCableLengthStr.replaceAll('6', '1');
+      //   data.curRightCableLength = -int.parse(rightCableLengthStr, radix: 2);
+      // }else {
+      //   data.curRightCableLength = rightCableLength;
+      // }
+      data.curRightCableLength = (rightCableLength << 48) >> 48;
+      // LogUtils.d("绳长数据： ${data.curRightCableLength}");
       int cableVelocity1 = Tools.getTwoByteByBigEndian(value[subCmdDataIndex_5 + 22], value[subCmdDataIndex_5 + 23]);
-      String velocityStr1 = cableVelocity1.toRadixString(2).padLeft(16,'0');
-      if (cableVelocity1 > 32767) {
-        velocityStr1 = velocityStr1.replaceAll('0', '6');
-        velocityStr1 = velocityStr1.replaceAll('1', '0');
-        velocityStr1 = velocityStr1.replaceAll('6', '1');
-        data.curRightLinearVelocity = -int.parse(velocityStr1, radix: 2);
-      }else {
-        data.curRightLinearVelocity = cableVelocity1;
-      }
+      // String velocityStr1 = cableVelocity1.toRadixString(2).padLeft(16,'0');
+      // if (cableVelocity1 > 32767) {
+      //   velocityStr1 = velocityStr1.replaceAll('0', '6');
+      //   velocityStr1 = velocityStr1.replaceAll('1', '0');
+      //   velocityStr1 = velocityStr1.replaceAll('6', '1');
+      //   data.curRightLinearVelocity = -int.parse(velocityStr1, radix: 2);
+      // }else {
+      //   data.curRightLinearVelocity = cableVelocity1;
+      // }
+      data.curRightLinearVelocity = (cableVelocity1 << 48) >> 48;
       int rpm1 = Tools.getTwoByteByBigEndian(value[subCmdDataIndex_5 + 24], value[subCmdDataIndex_5 + 25]);
-      String rpmStr1 = rpm1.toRadixString(2).padLeft(16,'0');
-      if (rpm1 > 32767) {
-        rpmStr1 = rpmStr1.replaceAll('0', '6');
-        rpmStr1 = rpmStr1.replaceAll('1', '0');
-        rpmStr1 = rpmStr1.replaceAll('6', '1');
-        data.curRightRPM = -int.parse(rpmStr1, radix: 2);
-      }else {
-        data.curRightRPM = rpm1;
+      // String rpmStr1 = rpm1.toRadixString(2).padLeft(16,'0');
+      // if (rpm1 > 32767) {
+      //   rpmStr1 = rpmStr1.replaceAll('0', '6');
+      //   rpmStr1 = rpmStr1.replaceAll('1', '0');
+      //   rpmStr1 = rpmStr1.replaceAll('6', '1');
+      //   data.curRightRPM = -int.parse(rpmStr1, radix: 2);
+      // }else {
+      //   data.curRightRPM = rpm1;
+      // }
+      data.curRightRPM = (rpm1 << 48) >> 48;
+      if (data.curRightRPM > 10000) {
+        data.curRightRPM = 0;
       }
     }
     bleDeviceDataController.add(BleDeviceDataMsg.dataQueryUpdate_0x14);

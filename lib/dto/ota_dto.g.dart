@@ -18,6 +18,7 @@ OtaDto _$OtaDtoFromJson(Map<String, dynamic> json) {
     minorVersion: RHNull.getInt(json['minorVersion']),
     fullVersion: RHNull.getStr(json['fullVersion']),
     downloadUrl: RHNull.getStr(json['downloadUrl']),
+    showName: RHNull.getStr(json['showName']),
   );
 }
 

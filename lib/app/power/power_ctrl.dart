@@ -45,6 +45,7 @@ class PowerCtrl extends GetxController {
           flag.value++;
         }
         case BleDeviceStateMsg.deviceCheckSuccess: {
+          LogUtils.d("进入详情界面： ");
           Get.toNamed(RHRoute.powerDetailPage);
         }
         default:

@@ -5,8 +5,8 @@ class NetConfig {
   // static const String testUrl = "https://berrygame.top/";
 
   static const String productUrl = 'https://power.renhesports.com';
-  // static const String testUrl = "https://power.renhesports.com";
-  static const String testUrl = "http://43.136.69.79:8079/power";
+  static const String testUrl = "https://power.renhesports.com";
+  // static const String testUrl = "http://43.136.69.79:8079/power";
 /// 正式服
 //   static const bool isDebug = false;
 //   static const String productUrl = "https://speraxapp.com/";

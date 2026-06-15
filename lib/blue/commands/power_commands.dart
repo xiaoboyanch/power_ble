@@ -114,12 +114,22 @@ class PowerCommands {
     ]);
   }
 
-  static List<int> getDeviceConfig(bool isKG, bool open) {
+  static List<int> getDeviceConfig(bool isKG, bool open, int protectState, int protectWeight, int protectRope, int protectTime, int ropeState, int ropeSpeed) {
     return CrcTools.encryptCmd([
       cmdControl_0x04,
       queryDeviceCtrl_0x01,
       isKG ? 0 : 1,
-      open ? 1:0
+      open ? 1:0,
+      protectState,
+      protectWeight ~/ 256,
+      protectWeight % 256,
+      protectRope ~/ 256,
+      protectRope % 256,
+      protectTime ~/ 256,
+      protectTime % 256,
+      ropeState,
+      ropeSpeed ~/ 256,
+      ropeSpeed % 256
     ]);
   }
 

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cabina_ble/base_tool/log_utils.dart';
 import 'package:cabina_ble/blue/ble_manager.dart';
 import 'package:cabina_ble/blue/enum/device_type.dart';
 import 'package:cabina_ble/blue/factory/ble_factory.dart';
@@ -57,6 +58,7 @@ class OtaCtrl extends GetxController {
   }
 
   connectDevice(RHBlueScanResult rhBlueScanResult) {
+    otaModel.isDispose = false;
     otaModel.selectDevice(rhBlueScanResult);
   }
 

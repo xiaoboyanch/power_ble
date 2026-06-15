@@ -265,7 +265,7 @@ abstract class BleModel {
 
   _connect() async {
     try {
-      await mDevice?.connect(timeout: const Duration(seconds: scanTime));
+      await mDevice?.connect(timeout: const Duration(seconds: scanTime), license: License.nonprofit, );
     } catch (e) {
       if (_connectCount > 3) {
         bleDeviceStateController.add(BleDeviceStateMsg.bleConnectError);

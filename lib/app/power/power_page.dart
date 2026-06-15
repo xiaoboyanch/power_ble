@@ -7,6 +7,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 import '../../blue/entity/rh_blue_scan_result.dart';
+import '../../route/rh_route.dart';
 
 
 class PowerPage extends GetView<PowerCtrl> {
@@ -92,11 +93,21 @@ class PowerPage extends GetView<PowerCtrl> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Gap(12),
-                              RHText(
-                                text: rhBlueScanResult.bluetoothDevice.advName,
-                                // text: scanResult.device.platformName.isNotEmpty ? scanResult.device.platformName : scanResult.device.remoteId.str,
-                                fontSize: 20,
-                                fontColor: RHColor.black,
+                              Row(
+                                children: [
+                                  RHText(
+                                    text: rhBlueScanResult.bluetoothDevice.advName,
+                                    // text: scanResult.device.platformName.isNotEmpty ? scanResult.device.platformName : scanResult.device.remoteId.str,
+                                    fontSize: 20,
+                                    fontColor: RHColor.black,
+                                  ),
+                                  const Spacer(),
+                                  RHText(
+                                    text: 'RSSI: ${rhBlueScanResult.scanResult.rssi}',
+                                    fontSize: 20,
+                                    fontColor: RHColor.black,
+                                  )
+                                ],
                               ),
                               const Gap(8),
                               RHText(

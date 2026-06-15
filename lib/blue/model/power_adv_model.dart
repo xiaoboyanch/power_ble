@@ -25,12 +25,12 @@ class PowerAdvancedModel extends BleModel {
   late PowerAdvancedRepository _repository;
   List<RHBlueScanResult> bleResultList = [];
   StreamController<BleDeviceDataMsg> get bleDeviceDataController => _repository.bleDeviceDataController;
-  List<RHDeviceType> typeList = [RHDeviceType.powerAdvanced, RHDeviceType.powerSony];
+  List<RHDeviceType> typeList = [RHDeviceType.powerAdvanced];
   Timer? degreeTimer;
   Timer? paramsTimer;
   Timer? curMotorTimer;
   StreamSubscription? _stateSubscription;
-
+  bool isFirst = true;
   PowerAdvancedModel() {
     setDeviceType(RHDeviceType.powerAdvanced);
     _repository = PowerAdvancedRepository(bleDeviceStateController);
@@ -41,15 +41,19 @@ class PowerAdvancedModel extends BleModel {
         case BleDeviceStateMsg.deviceCheckSuccess: {
           RHToast.dismiss();
           cleanParamsTimer();
+          LogUtils.d("没关闭吗");
           sendCmd(PowerCommands.getDeviceState0902CMD());
         }
         case BleDeviceStateMsg.deviceUnitState: {
-          sendCmd(PowerCommands.getMainInfo_03Data());
-          startSendTimer();
-          startDegreeTimer();
-          startCurMotorTimer();
-          if (mPowerData.deviceType == RHDeviceType.powerAdvanced.value) {
-            startParamTimer();
+          if (isFirst) {
+            sendCmd(PowerCommands.getMainInfo_03Data());
+            startSendTimer();
+            startDegreeTimer();
+            startCurMotorTimer();
+            if (mPowerData.deviceType == RHDeviceType.powerAdvanced.value) {
+              startParamTimer();
+            }
+            isFirst = false;
           }
         }
         case BleDeviceStateMsg.bleBleReConnect: {
@@ -133,6 +137,7 @@ class PowerAdvancedModel extends BleModel {
       bleResultList.clear();
       if (resultList.isNotEmpty) {
         bleResultList.addAll(resultList);
+        bleResultList.sort((a, b) => b.scanResult.rssi.compareTo(a.scanResult.rssi));
       }
       bleDeviceStateController.add(BleDeviceStateMsg.deviceScanResult);
     }
@@ -320,8 +325,30 @@ class PowerAdvancedModel extends BleModel {
     sendCmd(cmdData);
   }
 
-  setUnit(bool isKG, bool open) {
-    sendCmd(PowerCommands.getDeviceConfig(isKG, open));
+  // setUnit(bool isKG, bool open, int protectState, int protectWeight, int protectRope, int protectTime, int ropeState, int ropeSpeed) {
+  //   sendCmd(PowerCommands.getDeviceConfig(isKG, open, protectState, protectWeight, protectRope, protectTime, ropeState, ropeSpeed));
+  // }
+
+  setUnit({
+    bool? isKG,
+    bool? open,
+    int? protectState,
+    int? protectWeight,
+    int? protectRope,
+    int? protectTime,
+    int? ropeState,
+    int? ropeSpeed,
+  }) {
+    sendCmd(PowerCommands.getDeviceConfig(
+      isKG ?? (mPowerData.unit == 0),
+      open ?? (mPowerData.pullUpLock == 1),
+      protectState ?? mPowerData.protectState,
+      protectWeight ?? mPowerData.protectWeight,
+      protectRope ?? mPowerData.protectRopeLength,
+      protectTime ?? mPowerData.protectTime,
+      ropeState ?? mPowerData.ropeBackState,
+      ropeSpeed ?? mPowerData.ropeBackSpeed,
+    ));
   }
 
   setPowerMode(int motorNumber, int status, int mode, List<int> modeList) {
@@ -345,6 +372,10 @@ class PowerAdvancedModel extends BleModel {
 
   getHandleClear() {
     sendCmd(PowerCommands.getHandleClear());
+  }
+
+  getDeviceConfig() {
+    sendCmd(PowerCommands.getDeviceState0902CMD());
   }
 
   ///ota 升级
@@ -391,10 +422,11 @@ class PowerAdvancedModel extends BleModel {
     paramsTimer = null;
     curMotorTimer?.cancel();
     curMotorTimer = null;
-    _stateSubscription?.cancel();
-    _stateSubscription = null;
+    // _stateSubscription?.cancel();
+    // _stateSubscription = null;
     disconnectDevice(clean:  true);
     disposeConnect();
+    isFirst = true;
     _buffer.clear();
   }
 

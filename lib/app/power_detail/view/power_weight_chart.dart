@@ -36,7 +36,7 @@ class _PowerWeightChartState extends State<PowerWeightChart> {
   }
 
   LineChartData get sampledData1 => LineChartData(
-    minY: 10,
+    minY: 0,
     maxY: 600,
     baselineY: 0,
     lineBarsData: randomLineData,

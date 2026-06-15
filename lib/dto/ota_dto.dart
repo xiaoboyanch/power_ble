@@ -14,6 +14,7 @@ class OtaDto {
   int minorVersion;
   String fullVersion;
   String downloadUrl;
+  String showName;
 
   OtaDto({
       this.id = 0,
@@ -23,7 +24,8 @@ class OtaDto {
       this.majorVersion = 0,
       this.minorVersion = 0,
       this.fullVersion = '',
-      this.downloadUrl = ''
+      this.downloadUrl = '',
+      this.showName = ''
   });
 
   factory OtaDto.fromJson(Map<String, dynamic> json) => _$OtaDtoFromJson(json);

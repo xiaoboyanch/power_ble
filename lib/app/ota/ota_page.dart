@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import '../../base_views/rh_colors.dart';
 import '../../base_views/rh_text.dart';
 import '../../blue/entity/rh_blue_scan_result.dart';
+import '../../route/rh_route.dart';
 
 class OtaPage extends GetView<OtaCtrl> {
   @override
@@ -41,11 +42,21 @@ class OtaPage extends GetView<OtaCtrl> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Gap(12),
-                          RHText(
-                            text: rhBlueScanResult.bluetoothDevice.advName,
-                            // text: scanResult.device.platformName.isNotEmpty ? scanResult.device.platformName : scanResult.device.remoteId.str,
-                            fontSize: 20,
-                            fontColor: RHColor.black,
+                          Row(
+                            children: [
+                              RHText(
+                                text: rhBlueScanResult.bluetoothDevice.advName,
+                                // text: scanResult.device.platformName.isNotEmpty ? scanResult.device.platformName : scanResult.device.remoteId.str,
+                                fontSize: 20,
+                                fontColor: RHColor.black,
+                              ),
+                              const Spacer(),
+                              RHText(
+                                text: 'RSSI: ${rhBlueScanResult.scanResult.rssi}',
+                                fontSize: 20,
+                                fontColor: RHColor.black,
+                              )
+                            ],
                           ),
                           const Gap(8),
                           RHText(
@@ -79,7 +90,7 @@ class OtaPage extends GetView<OtaCtrl> {
                 child: GestureDetector(
                   onTap: () {
                     controller.btnStartScan();
-                    // Get.toNamed(RHRoute.powerDetailPage);
+                    // Get.toNamed(RHRoute.otaDetailPage);
                   },
                   child: Container(
                     width: 216,

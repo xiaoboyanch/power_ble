@@ -51,7 +51,7 @@ class ScanDeviceTools {
       final deviceType = Tools.getTwoByteByBigEndian(data[2], data[3]);
 
       RHDeviceType dtEnum = RHDeviceType.fromInt(deviceType);
-      // LogUtils.d("AAAA   vendorId: $vendorId, deviceType: $deviceType : typeList: ${typeList[0].value}  :  ${typeList.contains(dtEnum)}");
+      LogUtils.d("AAAA   vendorId: $vendorId, deviceType: $deviceType : typeList: ${typeList[0].value}  :  ${typeList.contains(dtEnum)}");
       if (typeList.contains(dtEnum)) {
         if (vendorId == 0xCB90 || vendorId == 0x912F) {
           RHBluetoothDeviceInfo deviceInfo = RHBluetoothDeviceInfo();
@@ -66,6 +66,7 @@ class ScanDeviceTools {
           rs.deviceInfo = deviceInfo;
           rs.bluetoothDevice = item.device;
           rs.scanResult = item;
+          LogUtils.d("${rs.scanResult  != null}");
           rs.deviceInfo.bluetoothName = item.device.platformName;
           list.add(rs);
         }

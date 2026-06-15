@@ -32,6 +32,8 @@ class PowerDetailCtrl extends GetxController {
   RxInt backSeatStatus = 0.obs;
   ///Data update:
   RxInt paramUpdate = 0.obs;
+  ///Device Config
+  RxInt deviceConfig = 0.obs;
 
   RxInt logUpdate = 0.obs;
 
@@ -83,14 +85,24 @@ class PowerDetailCtrl extends GetxController {
   TextEditingController pullUpCtrl = TextEditingController();
   TextEditingController raiseHeightCtrl = TextEditingController();
 
+  TextEditingController protectWeightCtrl = TextEditingController();
+  TextEditingController protectRopeCtrl = TextEditingController();
+  TextEditingController protectTimeCtrl = TextEditingController();
+  TextEditingController ropeBackCtrl = TextEditingController();
+  // TextEditingController maxLimitCtrl = TextEditingController();
   Timer? logTimer;
 
   int minRPM = 0;
   int minVelocity = 0;
+  int maxVelocity = 0;
   int leftMinRPM = 0;
   int rightMinRPM = 0;
   int leftMinVelocity = 0;
   int rightMinVelocity = 0;
+  int rightMaxVelocity = 0;
+
+  StreamSubscription? stateStream;
+  StreamSubscription? dataStream;
 
   @override
   void onInit() {
@@ -109,8 +121,12 @@ class PowerDetailCtrl extends GetxController {
     cableCtrl.text = "500";
     pullUpCtrl.text = "20";
     raiseHeightCtrl.text = "20";
+    protectWeightCtrl.text = '0';
+    protectRopeCtrl.text = '0';
+    protectTimeCtrl.text = '0';
+    ropeBackCtrl.text = '0';
     isStart.value = powerData.isStart;
-    powerModel.bleDeviceStateController.stream.listen((msg) {
+    stateStream = powerModel.bleDeviceStateController.stream.listen((msg) {
       switch (msg) {
         case BleDeviceStateMsg.deviceUnitState: {
           unitFlag.value++;
@@ -119,7 +135,7 @@ class PowerDetailCtrl extends GetxController {
         }
       }
     });
-    powerModel.bleDeviceDataController.stream.listen((msg) {
+    dataStream = powerModel.bleDeviceDataController.stream.listen((msg) {
       switch (msg) {
         case BleDeviceDataMsg.dataQueryUpdate_0x02: {
         }
@@ -173,6 +189,14 @@ class PowerDetailCtrl extends GetxController {
             if (powerData.curRightLinearVelocity < rightMinVelocity){
               rightMinVelocity = powerData.curRightLinearVelocity;
             }
+            if(powerData.curRightLinearVelocity > 0) {
+              if (powerData.curRightLinearVelocity > rightMaxVelocity) {
+                rightMaxVelocity = powerData.curRightLinearVelocity;
+              }
+            }else {
+              rightMaxVelocity = 0;
+            }
+
           }
           paramUpdate.value++;
         }
@@ -285,6 +309,10 @@ class PowerDetailCtrl extends GetxController {
   @override
   void onClose() {
     super.onClose();
+    stateStream?.cancel();
+    stateStream = null;
+    dataStream?.cancel();
+    dataStream = null;
     powerModel.stopConnect();
     logTimer?.cancel();
     logTimer = null;
@@ -295,11 +323,52 @@ class PowerDetailCtrl extends GetxController {
   }
 
   setUnit(int unit, int open) {
-    powerModel.setUnit(unit == 0 ? true : false, open == 1 ? true : false);
+    powerModel.setUnit(isKG :unit == 0 ? true : false, open: open == 1 ? true : false);
     powerData.unit = unit;
     powerData.pullUpLock = open;
+    powerModel.getDeviceConfig();
     unitFlag.value++;
   }
+
+  setProtectState(int state) {
+    powerModel.setUnit(protectState: state);
+    powerModel.getDeviceConfig();
+  }
+
+  setRopeState(int state) {
+    powerModel.setUnit(ropeState: state);
+    powerModel.getDeviceConfig();
+  }
+
+  setProtectWeight() {
+    int weight = int.parse(protectWeightCtrl.text) * 10;
+    powerModel.setUnit(protectWeight: weight);
+    powerModel.getDeviceConfig();
+  }
+
+  setProtectRope() {
+    int rope = int.parse(protectRopeCtrl.text);
+    powerModel.setUnit(protectRope: rope);
+    powerModel.getDeviceConfig();
+  }
+
+  setProtectTime() {
+    int time = int.parse(protectTimeCtrl.text) * 10;
+    powerModel.setUnit(protectTime: time);
+    powerModel.getDeviceConfig();
+  }
+
+  setRopeBackSpeed() {
+    int speed = int.parse(ropeBackCtrl.text);
+    powerModel.setUnit(ropeSpeed:  speed);
+    powerModel.getDeviceConfig();
+  }
+
+  // setMaxLimitWeight() {
+  //   int limit = int.parse(maxLimitCtrl.text);
+  //   powerModel.setUnit(powerData.unit == 0 ? true : false, powerData.pullUpLock == 1 ? true : false, powerData.protectTime, powerData.ropeBackSpeed, limit);
+  //   powerModel.getDeviceConfig();
+  // }
 
   setBackSeatDegree() {
     int back = int.parse(backCtrl.text);

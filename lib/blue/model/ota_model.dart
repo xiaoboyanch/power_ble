@@ -20,7 +20,7 @@ import '../uuid/ble_uuid.dart';
 class OtaModel extends BleModel {
 
   List<RHBlueScanResult> bleResultList = [];
-  List<RHDeviceType> typeList = [RHDeviceType.walking, RHDeviceType.running, RHDeviceType.powerAdvanced];
+  List<RHDeviceType> typeList = [RHDeviceType.powerAdvanced];
   // OTA 数据回调接口
   Function(List<int> otaData)? onOtaDataReceived;
   OtaModel() {
@@ -58,6 +58,7 @@ class OtaModel extends BleModel {
       bleResultList.clear();
       if (resultList.isNotEmpty) {
         bleResultList.addAll(resultList);
+        bleResultList.sort((a, b) => b.scanResult.rssi.compareTo(a.scanResult.rssi));
       }
       bleDeviceStateController.add(BleDeviceStateMsg.deviceScanResult);
     }

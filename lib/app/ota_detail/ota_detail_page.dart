@@ -26,10 +26,32 @@ class OtaDetailPage extends GetView<OtaDetailCtrl> {
             children: [
               Obx(() {
                 controller.msgFlag.value;
-                return RHText(
-                  text: '当前更新芯片号： ${controller.chipNumber.toRadixString(16).toUpperCase()}',
-                  fontSize: 24,
-                  fontColor: RHColor.black,
+                return Column(
+                  children: [
+                    Row(
+                      children: [
+                        RHText(
+                          text: '当前更新芯片号： ${controller.chipNumber.toRadixString(16).toUpperCase()}',
+                          fontSize: 24,
+                          fontColor: RHColor.black,
+                        ),
+                        const Spacer(),
+                        RHButton(
+                          width: 120,
+                          height: 35,
+                          textKey: '下一个固件',
+                          onTap: () {
+                            controller.updateNext();
+                          },
+                        ),
+                      ],
+                    ),
+                    RHText(
+                      text: controller.showName,
+                      fontSize: 20,
+                      fontColor: RHColor.font3333,
+                    )
+                  ],
                 );
               }),
               const Gap(20),
@@ -146,7 +168,7 @@ class OtaDetailPage extends GetView<OtaDetailCtrl> {
                             ],
                           ),
                           RHText(
-                            text: '版本：${controller.deviceHigh} ： ${controller.deviceLow}',
+                            text: '版本：${controller.deviceHigh}.${controller.deviceLow}',
                             fontSize: 20,
                             fontColor: RHColor.black,
                           ),
