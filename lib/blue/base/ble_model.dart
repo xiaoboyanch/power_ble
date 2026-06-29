@@ -218,11 +218,11 @@ abstract class BleModel {
       // BleManager.instance.
       return false;
     }
-    if (Platform.isAndroid) {
-      if (!(await RHPermission.checkLocationService())) {
-        return false;
-      }
-    }
+    // if (Platform.isAndroid) {
+    //   if (!(await RHPermission.checkLocationService())) {
+    //     return false;
+    //   }
+    // }
     if (!(await RHPermission.checkBluetoothPermission())) {
       return false;
     }

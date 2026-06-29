@@ -1,3 +1,4 @@
+import 'package:cabina_ble/base_tool/log_utils.dart';
 import 'package:cabina_ble/base_views/rh_button.dart';
 import 'package:cabina_ble/base_views/rh_colors.dart';
 import 'package:cabina_ble/base_views/rh_text.dart';
@@ -26,6 +27,7 @@ class OtaDetailPage extends GetView<OtaDetailCtrl> {
             children: [
               Obx(() {
                 controller.msgFlag.value;
+                LogUtils.d("AAAAAA : ${controller.showName}");
                 return Column(
                   children: [
                     Row(
@@ -47,11 +49,40 @@ class OtaDetailPage extends GetView<OtaDetailCtrl> {
                       ],
                     ),
                     RHText(
-                      text: controller.showName,
+                      text: controller.showName == 1? '表头' : controller.showName == 2 ? '控制器': "未知",
                       fontSize: 20,
                       fontColor: RHColor.font3333,
                     )
                   ],
+                );
+              }),
+              const Gap(10),
+              Obx(() {
+                controller.msgFlag.value;
+                return Row(
+                    children: [
+                      RHButton(
+                        width: 100,
+                        height: 35,
+                        textKey: '110V',
+                        backgroundColor: controller.voltage == 1 ? RHColor.defaultRed : RHColor.grey999,
+                        onTap: () {
+                          controller.voltage = 1;
+                          controller.msgFlag.value++;
+                        },
+                      ),
+                      const Gap(20),
+                      RHButton(
+                        width: 100,
+                        height: 35,
+                        textKey: '220V',
+                        backgroundColor: controller.voltage == 0 ? RHColor.defaultRed : RHColor.grey999,
+                        onTap: () {
+                          controller.voltage = 0;
+                          controller.msgFlag.value++;
+                        },
+                      ),
+                    ]
                 );
               }),
               const Gap(20),
@@ -104,7 +135,12 @@ class OtaDetailPage extends GetView<OtaDetailCtrl> {
                             text: '芯片号： ${controller.currentOta?.chipNumber.toRadixString(16).toUpperCase()}',
                             fontSize: 20,
                             fontColor: RHColor.black,
-                          )
+                          ),
+                          RHText(
+                            text: '电压：： ${controller.currentOta?.voltage == 0 ? '220V' : '110V'}',
+                            fontSize: 20,
+                            fontColor: RHColor.black,
+                          ),
                         ],
                       );
                     }),
@@ -176,7 +212,12 @@ class OtaDetailPage extends GetView<OtaDetailCtrl> {
                             text: '芯片号： ${controller.deviceChip.toRadixString(16).toUpperCase()}',
                             fontSize: 20,
                             fontColor: RHColor.black,
-                          )
+                          ),
+                          RHText(
+                            text: '机型码：： ${controller.otaModel.mDeviceInfo?.deviceCode}',
+                            fontSize: 20,
+                            fontColor: RHColor.black,
+                          ),
                         ],
                       );
                     }),

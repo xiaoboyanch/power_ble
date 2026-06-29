@@ -23,7 +23,8 @@ enum RHDeviceType {
   ///Cabina
   powerSony(34),
   powerAdvanced(35),
-  ota(100),
+
+  ota(61166),
   /// 心率手表
   bracelet(99);
 

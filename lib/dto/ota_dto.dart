@@ -1,3 +1,4 @@
+import 'package:cabina_ble/base_tool/log_utils.dart';
 import 'package:cabina_ble/base_tool/rh_null.dart';
 import 'package:cabina_ble/blue/enum/device_type.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -14,7 +15,8 @@ class OtaDto {
   int minorVersion;
   String fullVersion;
   String downloadUrl;
-  String showName;
+  int showName;
+  int voltage;
 
   OtaDto({
       this.id = 0,
@@ -25,7 +27,8 @@ class OtaDto {
       this.minorVersion = 0,
       this.fullVersion = '',
       this.downloadUrl = '',
-      this.showName = ''
+      this.showName = 0,
+      this.voltage = 0,
   });
 
   factory OtaDto.fromJson(Map<String, dynamic> json) => _$OtaDtoFromJson(json);

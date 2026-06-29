@@ -1,5 +1,6 @@
 
 import '../base/base_device_data.dart';
+import '../enum/blue_ack_enum.dart';
 
 class PowerDeviceData extends BaseDeviceData {
   Map toJson () {
@@ -32,8 +33,8 @@ class PowerDeviceData extends BaseDeviceData {
     return m;
   }
 
-  //  收到的操作回调
-  // List<BlueAckEnum> ackList = [];
+//   收到的操作回调
+  List<BlueAckEnum> ackList = [];
 
   int isStart = 0;
   int isStart2 = 0;
@@ -118,4 +119,11 @@ class PowerDeviceData extends BaseDeviceData {
   int maxLevel = 2;
   int minLevel = 1;
   int supportMode = 0;  //  支持的设备类型
+
+  int protectState = 0;
+  int protectWeight = 0;
+  int protectRopeLength = 0;
+  int protectTime = 0;
+  int ropeBackState = 0;
+  int ropeBackSpeed = 0;
 }

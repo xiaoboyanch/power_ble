@@ -27,11 +27,11 @@ class ScanDeviceTools {
   static Future<List<RHBlueScanResult>> sortDeviceInfo(List<ScanResult> result, List<RHDeviceType> deviceType) async{
     List<RHBlueScanResult> list = [];
     for (var item in result) {
-      if (item.device.platformName.toUpperCase().contains("BT SONY") || item.device.platformName.toUpperCase().contains("BT_SONY") ) {
-        list.add(addScanItem(RHDeviceCode.walkP1.value, item.device));
-      }else {
+      // if (item.device.platformName.toUpperCase().contains("BT SONY") || item.device.platformName.toUpperCase().contains("BT_SONY") ) {
+      //   list.add(addScanItem(RHDeviceCode.walkP1.value, item.device));
+      // }else {
         checkRHDeviceInfo(item, deviceType, list);
-      }
+      // }
     }
     return Future.value(list);
   }
@@ -51,8 +51,8 @@ class ScanDeviceTools {
       final deviceType = Tools.getTwoByteByBigEndian(data[2], data[3]);
 
       RHDeviceType dtEnum = RHDeviceType.fromInt(deviceType);
-      LogUtils.d("AAAA   vendorId: $vendorId, deviceType: $deviceType : typeList: ${typeList[0].value}  :  ${typeList.contains(dtEnum)}");
-      if (typeList.contains(dtEnum)) {
+      LogUtils.d("AAAA   vendorId: $vendorId, deviceType: $deviceType : typeList: ${typeList[0].value}  :  ${typeList.contains(dtEnum)} : ${item.device.advName}");
+      if (deviceType == 61166 || typeList.contains(dtEnum) || item.device.advName == "OMNI X1" || item.device.advName == "Home Power") {
         if (vendorId == 0xCB90 || vendorId == 0x912F) {
           RHBluetoothDeviceInfo deviceInfo = RHBluetoothDeviceInfo();
           deviceInfo.type = deviceType;

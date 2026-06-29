@@ -68,6 +68,54 @@ class HomePage extends GetView<HomeCtrl> {
                 ),
               ],
             ),
+            const Gap(10),
+            Row(
+              children: [
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      Get.toNamed(RHRoute.table);
+                    },
+                    child: Container(
+                      height: 120,
+                      decoration: BoxDecoration(
+                          color: Colors.deepPurple,
+                          borderRadius: BorderRadius.circular(30)
+                      ),
+                      child: Center(
+                        child: RHText(
+                          text: 'Table TEST',
+                          fontColor: RHColor.white,
+                          fontSize: 22,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const Gap(10),
+                Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        // Get.toNamed(RHRoute.otaPage);
+                      },
+                      child: Container(
+                        height: 120,
+                        decoration: BoxDecoration(
+                            // color: Colors.blue,
+                            borderRadius: BorderRadius.circular(30)
+                        ),
+                        child: Center(
+                          child: RHText(
+                            // text: 'OTA TEST',
+                            fontColor: RHColor.white,
+                            fontSize: 22,
+                          ),
+                        ),
+                      ),
+                    )
+                ),
+              ],
+            ),
           ],
         )
     );

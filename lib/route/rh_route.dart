@@ -8,6 +8,8 @@ import 'package:get/get.dart';
 import '../app/ota/ota_page.dart';
 import '../app/ota_detail/ota_detail_page.dart';
 import '../app/power/power_page.dart';
+import '../app/table/table_page.dart';
+import '../app/table_detail/table_detail_page.dart';
 
 class RHRoute {
   static const homePage = "/homePageCtrl";
@@ -17,6 +19,8 @@ class RHRoute {
   static const aiWorkout = "/aiWorkout";
   static const otaPage = "/otaPage";
   static const otaDetailPage = "/otaDetailPage";
+  static const table = "/table";
+  static const tableDetail = "/tableDetail";
 
   static List<GetPage> getPages = [
 
@@ -28,5 +32,7 @@ class RHRoute {
     GetPage(name: aiWorkout, page: () => AIWorkoutPage(), binding: BDAIWorkoutBinding()),
     GetPage(name: otaPage, page: () => OtaPage(), binding: BDOtaBinding()),
     GetPage(name: otaDetailPage, page: () => OtaDetailPage(), binding: BDOtaDetailBinding()),
+    GetPage(name: table, page: () => TablePage(), binding: BDTableBinding()),
+    GetPage(name: tableDetail, page: () => TableDetailPage(), binding: BDTableDetailBinding()),
   ];
 }

@@ -44,7 +44,7 @@ class OtaDetailCtrl extends GetxController {
   String filePath = '';
 
   int chipNumber = 1;
-  String showName = '';
+  int showName = 0;
 
   int newOtaHighVer = 0;
   int newOtaLowVer = 0;
@@ -58,6 +58,7 @@ class OtaDetailCtrl extends GetxController {
   File? otaFile;
   int totalFileLength = 0;
   int totalPacketCount = 0;
+  int fileCheckSum = 0;
   int currentPacketNum = 0;  // 当前发送的包序号
   bool isOtaUpgrading = false;  // 是否正在 OTA 升级中
 
@@ -85,6 +86,10 @@ class OtaDetailCtrl extends GetxController {
   Timer? handshakeTimer;
 
   int currentPacketIndex = 0;
+
+  ///电压 220v 0, 110v 1。通用型： 2
+  int voltage = 0;
+
    @override
   void onInit() {
     super.onInit();
@@ -134,6 +139,9 @@ class OtaDetailCtrl extends GetxController {
                   isOtaUpgrading = false;
                   LogUtils.d("更新完成");
                   RHToast.showToast(msg: "更新完成");
+                  Future.delayed(const Duration(milliseconds: 10), (){
+                    exitBootloaderCheck();
+                  });
                 }else {
                   // if (currentPacket.isNotEmpty) {
                   //   String text = '40';
@@ -155,6 +163,8 @@ class OtaDetailCtrl extends GetxController {
             }
             case OtaCommands.cmdQueryData_0xD5: {
               RHToast.showToast(msg: "推出BOOTLOAD操作, 进入APP");
+              int checkSum = Tools.getTwoByteByBigEndian(value[subCmdDataIndex_5 + 1], value[subCmdDataIndex_5 + 2]);
+              LogUtils.d("校验认证： app: $fileCheckSum :  设备： $checkSum");
             }
           }
         }
@@ -175,6 +185,9 @@ class OtaDetailCtrl extends GetxController {
             LogUtils.d("当前正下载失败：$chip : $error : $msgHigh : $msgLow");
             _sendNextPacket();
           }else {
+            //0F 检验错误
+            //0A 写入错误
+            //00 未握手
             LogUtils.d("报错： : $chip : $error : $msgHigh : $msgLow ");
           }
           // switch (requestType) {
@@ -219,7 +232,9 @@ class OtaDetailCtrl extends GetxController {
      RHHttp.queryData(
          mtd: RHHttp.methodGet,
          params: {//系统：1-安卓 2-IOS 3-彩屏
-           'deviceType': 35,
+           'deviceType': otaModel.deviceType.value,
+           'voltage': voltage,
+           'deviceCode': otaModel.mDeviceInfo?.deviceCode,
          },
          url: RHUrls.otaUpdate,
          callback: (a,b,data) {
@@ -241,6 +256,8 @@ class OtaDetailCtrl extends GetxController {
              showName = currentOta!.showName;
              chipCtrl.text = chipNumber.toRadixString(16).toUpperCase();
              // startDownload();
+           }else {
+             RHToast.showToast(msg: "找不到固件包: ${otaModel.deviceType.value} : ${voltage} : ${otaModel.mDeviceInfo?.deviceCode}");
            }
            romFlag.value++;
            msgFlag.value++;
@@ -266,6 +283,7 @@ class OtaDetailCtrl extends GetxController {
          newOtaHighVer = currentOta!.majorVersion;
          newOtaLowVer = currentOta!.minorVersion;
          chipNumber = currentOta!.chipNumber;
+         showName = currentOta!.showName;
          chipCtrl.text = chipNumber.toRadixString(16).toUpperCase();
          // startDownload();
          romFlag.value++;
@@ -314,12 +332,37 @@ class OtaDetailCtrl extends GetxController {
     // 计算总包数 (向上取整)
     totalPacketCount = (totalFileLength / packetSize).ceil();
 
+
+
+    // 判断最后一个包的数据长度是否是4的倍数，不足则补0xFF
+    // int lastPacketLen = totalFileLength - (totalPacketCount - 1) * packetSize;
+    // if (lastPacketLen % 4 != 0) {
+    //   int padding = 4 - (lastPacketLen % 4);
+    //   Uint8List padded = Uint8List(fileData.length + padding);
+    //   padded.setRange(0, fileData.length, fileData);
+    //   for (int i = fileData.length; i < padded.length; i++) {
+    //     padded[i] = 0xFF;
+    //   }
+    //   fileData = padded;
+    //   totalFileLength = fileData.length;
+    //   LogUtils.d('最后一个包补零：原长度 $lastPacketLen, 补零后长度 ${lastPacketLen + padding}');
+    // }
+
+    Uint8List fileData = otaFile!.readAsBytesSync();
+    int sum = 0;
+    for (int i = 0; i < fileData.length; i++) {
+      sum += fileData[i];
+    }
+    fileCheckSum = sum & 0xFFFF;
+
     LogUtils.d('文件大小：$totalFileLength 字节');
     LogUtils.d('分包大小：$packetSize 字节');
     LogUtils.d('总包数：$totalPacketCount 包');
+    LogUtils.d('文件校验和：$sum : $fileCheckSum ： $totalFileLength');
     LogUtils.d("固件包路径： $filePath");
     handshakeTimer?.cancel();
     handshakeTimer = null;
+    // handshake(chipNumber, 1, totalPacketCount, fileCheckSum, newOtaHighVer, newOtaLowVer);
     handshakeTimer = Timer.periodic(const Duration(milliseconds: 400), (timer) {
       if (!isOtaUpgrading) {
         handshake(chipNumber, 1, totalPacketCount, totalFileLength, newOtaHighVer, newOtaLowVer);
@@ -411,7 +454,14 @@ class OtaDetailCtrl extends GetxController {
   }
 
   exitBootloader() {
-    otaModel.exitBootloader(chipNumber);
+    // otaModel.exitBootloader(chipNumber);
+    LogUtils.d("退出，并发送校验和： $fileCheckSum");
+    otaModel.exitBootloaderCheck(chipNumber, fileCheckSum);
+  }
+
+  exitBootloaderCheck() {
+     LogUtils.d("退出，并发送校验和： $fileCheckSum");
+     otaModel.exitBootloaderCheck(chipNumber, fileCheckSum);
   }
 
   readRom() {

@@ -56,6 +56,15 @@ class OtaCommands {
       0x00,
     ]);
   }
+
+  static List<int> exitBootloaderCheck(int chipNumber, int checkSum) {
+    return CrcTools.encryptCmd([
+      cmdQueryData_0xD5,
+      chipNumber,
+      checkSum ~/ 256,
+      checkSum % 256,
+    ]);
+  }
   /// 查询芯片版本号 D7
   static List<int> queryChipVersion(int chipNumber) {
     return CrcTools.encryptCmd([

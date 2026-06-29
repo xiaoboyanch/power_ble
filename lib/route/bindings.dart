@@ -8,6 +8,8 @@ import '../app/ota/ota_ctrl.dart';
 import '../app/ota_detail/ota_detail_ctrl.dart';
 import '../app/power/power_ctrl.dart';
 import '../app/power_detail/power_detail_ctrl.dart';
+import '../app/table/table_ctrl.dart';
+import '../app/table_detail/table_detail_ctrl.dart';
 
 class BDHomeBinding implements Bindings {
   @override
@@ -55,5 +57,19 @@ class BDOtaDetailBinding implements Bindings {
   @override
   void dependencies() {
     Get.lazyPut(() => OtaDetailCtrl());
+  }
+}
+
+class BDTableBinding implements Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut(() => TableCtrl());
+  }
+}
+
+class BDTableDetailBinding implements Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut(() => TableDetailCtrl());
   }
 }

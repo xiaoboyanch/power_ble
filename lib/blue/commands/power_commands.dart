@@ -56,6 +56,9 @@ class PowerCommands {
   static const int queryDataState_0x02 = 0x02; //
   // static const int queryBobaoOpen_0x03 = 0x03; //
   static const int queryDataSport_0x04 = 0x04; //
+  static const int queryDataSport_0x06 = 0x06; //划船机运动数据
+  static const int queryDataSport_0x08 = 0x08; //划船机运动数据
+  static const int queryDataSport_0x0A = 0x0A; //划船机运动数据
   static const int queryDataSport_0x10 = 0x10; //
   static const int queryDataSport_0x12 = 0x12; //
   static const int queryDataSport_0x14 = 0x14; //
@@ -198,82 +201,107 @@ class PowerCommands {
   }
 
 
-  // static List<int> getReBLEName(String name) {
-  //   Uint8List byte = Utf8Encoder().convert(name);
-  //   List<int> list = [];
-  //   if (byte.length > 12) {
-  //     list.addAll(byte.sublist(0, 12));
-  //   }else {
-  //     list.addAll(byte);
-  //     while (list.length < 12) {
-  //       list.add(0);
-  //     }
-  //   }
-  //   list.insertAll(0, [cmdDeviceConf_0x0C, controlReBLE]);
-  //   return CrcTools.encryptCmd(list, needSplit: false);
-  // }
-  //
-  // static List<int> getReMusicName(String name) {
-  //   Uint8List byte = Utf8Encoder().convert(name);
-  //   List<int> list = [];
-  //   if (byte.length > 12) {
-  //     list.addAll(byte.sublist(0, 12));
-  //   }else {
-  //     list.addAll(byte);
-  //     while (list.length < 12) {
-  //       list.add(0);
-  //     }
-  //   }
-  //   list.insertAll(0, [cmdDeviceConf_0x0C, controlReMusic]);
-  //   return CrcTools.encryptCmd(list, needSplit: false);
-  // }
-  //
-  //
-  // static List<int> getHengLiCMD(double weight) {
-  //   // print('BBBBBBB  $weight  ${(weight*10)~/256} - ${((weight * 10).toInt() % 256)}');
-  //   return CrcTools.encryptCmd([
-  //     cmdControl_0x05,
-  //     hengLiMode,
-  //     (weight*10)~/256,
-  //     ((weight * 10).toInt() % 256),
-  //   ]);
-  // }
-  //
-  // static List<int> getLiXinCMD(double weight) {
-  //   return CrcTools.encryptCmd([
-  //     cmdControl_0x05,
-  //     liXinLiMode,
-  //     (weight*10)~/256,
-  //     ((weight * 10).toInt() % 256),
-  //   ]);
-  // }
-  //
-  // static List<int> getTanLiCMD(double weight) {
-  //   return CrcTools.encryptCmd([
-  //     cmdControl_0x05,
-  //     tanLiMode,
-  //     (weight*10)~/256,
-  //     ((weight * 10).toInt() % 256),
-  //   ]);
-  // }
-  //
-  // static List<int> getSpeedCmd(double weight) {
-  //   return CrcTools.encryptCmd([
-  //     cmdControl_0x05,
-  //     speedMode,
-  //     (weight*10)~/256,
-  //     ((weight * 10).toInt() % 256),
-  //   ]);
-  // }
-  //
-  // static List<int> getGearCMD(int leftLevel) {
-  //   return CrcTools.encryptCmd([
-  //     cmdControl_0x05,
-  //     gearMode,
-  //     0,
-  //     leftLevel,
-  //   ]);
-  // }
+  static List<int> getReBLEName(String name) {
+    Uint8List byte = Utf8Encoder().convert(name);
+    List<int> list = [];
+    if (byte.length > 12) {
+      list.addAll(byte.sublist(0, 12));
+    }else {
+      list.addAll(byte);
+      while (list.length < 12) {
+        list.add(0);
+      }
+    }
+    list.insertAll(0, [cmdDeviceConf_0x0C, controlReBLE]);
+    return CrcTools.encryptCmd(list, needSplit: false);
+  }
+
+  static List<int> getReMusicName(String name) {
+    Uint8List byte = Utf8Encoder().convert(name);
+    List<int> list = [];
+    if (byte.length > 12) {
+      list.addAll(byte.sublist(0, 12));
+    }else {
+      list.addAll(byte);
+      while (list.length < 12) {
+        list.add(0);
+      }
+    }
+    list.insertAll(0, [cmdDeviceConf_0x0C, controlReMusic]);
+    return CrcTools.encryptCmd(list, needSplit: false);
+  }
+
+
+  static List<int> getHengLiCMD(double weight) {
+    // print('BBBBBBB  $weight  ${(weight*10)~/256} - ${((weight * 10).toInt() % 256)}');
+    return CrcTools.encryptCmd([
+      cmdControl_0x05,
+      hengLiMode,
+      (weight*10)~/256,
+      ((weight * 10).toInt() % 256),
+    ]);
+  }
+
+  static List<int> getLiXinCMD(double weight) {
+    return CrcTools.encryptCmd([
+      cmdControl_0x05,
+      liXinLiMode,
+      (weight*10)~/256,
+      ((weight * 10).toInt() % 256),
+    ]);
+  }
+
+  static List<int> getTanLiCMD(double weight) {
+    return CrcTools.encryptCmd([
+      cmdControl_0x05,
+      tanLiMode,
+      (weight*10)~/256,
+      ((weight * 10).toInt() % 256),
+    ]);
+  }
+
+  static List<int> getSpeedCmd(double weight) {
+    return CrcTools.encryptCmd([
+      cmdControl_0x05,
+      speedMode,
+      (weight*10)~/256,
+      ((weight * 10).toInt() % 256),
+    ]);
+  }
+
+  static List<int> getGearCMD(int leftLevel) {
+    return CrcTools.encryptCmd([
+      cmdControl_0x05,
+      gearMode,
+      0,
+      leftLevel,
+    ]);
+  }
+
+  static List<int> getDeviceParams() {
+    return CrcTools.encryptCmd([
+      cmdQueryData_0x09,
+      cmdControl_0x06,
+
+    ]);
+  }
+
+  static List<int> setDeviceParams(int protectState, int protectWeight, int protectRope, int protectTime, int ropeState, int ropeSpeed) {
+    return CrcTools.encryptCmd([
+      cmdQueryExtParam_0x03,
+      cmdControl_0x02,
+      protectState,
+      protectWeight ~/ 256,
+      protectWeight % 256,
+      protectRope ~/ 256,
+      protectRope % 256,
+      protectTime ~/ 256,
+      protectTime % 256,
+      ropeState,
+      ropeSpeed ~/ 256,
+      ropeSpeed % 256
+    ]);
+  }
 
   static List<int> setSideSlider(int leftSlider, int rightSlider) {
     return CrcTools.encryptCmd([

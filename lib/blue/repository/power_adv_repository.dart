@@ -100,8 +100,10 @@ class PowerAdvancedRepository {
         break;
       case PowerCommands.cmdQueryData_0x0B:
         int handleKey = value[subCmdIndex];
+        LogUtils.d("按键值： $handleKey :   ${Tools.getNiceHexArray(value)}");
         if (handleKey != data.handlePress) {
           data.handlePress = handleKey;
+
           if (data.handlePress != 0) {
             RHToast.showToast(msg: 'Handle Pressed Key: ${data.handlePress}');
           }

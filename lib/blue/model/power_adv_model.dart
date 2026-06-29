@@ -25,7 +25,7 @@ class PowerAdvancedModel extends BleModel {
   late PowerAdvancedRepository _repository;
   List<RHBlueScanResult> bleResultList = [];
   StreamController<BleDeviceDataMsg> get bleDeviceDataController => _repository.bleDeviceDataController;
-  List<RHDeviceType> typeList = [RHDeviceType.powerAdvanced];
+  List<RHDeviceType> typeList = [RHDeviceType.powerAdvanced, RHDeviceType.powerSony];
   Timer? degreeTimer;
   Timer? paramsTimer;
   Timer? curMotorTimer;

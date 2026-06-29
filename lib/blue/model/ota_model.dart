@@ -20,7 +20,7 @@ import '../uuid/ble_uuid.dart';
 class OtaModel extends BleModel {
 
   List<RHBlueScanResult> bleResultList = [];
-  List<RHDeviceType> typeList = [RHDeviceType.powerAdvanced];
+  List<RHDeviceType> typeList = [ RHDeviceType.ota, RHDeviceType.running];
   // OTA 数据回调接口
   Function(List<int> otaData)? onOtaDataReceived;
   OtaModel() {
@@ -178,6 +178,10 @@ class OtaModel extends BleModel {
 
   exitBootloader(int chipNumber) {
     otaWrite(OtaCommands.exitBootloader(chipNumber));
+  }
+
+  exitBootloaderCheck(int chipNumber, int checkSum) {
+    otaWrite(OtaCommands.exitBootloaderCheck(chipNumber, checkSum));
   }
 
   queryChipVersion(int chipNumber) {
