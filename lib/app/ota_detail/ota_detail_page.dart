@@ -25,6 +25,28 @@ class OtaDetailPage extends GetView<OtaDetailCtrl> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Row(
+                children: [
+                  RHButton(
+                    width: 120,
+                    height: 35,
+                    textKey: '更改音乐蓝牙名',
+                    onTap: () {
+                      controller.setMusicName('OMNIX1 Music');
+                    },
+                  ),
+                  const Gap(10),
+                  RHButton(
+                    width: 120,
+                    height: 35,
+                    textKey: '重启蓝牙',
+                    onTap: () {
+                      controller.rebootBle();
+                    },
+                  ),
+                ],
+              ),
+              const Gap(10),
               Obx(() {
                 controller.msgFlag.value;
                 LogUtils.d("AAAAAA : ${controller.showName}");

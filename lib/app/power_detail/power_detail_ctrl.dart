@@ -47,6 +47,8 @@ class PowerDetailCtrl extends GetxController {
 
   RxInt pullUpFlag = 0.obs;
 
+  RxInt deviceLockFlag = 0.obs;
+
   List<double>  leftWeight = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   List<double> rightWeight = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   List<double>  leftRope = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -104,6 +106,7 @@ class PowerDetailCtrl extends GetxController {
   StreamSubscription? stateStream;
   StreamSubscription? dataStream;
 
+  Timer? snTimer;
   @override
   void onInit() {
     super.onInit();
@@ -138,6 +141,10 @@ class PowerDetailCtrl extends GetxController {
     dataStream = powerModel.bleDeviceDataController.stream.listen((msg) {
       switch (msg) {
         case BleDeviceDataMsg.dataQueryUpdate_0x02: {
+        }
+        case BleDeviceDataMsg.dataQueryUpdate_0x08: {
+          LogUtils.d("dataQueryUpdate_0x08   +++ ${powerData.deviceLock}");
+          deviceLockFlag.value++;
         }
         case BleDeviceDataMsg.dataQueryUpdate_0x10: {
           //device status include training mode, motor status,
@@ -215,10 +222,21 @@ class PowerDetailCtrl extends GetxController {
         case BleDeviceDataMsg.dataQueryUpdate_0x40: {
           // onPressureCallBack(powerData);
         }
+        case BleDeviceDataMsg.dataQueryUpdate_0x1D: {
+          if (powerData.deviceSNCode != '') {
+            snTimer?.cancel();
+            snTimer = null;
+          }
+        }
         default: {}
       }
     });
     startLogTimer();
+    powerModel.getDeviceLock();
+    snTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+      powerModel.getDeviceSN();
+    });
+    // getDeviceSN();
     // Timer.periodic(Duration(seconds: 2), (_) {
     //   powerModel.setBackSeatDegree(back, seat);
     // });
@@ -256,16 +274,26 @@ class PowerDetailCtrl extends GetxController {
       }
     });
   }
-
+  static const double _emaAlpha = 0.15;
+  double _ema(double newValue, double prevEma) {
+    if (prevEma == 0 && newValue != 0) return newValue;
+    return _emaAlpha * newValue + (1 - _emaAlpha) * prevEma;
+  }
+  double _leftRopeEma = 0;
+  double _rightRopeEma = 0;
   onDataCallBack(PowerAdvancedData data) {
     if (motorType.value != 2) {
-      leftRope.add(data.curLeftCableLength.toDouble());
-      rightRope.add(data.curRightCableLength.toDouble());
+      _leftRopeEma = _ema(data.curLeftCableLength.toDouble(), _leftRopeEma);
+      _rightRopeEma = _ema(data.curRightCableLength.toDouble(), _rightRopeEma);
+      leftRope.add(_leftRopeEma);
+      rightRope.add(_rightRopeEma);
+      // leftRope.add(data.curLeftCableLength.toDouble());
+      // rightRope.add(data.curRightCableLength.toDouble());
       if (leftRope.length > 80) {
         leftRope.removeAt(0);
         rightRope.removeAt(0);
       }
-
+      LogUtils.d("leftRope: $leftRope \n rightRope: $rightRope");
       leftAbsRope.add(data.curLeftRPM.toDouble());
       rightAbsRope.add(data.curRightRPM.toDouble());
       if (leftAbsRope.length > 80) {
@@ -316,6 +344,8 @@ class PowerDetailCtrl extends GetxController {
     powerModel.stopConnect();
     logTimer?.cancel();
     logTimer = null;
+    snTimer?.cancel();
+    snTimer = null;
   }
 
   getUnitStr() {
@@ -328,6 +358,11 @@ class PowerDetailCtrl extends GetxController {
     powerData.pullUpLock = open;
     powerModel.getDeviceConfig();
     unitFlag.value++;
+  }
+
+  setDeviceLock(int lock) {
+    powerModel.setDeviceLock(lock);
+    powerModel.getDeviceLock();
   }
 
   setProtectState(int state) {
@@ -362,6 +397,15 @@ class PowerDetailCtrl extends GetxController {
     int speed = int.parse(ropeBackCtrl.text);
     powerModel.setUnit(ropeSpeed:  speed);
     powerModel.getDeviceConfig();
+  }
+
+
+  getDeviceSN() {
+    powerModel.getDeviceSN();
+  }
+
+  setSn() {
+    powerModel.setSNName();
   }
 
   // setMaxLimitWeight() {

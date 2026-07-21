@@ -44,6 +44,7 @@ class OtaDetailCtrl extends GetxController {
   String filePath = '';
 
   int chipNumber = 1;
+  int chipAddress = 0;
   int showName = 0;
 
   int newOtaHighVer = 0;
@@ -232,11 +233,12 @@ class OtaDetailCtrl extends GetxController {
      RHHttp.queryData(
          mtd: RHHttp.methodGet,
          params: {//系统：1-安卓 2-IOS 3-彩屏
-           'deviceType': otaModel.deviceType.value,
+           // "deviceType": 7,
+           'deviceType': 7,
            'voltage': voltage,
-           'deviceCode': otaModel.mDeviceInfo?.deviceCode,
+           // 'deviceCode': otaModel.mDeviceInfo?.deviceCode,
          },
-         url: RHUrls.otaUpdate,
+         url: RHUrls.otaVersionList,
          callback: (a,b,data) {
            if (!a) {
              RHToast.showToast(msg: '获取固件版本失败');
@@ -253,6 +255,7 @@ class OtaDetailCtrl extends GetxController {
              newOtaHighVer = currentOta!.majorVersion;
              newOtaLowVer = currentOta!.minorVersion;
              chipNumber = currentOta!.chipNumber;
+             chipAddress = currentOta!.address;
              showName = currentOta!.showName;
              chipCtrl.text = chipNumber.toRadixString(16).toUpperCase();
              // startDownload();
@@ -271,6 +274,7 @@ class OtaDetailCtrl extends GetxController {
        newOtaHighVer = currentOta!.majorVersion;
        newOtaLowVer = currentOta!.minorVersion;
        chipNumber = currentOta!.chipNumber;
+       chipAddress = currentOta!.address;
        showName = currentOta!.showName;
        chipCtrl.text = chipNumber.toRadixString(16).toUpperCase();
        // startDownload();
@@ -283,6 +287,7 @@ class OtaDetailCtrl extends GetxController {
          newOtaHighVer = currentOta!.majorVersion;
          newOtaLowVer = currentOta!.minorVersion;
          chipNumber = currentOta!.chipNumber;
+         chipAddress = currentOta!.address;
          showName = currentOta!.showName;
          chipCtrl.text = chipNumber.toRadixString(16).toUpperCase();
          // startDownload();
@@ -365,7 +370,7 @@ class OtaDetailCtrl extends GetxController {
     // handshake(chipNumber, 1, totalPacketCount, fileCheckSum, newOtaHighVer, newOtaLowVer);
     handshakeTimer = Timer.periodic(const Duration(milliseconds: 400), (timer) {
       if (!isOtaUpgrading) {
-        handshake(chipNumber, 1, totalPacketCount, totalFileLength, newOtaHighVer, newOtaLowVer);
+        handshake(chipNumber, 1, totalPacketCount, totalFileLength, newOtaHighVer, newOtaLowVer, address: chipAddress);
       }
     });
     // handshake(chipNumber, 1, totalPacketCount, totalFileLength, newOtaHighVer, newOtaLowVer);
@@ -399,7 +404,7 @@ class OtaDetailCtrl extends GetxController {
 
       LogUtils.d('发送包 ${currentPacketNum + 1}/$totalPacketCount, 数据长度：${packetData.length}');
 
-      IAPWrite(chipNumber, currentPacketNum, packetData.length, packetData);
+      IAPWrite(chipNumber, currentPacketNum, packetData.length, packetData, address: chipAddress);
       currentPacket.addAll(packetData);
     } catch (e) {
       LogUtils.e('读取固件包失败：$e');
@@ -441,16 +446,25 @@ class OtaDetailCtrl extends GetxController {
     }
   }
 
+  setMusicName(String name){
+     otaModel.setMusicName(name);
+  }
+
+  rebootBle() {
+     otaModel.rebootBle();
+  }
+
+
   queryChipVersion() {
-     otaModel.queryChipVersion(chipNumber);
+     otaModel.queryChipVersion(chipNumber, address: chipAddress);
   }
 
-  handshake(int chipNumber, int mode, int packetCount, int fileLength, int versionHigh, int versionLow) {
-    otaModel.handshake(chipNumber, mode, packetCount, fileLength, versionHigh, versionLow);
+  handshake(int chipNumber, int mode, int packetCount, int fileLength, int versionHigh, int versionLow, {int address = 0x00}) {
+    otaModel.handshake(chipNumber, mode, packetCount, fileLength, versionHigh, versionLow,  address:  address);
   }
 
-  IAPWrite(int chipNumber, int packageNum, int length, List<int> data) {
-    otaModel.IAPWrite(chipNumber, packageNum, length, data);
+  IAPWrite(int chipNumber, int packageNum, int length, List<int> data, {int address = 0x00}) {
+    otaModel.IAPWrite(chipNumber, packageNum, length, data , address: address);
   }
 
   exitBootloader() {
@@ -461,7 +475,7 @@ class OtaDetailCtrl extends GetxController {
 
   exitBootloaderCheck() {
      LogUtils.d("退出，并发送校验和： $fileCheckSum");
-     otaModel.exitBootloaderCheck(chipNumber, fileCheckSum);
+     otaModel.exitBootloaderCheck(chipNumber, fileCheckSum, address: chipAddress);
   }
 
   readRom() {

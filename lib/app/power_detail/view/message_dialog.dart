@@ -50,6 +50,7 @@ class MessageDialog {
                       contentStr("${"device_code".tr}${data.deviceCode}"),
                       contentStr("${"brand_code".tr}${data.brandCode}"),
                       contentStr("${"firmware_version".tr}${data.version} - ${data.subVersion}"),
+                      contentStr("SN: ${data.deviceSNCode}"),
                       line(),
                       contentStr("${"unit_system".tr}${data.unit == 0? "metric".tr : "imperial".tr}"),
                       line(),

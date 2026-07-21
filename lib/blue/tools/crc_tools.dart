@@ -123,8 +123,9 @@ class CrcTools {
     return false;
   }
 
-  static List<int> encryptCmd(List<int> inputData, {bool needSplit = true}) {
-    List<int> data = [0xF5, 0x00, 0x00];
+  static List<int> encryptCmd(List<int> inputData, {bool needSplit = true, int address = 0x00}) {
+    List<int> data = [0xF5, 0x00];
+    data.add(address);
     data.addAll(inputData);
     data[1] = data.length + 3;
 

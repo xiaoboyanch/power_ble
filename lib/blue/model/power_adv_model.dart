@@ -42,6 +42,7 @@ class PowerAdvancedModel extends BleModel {
           RHToast.dismiss();
           cleanParamsTimer();
           LogUtils.d("没关闭吗");
+          getDeviceConfig();
           sendCmd(PowerCommands.getDeviceState0902CMD());
         }
         case BleDeviceStateMsg.deviceUnitState: {
@@ -358,6 +359,10 @@ class PowerAdvancedModel extends BleModel {
     sendCmd(PowerCommands.setPowerMode(motorNumber, status, mode, modeList));
   }
 
+  setDeviceLock(int lock) {
+    sendCmd(PowerCommands.setDeviceLock(lock));
+  }
+
   getBackSeatDegree() {
     sendCmd(PowerCommands.getBackSeatDegree());
   }
@@ -376,6 +381,19 @@ class PowerAdvancedModel extends BleModel {
 
   getDeviceConfig() {
     sendCmd(PowerCommands.getDeviceState0902CMD());
+  }
+
+  getDeviceLock() {
+    sendCmd(PowerCommands.getDeviceLock());
+  }
+
+
+  getDeviceSN() {
+    sendCmd(PowerCommands.readSNCode());
+  }
+
+  setSNName() {
+    sendCmd(PowerCommands.writeSNCode("QRTSSPB25070003"));
   }
 
   ///ota 升级

@@ -102,7 +102,8 @@ class RHUrls {
   static const String trackGoods = "/api/log/clickGoods";
   static const String trackApp = "/api/log/evoke";
 
-  static const String otaUpdate = "/api/ota/version/list";
+  static const String otaVersionList = '/api/ota/version/list';
+  static const String otaTestList = '/api/ota/test/version/list';
 
   RHUrls._();
 }

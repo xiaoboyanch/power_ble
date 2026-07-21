@@ -52,7 +52,7 @@ class ScanDeviceTools {
 
       RHDeviceType dtEnum = RHDeviceType.fromInt(deviceType);
       LogUtils.d("AAAA   vendorId: $vendorId, deviceType: $deviceType : typeList: ${typeList[0].value}  :  ${typeList.contains(dtEnum)} : ${item.device.advName}");
-      if (deviceType == 61166 || typeList.contains(dtEnum) || item.device.advName == "OMNI X1" || item.device.advName == "Home Power") {
+      if (deviceType == 61166 || typeList.contains(dtEnum) || item.device.advName == "OMNI X1" || item.device.advName == "SPERAX_RM01" || item.device.advName == "BT_SONY" || item.device.advName == "BT SONY" || item.device.advName == "Home Power") {
         if (vendorId == 0xCB90 || vendorId == 0x912F) {
           RHBluetoothDeviceInfo deviceInfo = RHBluetoothDeviceInfo();
           deviceInfo.type = deviceType;

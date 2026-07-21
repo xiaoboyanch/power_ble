@@ -5,12 +5,14 @@ enum BleDeviceDataMsg {
   dataQueryUpdate_0x03(3),
   dataQueryUpdate_0x04(4),
   dataQueryUpdate_0x06(6),
+  dataQueryUpdate_0x08(8),
   dataQueryUpdate_0x10(10),
   dateQueryUpdate_0x12(12),
   dataQueryUpdate_0x14(14),
   dataQueryUpdate_0x16(16),
   dataQueryUpdate_0x0B(11),
   dataQueryUpdate_0x40(40),
+  dataQueryUpdate_0x1D(60),
   orderError_0x0E(14),
   deviceAck_0xD0(208);
 

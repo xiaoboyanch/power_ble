@@ -20,7 +20,7 @@ import '../uuid/ble_uuid.dart';
 class OtaModel extends BleModel {
 
   List<RHBlueScanResult> bleResultList = [];
-  List<RHDeviceType> typeList = [ RHDeviceType.ota, RHDeviceType.running];
+  List<RHDeviceType> typeList = [ RHDeviceType.ota, RHDeviceType.running, RHDeviceType.powerBoard, RHDeviceType.powerAdvanced, RHDeviceType.powerSony];
   // OTA 数据回调接口
   Function(List<int> otaData)? onOtaDataReceived;
   OtaModel() {
@@ -168,24 +168,24 @@ class OtaModel extends BleModel {
     bleDeviceStateController.add(msg);
   }
 
-  handshake(int chipNumber, int mode, int packetCount, int fileLength, int versionHigh, int versionLow) {
-    otaWrite(OtaCommands.handshake(chipNumber, mode, packetCount, fileLength, versionHigh, versionLow));
+  handshake(int chipNumber, int mode, int packetCount, int fileLength, int versionHigh, int versionLow, {int address = 0x00}) {
+    otaWrite(OtaCommands.handshake(chipNumber, mode, packetCount, fileLength, versionHigh, versionLow, address: address));
   }
 
-  IAPWrite(int chipNumber, int packageNum, int length, List<int> data) {
-    otaWrite(OtaCommands.IAPWrite(chipNumber, packageNum, length, data));
+  IAPWrite(int chipNumber, int packageNum, int length, List<int> data, {int address = 0x00}) {
+    otaWrite(OtaCommands.IAPWrite(chipNumber, packageNum, length, data, address: address));
   }
 
   exitBootloader(int chipNumber) {
     otaWrite(OtaCommands.exitBootloader(chipNumber));
   }
 
-  exitBootloaderCheck(int chipNumber, int checkSum) {
-    otaWrite(OtaCommands.exitBootloaderCheck(chipNumber, checkSum));
+  exitBootloaderCheck(int chipNumber, int checkSum, {int address = 0x00}) {
+    otaWrite(OtaCommands.exitBootloaderCheck(chipNumber, checkSum, address: address));
   }
 
-  queryChipVersion(int chipNumber) {
-    otaWrite(OtaCommands.queryChipVersion(chipNumber));
+  queryChipVersion(int chipNumber, {int address = 0x00}) {
+    otaWrite(OtaCommands.queryChipVersion(chipNumber, address: address));
   }
 
   readRom(int chipNumber, int addressHigh, int addressLow, int length) {
@@ -198,6 +198,14 @@ class OtaModel extends BleModel {
 
   eraseRom(int chipNumber, int addressHigh, int addressLow) {
     otaWrite(OtaCommands.eraseRom(chipNumber, addressHigh, addressLow));
+  }
+
+  rebootBle() {
+    otaWrite(OtaCommands.getReBootBlue());
+  }
+  
+  setMusicName(String name){
+    otaWrite(OtaCommands.getReMusicName(name));
   }
 
   @override

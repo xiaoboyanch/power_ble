@@ -17,11 +17,13 @@ class OtaDto {
   String downloadUrl;
   int showName;
   int voltage;
+  int address;
 
   OtaDto({
       this.id = 0,
       this.deviceType = RHDeviceType.powerAdvanced,
       this.manufacturer = '',
+      this.address = 0,
       this.chipNumber = 0,
       this.majorVersion = 0,
       this.minorVersion = 0,

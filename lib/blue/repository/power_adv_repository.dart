@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:cabina_ble/base_tool/log_utils.dart';
 import 'package:cabina_ble/base_tool/rh_int.dart';
@@ -36,8 +37,10 @@ class PowerAdvancedRepository {
     RHBluetoothDeviceInfo deviceInfo,
   ) {
     switch (value[cmdIndex]) {
+      case PowerCommands.cmdResponse_0x1D: {
+        _handleSNCode(value, data, deviceInfo);
+      }
       case PowerCommands.cmdQueryParam_0x01:
-        LogUtils.d("0x01指令: ${Tools.getNiceHexArray(value)}");
       try {
         _handleDeviceInfo(value, data, deviceInfo);
 
@@ -48,40 +51,53 @@ class PowerAdvancedRepository {
       bleDeviceDataController.add(BleDeviceDataMsg.deviceInfoUpdate_0x01);
         break;
       case PowerCommands.cmdQueryExtParam_0x03:
-        // LogUtils.d("0x03指令: ${Tools.getNiceHexArray(value)}");
         _handleExtendedParams(value, data, deviceInfo);
       case PowerCommands.cmdQueryData_0x09:
 
         switch (value[subCmdIndex]) {
           case PowerCommands.queryDataState_0x02: {
-            LogUtils.d("0x09指令: ${Tools.getNiceHexArray(value)}");
               data.unit = value[subCmdDataIndex_5];
               if (value.length >= 10) {
                 data.pullUpLock = value[subCmdDataIndex_5 + 1];
               }
               if (value.length > 12) {
                 data.protectState = value[subCmdDataIndex_5 + 2];
-                data.protectWeight = Tools.getTwoByteByBigEndian(
+                int data1 = Tools.getTwoByteByBigEndian(
                   value[subCmdDataIndex_5 + 3],
                   value[subCmdDataIndex_5 + 4],
                 );
-                LogUtils.d("0x09指令: ${data.protectWeight}");
-                data.protectRopeLength = Tools.getTwoByteByBigEndian(
+                if (data1 != 0) {
+                  data.protectWeight = data1;
+                }
+                int data2 = Tools.getTwoByteByBigEndian(
                   value[subCmdDataIndex_5 + 5],
                   value[subCmdDataIndex_5 + 6],
                 );
-                data.protectTime = Tools.getTwoByteByBigEndian(
+                if (data2 != 0) {
+                  data.protectRopeLength = data2;
+                }
+                int data3 = Tools.getTwoByteByBigEndian(
                   value[subCmdDataIndex_5 + 7],
                   value[subCmdDataIndex_5 + 8],
                 );
+                if (data3 != 0) {
+                  data.protectTime = data3;
+                }
                 data.ropeBackState = value[subCmdDataIndex_5 + 9];
-                data.ropeBackSpeed = Tools.getTwoByteByBigEndian(
+                int data4 = Tools.getTwoByteByBigEndian(
                   value[subCmdDataIndex_5 + 10],
                   value[subCmdDataIndex_5 + 11],
                 );
+                if (data4 != 0) {
+                  data.ropeBackSpeed = data4;
+                }
               }
               bleDeviceStateController.add(BleDeviceStateMsg.deviceUnitState);
             }
+          case PowerCommands.queryDataSport_0x08: {
+            data.deviceLock = value[subCmdDataIndex_5];
+            bleDeviceDataController.add(BleDeviceDataMsg.dataQueryUpdate_0x08);
+          }
           case PowerCommands.queryDataSport_0x10: {
               _handleDataSport0x10(value, data, deviceInfo);
             }
@@ -100,7 +116,7 @@ class PowerAdvancedRepository {
         break;
       case PowerCommands.cmdQueryData_0x0B:
         int handleKey = value[subCmdIndex];
-        LogUtils.d("按键值： $handleKey :   ${Tools.getNiceHexArray(value)}");
+        // LogUtils.d("按键值： $handleKey :   ${Tools.getNiceHexArray(value)}");
         if (handleKey != data.handlePress) {
           data.handlePress = handleKey;
 
@@ -114,6 +130,32 @@ class PowerAdvancedRepository {
       default:
         break;
     }
+  }
+
+  _handleSNCode(
+      List<int> value,
+      PowerAdvancedData data,
+      RHBluetoothDeviceInfo deviceInfo,
+      ) {
+    /// 上面有拦截小于20个直接过滤
+    value.removeLast();
+    value.removeLast();
+    value.removeLast();
+    value.removeRange(0, 4);
+    int i=value.length-1;
+    while (i >= 0) {
+      if (value[i] == 0) {
+        value.removeLast();
+      }
+      i--;
+    }
+    if (value.isEmpty) {
+      return;
+    }
+    String str = Utf8Codec().decode(value);
+    LogUtils.d('查询指令 : 返回的数据SN : $str');
+    data.deviceSNCode = str;
+    bleDeviceDataController.add(BleDeviceDataMsg.dataQueryUpdate_0x1D);
   }
 
   _handleDeviceInfo(

@@ -118,17 +118,20 @@ class PowerAdvancedData extends BaseDeviceData {
   int pullUpState = 0;
   int pullUpNoPeople = 0;
 
-  int protectState = 0;
-  int protectWeight = 0;
-  int protectRopeLength = 0;
-  int protectTime = 0;
-  int ropeBackState = 0;
-  int ropeBackSpeed = 0;
+  int protectState = 1;
+  int protectWeight = 100;
+  int protectRopeLength = 200;
+  int protectTime = 30;
+  int ropeBackState = 1;
+  int ropeBackSpeed = 3000;
   // int maxLimitWeight = 0;
 
   ///handle button press
   int handlePress = 0;
 
+  int deviceLock = 0;
+
+  String deviceSNCode = '';
   updateMotorStatus() {
     if (mainStatus == 1) {
       isStart = true;

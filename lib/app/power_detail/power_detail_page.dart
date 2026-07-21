@@ -510,6 +510,7 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
               const Gap(10),
               Obx(() {
                 int flag = controller.unitFlag.value;
+                int lock = controller.deviceLockFlag.value;
                 return Column(
                   children: [
                     RHText(
@@ -880,6 +881,96 @@ class PowerDetailPage extends GetView<PowerDetailCtrl> {
                     //     ),
                     //   ],
                     // ),
+                    const Gap(10),
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            controller.getDeviceSN();
+                          },
+                          child: Container(
+                              width: 70,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                  color: RHColor.white,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Center(
+                                child: RHText(
+                                  text: "查询1D",
+                                  fontColor: RHColor.black,
+                                  fontSize: 16,
+                                ),
+                              )
+                          ),
+                        ),
+                        const Gap(30),
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     controller.setSn();
+                        //   },
+                        //   child: Container(
+                        //       width: 70,
+                        //       height: 40,
+                        //       decoration: BoxDecoration(
+                        //           color: RHColor.white,
+                        //           borderRadius: BorderRadius.circular(10)),
+                        //       child: Center(
+                        //         child: RHText(
+                        //           text: "写入设备",
+                        //           fontColor: RHColor.black,
+                        //           fontSize: 16,
+                        //         ),
+                        //       )
+                        //   ),
+                        // ),
+                      ],
+                    ),
+                    const Gap(10),
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            controller.setDeviceLock(1);
+                          },
+                          child: Container(
+                              width: 70,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                  color: controller.powerData.deviceLock == 1 ? RHColor.primary : RHColor.white,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Center(
+                                child: RHText(
+                                  text: "设备解锁",
+                                  fontColor: RHColor.black,
+                                  fontSize: 16,
+                                ),
+                              )
+                          ),
+                        ),
+                        const Gap(30),
+                        GestureDetector(
+                          onTap: () {
+                            controller.setDeviceLock(0);
+                          },
+                          child: Container(
+                              width: 70,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                  color: controller.powerData.deviceLock == 0 ? RHColor.primary : RHColor.white,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Center(
+                                child: RHText(
+                                  text: "设备锁定",
+                                  fontColor: RHColor.black,
+                                  fontSize: 16,
+                                ),
+                              )
+                          ),
+                        ),
+                        const Gap(30),
+
+                      ],
+                    ),
                     const Gap(10),
                     Row(
                       children: [

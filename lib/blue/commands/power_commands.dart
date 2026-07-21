@@ -30,6 +30,7 @@ class PowerCommands {
   static const int cmdQueryData_0x0D = 0x0D;
   static const int cmdError = 0x0E;
   static const int cmdResponse_0xD0 = 0xD0;
+  static const int cmdResponse_0x1D = 0x1D;
 
 
   static const int controlReset = 0x01; //
@@ -331,6 +332,18 @@ class PowerCommands {
     list.add(mode);
     list.addAll(modeList);
     return CrcTools.encryptCmd(list);
+  }
+
+  static List<int> setDeviceLock(int lock) {
+    return CrcTools.encryptCmd([
+      cmdControl_0x04,
+      cmdControl_0x02,
+      lock,
+    ]);
+  }
+
+  static List<int> getDeviceLock() {
+    return CrcTools.encryptCmd([cmdQueryData_0x09, queryDataSport_0x08]);
   }
 
   static List<int> getDeviceStatus() {
